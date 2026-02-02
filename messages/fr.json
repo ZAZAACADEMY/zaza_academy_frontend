@@ -1,0 +1,478 @@
+{
+  "Navbar": {
+    "programs": "Programmes",
+    "about": "Pourquoi Zaza",
+    "pricing": "Tarifs",
+    "testimonials": "Témoignages",
+    "faq": "FAQ",
+    "login": "Connexion",
+    "getStarted": "Commencer",
+    "aria": {
+      "switcher": "Sélecteur de langue",
+      "switchToFr": "Passer en français",
+      "switchToEn": "Passer en anglais",
+      "home": "Accueil Zaza Financial Education",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu"
+    }
+  },
+  "Hero": {
+    "title": "<strong1>Développer</strong1> <strong2>l’intelligence financière dès le</strong2> <highlight>plus jeune âge</highlight>",
+    "subtitle": "La plateforme d'éducation financière la plus engageante pour les 5-16 ans. Nous transformons des notions complexes en réflexes ludiques et durables.",
+    "cta": "Essai gratuit",
+    "learnMore": "Découvrir",
+    "enroll": "Inscrire mon enfant",
+    "howKidsLearn": "Méthode ludique",
+    "socialProof": {
+      "count": "1000+",
+      "label": "Familles en attente"
+    },
+    "featureCards": [
+      {
+        "title": "Cap d'épargne atteint !",
+        "subtitle": "Apprentissage en cours",
+        "description": "Des leçons ludiques et adaptées à l'âge pour comprendre épargner, dépenser et choisir avec bon sens.",
+        "icon": "piggy"
+      },
+      {
+        "title": "Compétences débloquées !",
+        "subtitle": "Leçon terminée",
+        "description": "Des activités interactives qui expliquent le fonctionnement de l'argent et encouragent les bons réflexes.",
+        "icon": "trending"
+      },
+      {
+        "title": "Compétences en croissance !",
+        "subtitle": "Leçon terminée",
+        "description": "Un apprentissage guidé, étape par étape, pour apprendre, économiser et faire grandir ses compétences financières.",
+        "icon": "sprout"
+      }
+    ]
+  },
+  "WhyZaza": {
+    "title": "Pourquoi Zaza Academy",
+    "titleAccent": "Parce que les réflexes financiers se construisent très tôt.",
+    "intro": "Nous mêlons jeux, histoires et mises en situation réelles pour que les enfants gagnent une confiance financière qui reste.",
+    "reasons": [
+      {
+        "title": "Dès 7 ans",
+        "subtitle": "Les habitudes sont fixées",
+        "description": "Les comportements financiers se forment avant 7 ans. Commencer tôt donne un avantage décisif."
+      },
+      {
+        "title": "70 %",
+        "subtitle": "Des adultes regrettent",
+        "description": "Ils auraient aimé apprendre l'argent plus tôt. Offrez à votre enfant cette longueur d'avance."
+      },
+      {
+        "title": "×3",
+        "subtitle": "Plus enclins à épargner",
+        "description": "Les enfants formés à la finance deviennent des adultes qui épargnent et choisissent mieux."
+      },
+      {
+        "title": "Moins de dettes",
+        "subtitle": "Meilleures décisions",
+        "description": "Des bases solides aujourd'hui, des choix responsables demain, et moins de dettes à l'âge adulte."
+      }
+    ]
+  },
+  "WhatWillLearn": {
+    "title": "Ce que votre enfant <accent>va apprendre</accent>",
+    "subtitle": "Des ateliers ludiques pour économiser, dépenser et faire fructifier l'argent avec confiance.",
+    "features": [
+      {
+        "title": "Épargne futée",
+        "description": "Comprendre la valeur de l'argent, la patience et l'intérêt d'économiser pour ses objectifs."
+      },
+      {
+        "title": "Budget malin",
+        "description": "Gérer une allocation, suivre ses dépenses et décider tôt avec méthode."
+      },
+      {
+        "title": "Investir simplement",
+        "description": "Découvrir comment l'argent peut croître avec le temps : intérêts composés, bases de l'investissement."
+      },
+      {
+        "title": "Gagner de la valeur",
+        "description": "Stimuler l'esprit entrepreneurial : effort, compétences et créativité créent de la valeur."
+      },
+      {
+        "title": "Dépenser intelligemment",
+        "description": "Distinguer besoins/envies et choisir avec responsabilité."
+      },
+      {
+        "title": "Fixer des objectifs",
+        "description": "Planifier et atteindre des buts financiers courts et longs termes avec clarté."
+      }
+    ]
+  },
+  "AgeGroupProgram": {
+    "title": "Un parcours pensé pour <accent>chaque âge</accent>",
+    "subtitle": "Des contenus adaptés aux étapes clés de développement pour ancrer durablement les apprentissages.",
+    "learnMore": "Voir le programme",
+    "close": "Fermer",
+    "programs": [
+      {
+        "ageRange": "5-7 ans",
+        "title": "Les bases de l'argent",
+        "description": "Histoires et jeux pour découvrir besoins vs envies, premières économies et bons réflexes.",
+        "details": "Missions racontées, tri besoins/envies, méthode des 3 tirelires et mini actions parents en moins de 10 minutes."
+      },
+      {
+        "ageRange": "8-11 ans",
+        "title": "Explorateurs malins",
+        "description": "Budget simple, argent de poche, défis d'épargne pour décider plus tôt avec discernement.",
+        "details": "Jeux de budget, planificateur d'argent de poche, défis d'épargne, premiers mots de banque et astuces rapides pour les parents."
+      },
+      {
+        "ageRange": "12-16 ans",
+        "title": "Constructeurs de richesse",
+        "description": "Budget & banque, notions d'investissement et esprit entrepreneurial pour l'autonomie réelle.",
+        "details": "Budgets à pratiquer, scénarios carte/débit fictifs, initiation à l'investissement (simulations) et mini projets business avec retours."
+      }
+    ]
+  },
+  "Pricing": {
+    "title": "Des tarifs simples et <accent>transparents</accent>",
+    "subtitle": "Un investissement pour l'avenir, moins cher qu'une soirée pizza par semaine.",
+    "mostPopular": "Le plus choisi",
+    "perQuarter": "/trimestre",
+    "quarterly": "Abonnement trimestriel",
+    "installmentNote": "inclut de légers frais d'échelonnement",
+    "cta": "Choisir ce plan",
+    "plans": [
+      {
+        "title": "Standard",
+        "description": "Parfait pour démarrer l'éducation financière en famille.",
+        "price": "199 $",
+        "installment": "ou 3 paiements de 32 $",
+        "features": [
+          "30 cours en ligne en direct",
+          "Fiches interactives",
+          "Accès au groupe parents",
+          "Certificat de réussite"
+        ],
+        "icon": "sparkles"
+      },
+      {
+        "title": "Plan Premium",
+        "description": "Le meilleur rapport valeur/progression.",
+        "price": "249,99 $",
+        "installment": "ou 3 paiements de 85 $",
+        "features": [
+          "Tout le Standard",
+          "Coaching familial bonus",
+          "Replays à la demande",
+          "Accès anticipé aux nouveautés"
+        ],
+        "icon": "crown",
+        "mostPopular": true
+      },
+      {
+        "title": "Pack Famille",
+        "description": "Idéal pour plusieurs enfants qui apprennent ensemble.",
+        "price": "499,99 $",
+        "installment": "ou 3 paiements de 140 $",
+        "features": [
+          "Accès pour 3 enfants",
+          "Toutes les options Premium",
+          "Tableau de bord parent partagé",
+          "Support prioritaire & onboarding"
+        ],
+        "icon": "users"
+      }
+    ]
+  },
+  "DashboardBilling": {
+    "title": "Facturation & plan",
+    "back": "Retour au tableau de bord",
+    "currentPlan": "Formule actuelle",
+    "statusActive": "Actif",
+    "popular": "Populaire",
+    "priceSuffix": "/mois",
+    "nextBilling": "Prochaine facturation",
+    "paymentMethod": "Moyen de paiement",
+    "paymentMethodMasked": "•••• •••• •••• 4242",
+    "installmentStatus": "Statut des versements",
+    "remaining": "{amount} restants",
+    "progressLabel": "Progression du paiement",
+    "nextInstallment": "Prochaine échéance : {date}",
+    "updatePayment": "Mettre à jour le paiement",
+    "cancel": "Annuler l'abonnement",
+    "usageTitle": "Utilisation ce mois-ci",
+    "childrenActive": "Enfants actifs",
+    "videosWatched": "Vidéos regardées",
+    "liveSessions": "Sessions en direct",
+    "plansTitle": "Choisissez votre plan",
+    "plansSubtitle": "Sélectionnez l'option adaptée à votre famille.",
+    "upgradeOnly": "Seules les formules supérieures à votre offre actuelle sont affichées.",
+    "historyTitle": "Historique de facturation",
+    "historyPaid": "Payé",
+    "needHelp": "Besoin d'aide ?",
+    "supportCopy": "Des questions sur votre abonnement ? Notre équipe est là pour vous.",
+    "contactSupport": "Contacter le support"
+  },
+  "CallToAction": {
+    "title": "Offrez à vos enfants la confiance financière",
+    "subtitle": "Rejoignez des milliers de familles qui préparent l'avenir de leurs enfants. Essai gratuit — sans carte bancaire.",
+    "cta": "Je commence"
+  },
+  "GetStarted": {
+    "title": "Commencez en <accent>4 étapes</accent> faciles",
+    "subtitle": "De l'inscription à la première leçon en quelques minutes, sans configuration compliquée.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Créez votre compte parent",
+        "description": "Ouvrez un compte parent sécurisé en quelques clics. Pilotez les progrès, l'activité et l'expérience de vos enfants depuis un tableau de bord simple."
+      },
+      {
+        "number": "02",
+        "title": "Choisissez votre plan",
+        "description": "Sélectionnez la formule adaptée à vos objectifs. Débloquez des cours structurés, du contenu interactif et le suivi des progrès."
+      },
+      {
+        "number": "03",
+        "title": "Ajoutez vos enfants",
+        "description": "Créez un profil pour chaque enfant. Nous adaptons les leçons à leur âge, niveau et centres d'intérêt pour garder l'envie d'apprendre."
+      },
+      {
+        "number": "04",
+        "title": "Lancez l'apprentissage",
+        "description": "Démarrez avec des vidéos ludiques, des activités interactives et des ateliers guidés qui construisent de vraies compétences et de la confiance."
+      }
+    ]
+  },
+  "FounderQuote": {
+    "quote": "L'école apprend à travailler pour l'argent. À Zaza Academy, nous apprenons aux enfants à faire travailler l'argent pour eux.",
+    "body": [
+      "En tant que parents, nous voulons la réussite de nos enfants. Dans un monde économique complexe, les bonnes notes ne suffisent plus. À Zaza Academy, nous construisons leur intelligence financière dès le plus jeune âge.",
+      "J'ai créé cette académie pour combler un manque avec un objectif clair : un apprentissage aussi ludique qu'un jeu, mais aussi concret et efficace que la vraie vie."
+    ],
+    "name": "Stéphanie Mbida",
+    "role": "Fondatrice, Zaza Academy"
+  },
+  "Testimonials": {
+    "title": "Ce que les parents <accent>attendent</accent>",
+    "subtitle": "leurs envies pour que Zaza aide dès maintenant.",
+    "items": [
+      {
+        "quote": "Je veux des réflexes simples pour mes enfants : mettre un peu de côté, réfléchir avant de dépenser, être fiers de leurs choix.",
+        "name": "Amina D.",
+        "role": "Maman de 2 enfants"
+      },
+      {
+        "quote": "Des mini-leçons à faire ensemble et des rappels pour garder le rythme à la maison, c'est ce que j'attends.",
+        "name": "Kwame A.",
+        "role": "Accra"
+      },
+      {
+        "quote": "Je cherche des situations concrètes : argent de poche, petits projets, premiers objectifs d'épargne pour que mon ado voie l'intérêt tout de suite.",
+        "name": "Lebo M.",
+        "role": "Johannesburg"
+      }
+    ]
+  },
+  "Login": {
+    "back": "Retour à l'accueil",
+    "title": "Ravi de vous revoir !",
+    "subtitle": "Connectez-vous pour poursuivre l'apprentissage de votre enfant.",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "jhonros93@gmail.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "********",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion...",
+    "noAccount": "Pas encore de compte ? ",
+    "signupLink": "Inscription",
+    "errors": {
+      "email": "Veuillez saisir une adresse e-mail valide",
+      "password": "Le mot de passe est requis"
+    }
+  },
+  "Signup": {
+    "progress": "Étape {step} sur {total}",
+    "stepTitles": {
+      "1": "Créer un compte",
+      "2": "Choisir un plan",
+      "3": "Cycle de facturation",
+      "4": "Vérifier la commande",
+      "5": "Paiement",
+      "6": "Traitement",
+      "7": "Succès",
+      "8": "Profil enfant",
+      "9": "Récapitulatif"
+    },
+    "stepSubtitles": {
+      "1": "On vous équipe pour démarrer",
+      "2": "Choisissez la meilleure formule pour votre famille",
+      "3": "Choisissez votre mode de paiement",
+      "4": "Merci de vérifier les détails de l'abonnement",
+      "5": "Saisissez vos infos de paiement en toute sécurité",
+      "6": "Nous confirmons votre paiement",
+      "7": "Bienvenue dans la famille Zaza !",
+      "8": "Créez le profil de votre enfant",
+      "9": "Récapitulatif de votre famille"
+    },
+    "step1": {
+      "firstNameLabel": "Prénom",
+      "firstNamePlaceholder": "Zaza",
+      "lastNameLabel": "Nom",
+      "lastNamePlaceholder": "Academy",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "zazaacademy@gmail.com",
+      "countryLabel": "Pays",
+      "countryPlaceholder": "Rechercher un pays...",
+      "countryEmpty": "Aucun pays trouvé",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "********",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "********",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "next": "Étape suivante",
+      "haveAccount": "Déjà un compte ? ",
+      "loginLink": "Se connecter"
+    },
+    "errors": {
+      "firstNameMin": "Le prénom doit comporter au moins 2 caractères",
+      "lastNameMin": "Le nom doit comporter au moins 2 caractères",
+      "email": "Veuillez saisir une adresse e-mail valide",
+      "country": "Veuillez sélectionner un pays",
+      "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordUpper": "Le mot de passe doit contenir au moins une majuscule",
+      "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
+      "passwordMatch": "Les mots de passe ne correspondent pas"
+    },
+    "step2": {
+      "soloTitle": "Solo",
+      "soloSub": "Parfait pour un enfant",
+      "familyTitle": "Famille",
+      "familySub": "Le plus choisi",
+      "familyPlusTitle": "Famille Plus",
+      "familyPlusSub": "Pour les familles nombreuses",
+      "note": "Tarif trimestriel",
+      "tagPopular": "Populaire",
+      "childLimit": "Jusqu'à {count, plural, one {# enfant} other {# enfants}}",
+      "next": "Étape suivante"
+    },
+    "step3": {
+      "monthly": "Mensuel",
+      "monthlyPrice": "$89/mois",
+      "quarterly": "Trimestriel",
+      "quarterlyPrice": "$249/trimestre",
+      "quarterlySave": "Économisez 10 %",
+      "next": "Étape suivante"
+    },
+    "step4": {
+      "title": "Récapitulatif de commande",
+      "plan": "Offre",
+      "billing": "Cycle de facturation",
+      "total": "Total",
+      "confirm": "Confirmer et payer"
+    },
+    "step5": {
+      "cardGateway": "Carte de débit / crédit",
+      "mobileGateway": "Mobile Money",
+      "networkProvider": "Opérateur",
+      "countryLabel": "Pays",
+      "countryPlaceholder": "Rechercher un pays...",
+      "countryEmpty": "Aucun pays trouvé",
+      "phoneLabel": "Numéro de téléphone",
+      "phonePlaceholder": "+243 000 000 000",
+      "cardHolder": "Nom du titulaire",
+      "cardHolderPlaceholder": "JEAN DUPONT",
+      "cardNumber": "Numéro de carte",
+      "cardNumberPlaceholder": "0000 0000 0000 0000",
+      "expiry": "Date d'expiration",
+      "expiryPlaceholder": "MM/AA",
+      "cvv": "CVV / CVC",
+      "cvvPlaceholder": "123",
+      "payNow": "Payer maintenant"
+    },
+    "step6": {
+      "title": "Traitement du paiement",
+      "body": "Patientez pendant que nous sécurisons votre abonnement. Ne fermez pas cette fenêtre."
+    },
+    "step7": {
+      "title": "Tout est prêt !",
+      "body": "Votre paiement est confirmé et votre compte est actif. Créons maintenant les profils de vos enfants.",
+      "cta": "Créer un profil enfant"
+    },
+    "step8": {
+      "chooseAvatar": "Choisissez un avatar",
+      "childName": "Nom de l'enfant",
+      "namePlaceholder": "Nom",
+      "ageLabel": "Âge",
+      "agePlaceholder": "Âge",
+      "ageError": "L'âge doit être compris entre 5 et 16 ans.",
+      "genderLabel": "Genre (optionnel)",
+      "genderBoy": "Garçon",
+      "genderGirl": "Fille",
+      "saveProfile": "Enregistrer le profil"
+    },
+    "step9": {
+      "title": "Vos enfants",
+      "ageDisplay": "{age} ans",
+      "addChild": "Ajouter un autre enfant",
+      "complete": "Finaliser l'inscription"
+    }
+  },
+  "FAQ": {
+    "title": "Foire aux <accent>questions</accent>",
+    "subtitle": "Les réponses pour avancer sereinement dans le parcours de votre enfant avec Zaza Academy.",
+    "items": [
+      {
+        "question": "Et si mon enfant rate un cours ?",
+        "answer": "Tous les cours en direct sont enregistrés puis ajoutés au tableau de bord sous 24 h. Votre enfant peut revoir et faire les activités à son rythme."
+      },
+      {
+        "question": "Les parents doivent-ils assister ?",
+        "answer": "Pour les 5-7 ans, nous conseillons de rester à proximité au début. Dès 8 ans, le programme est pensé pour l'autonomie, mais vous êtes toujours les bienvenus."
+      },
+      {
+        "question": "Quelles tranches d'âge sont acceptées ?",
+        "answer": "Nous proposons trois parcours : 5-7 ans (Bases de l'argent), 8-11 ans (Explorateurs malins) et 12-16 ans (Constructeurs de richesse)."
+      },
+      {
+        "question": "Comment payer ?",
+        "answer": "Cartes bancaires, PayPal et Apple Pay sont acceptés. Choisissez la facturation trimestrielle ou annuelle selon vos besoins."
+      },
+      {
+        "question": "Disponible en anglais et français ?",
+        "answer": "Oui. Zaza Academy est bilingue. Choisissez votre langue pour les cours et supports dans vos paramètres."
+      }
+    ]
+  },
+  "Footer": {
+    "brand": "Zaza Academy",
+    "tagline": "Former la nouvelle génération aux compétences financières essentielles avec des contenus ludiques, engageants et adaptés à chaque âge.",
+    "product": "Produit",
+    "productLinks": [
+      { "name": "Fonctionnalités", "href": "#curriculum" },
+      { "name": "Comment ça marche", "href": "#how-it-works" },
+      { "name": "Tarifs", "href": "#pricing" },
+      { "name": "Histoires", "href": "#testimonials" },
+      { "name": "FAQ", "href": "#faq" }
+    ],
+    "support": "Support",
+    "supportLinks": [
+      "Contactez-nous",
+      "Politique de retour",
+      "Produit garanti"
+    ],
+    "contact": "Contact",
+    "phone": "123819210",
+    "email": "zazaacademy@gmail.com",
+    "address": "Cameroun",
+    "paymentsLabel": "Moyens de paiement",
+    "aria": {
+      "instagram": "Suivez-nous sur Instagram",
+      "facebook": "Suivez-nous sur Facebook",
+      "youtube": "Abonnez-vous à notre chaîne YouTube",
+      "tiktok": "Suivez-nous sur TikTok"
+    },
+    "poweredBy": "Zaza Academy propulsé par Fivro Studio"
+  }
+}

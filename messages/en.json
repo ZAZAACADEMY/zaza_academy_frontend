@@ -1,0 +1,474 @@
+{
+  "Navbar": {
+    "programs": "Programs",
+    "about": "Why Zaza",
+    "pricing": "Pricing",
+    "testimonials": "Testimonials",
+    "faq": "FAQ",
+    "login": "Login",
+    "getStarted": "Get Started",
+    "aria": {
+      "switcher": "Language switcher",
+      "switchToFr": "Switch to French",
+      "switchToEn": "Switch to English",
+      "home": "Zaza Financial Education Home",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    }
+  },
+  "Hero": {
+    "title": "<strong1>Empowering</strong1> <strong2>Young Minds with Smart</strong2> <highlight>Financial Skills</highlight>",
+    "subtitle": "The world's most engaging financial literacy platform for kids ages 5-16. We turn complex money concepts into fun, lifelong skills.",
+    "cta": "Start Learning Free",
+    "learnMore": "Learn More",
+    "enroll": "Enroll Your Child",
+    "howKidsLearn": "How Kids Learn",
+    "socialProof": {
+      "count": "1000+",
+      "label": "Families waiting to join"
+    },
+    "featureCards": [
+      {
+        "title": "Saving Milestone!",
+        "subtitle": "Learning in Progress",
+        "description": "Fun, age-appropriate lessons that help children understand saving, spending, and making smart money choices.",
+        "icon": "piggy"
+      },
+      {
+        "title": "Money Skills Unlocked!",
+        "subtitle": "Lesson Completed",
+        "description": "Interactive and playful lessons designed to teach kids how money works, encouraging responsible habits.",
+        "icon": "trending"
+      },
+      {
+        "title": "Skills Growing!",
+        "subtitle": "Lesson Completed",
+        "description": "Step-by-step learning experiences that guide children to learn, save, and grow their money skills.",
+        "icon": "sprout"
+      }
+    ]
+  },
+  "WhyZaza": {
+    "title": "Why Zaza Academy",
+    "titleAccent": "Because money habits start early.",
+    "intro": "We blend playful learning with real-world skills so kids build money confidence that lasts.",
+    "reasons": [
+      {
+        "title": "By age 7",
+        "subtitle": "Habits Are Formed",
+        "description": "Research shows financial behaviors are established by age 7. Starting early gives children a crucial advantage."
+      },
+      {
+        "title": "70%",
+        "subtitle": "Of Adults Wish",
+        "description": "They had learned about money earlier. Give your child the gift of financial confidence from the start."
+      },
+      {
+        "title": "3x More",
+        "subtitle": "Likely to Save",
+        "description": "Children who receive financial education are significantly more likely to save money as adults."
+      },
+      {
+        "title": "Less Debt",
+        "subtitle": "Better Decisions",
+        "description": "Financially educated children grow into adults who make smarter choices and carry less debt."
+      }
+    ]
+  },
+  "WhatWillLearn": {
+    "title": "What Your Child <accent>Will Learn</accent>",
+    "subtitle": "Fun, interactive lessons that teach kids how to save, spend, and grow money with confidence.",
+    "features": [
+      {
+        "title": "Smart Saving",
+        "description": "Helps children understand the value of money, patience, and the importance of saving for future needs and goals."
+      },
+      {
+        "title": "Budgeting Basics",
+        "description": "Teaches kids how to manage their allowance, track expenses, and make smart budgeting decisions early on."
+      },
+      {
+        "title": "Investing 101",
+        "description": "Introduces how money can grow over time through simple investing concepts and compound interest."
+      },
+      {
+        "title": "Earning Money",
+        "description": "Encourages entrepreneurial thinking by showing kids how effort, skills, and creativity create value."
+      },
+      {
+        "title": "Smart Spending",
+        "description": "Guides children to distinguish between needs and wants and make thoughtful, responsible spending choices."
+      },
+      {
+        "title": "Goal Setting",
+        "description": "Helps kids plan and work toward short-term and long-term financial goals with confidence and clarity."
+      }
+    ]
+  },
+  "AgeGroupProgram": {
+    "title": "Curriculum Designed for <accent>Every Stage</accent>",
+    "subtitle": "We've tailored our lessons to match your child's developmental milestones, ensuring learning sticks at every age.",
+    "learnMore": "Learn More",
+    "close": "Close",
+    "programs": [
+      {
+        "ageRange": "Ages 5-7",
+        "title": "Money Basics for Little Learners",
+        "description": "Fun, story-based lessons that introduce kids to needs vs wants, simple saving goals, and positive money habits in a playful way.",
+        "details": "Story-led missions, needs vs wants sorting, three-jar saving, and mini parent prompts you can do in under 10 minutes."
+      },
+      {
+        "ageRange": "Ages 8-11",
+        "title": "Smart Money Explorers",
+        "description": "Introduces budgeting, earning allowance, and saving challenges, helping kids make smarter money decisions early on.",
+        "details": "Budgeting games, allowance planners, saving challenges, first bank vocabulary, and quick parent tips to keep habits consistent."
+      },
+      {
+        "ageRange": "Ages 12-16",
+        "title": "Teen Wealth Builders",
+        "description": "Covers budgeting & banking, investing basics, and entrepreneurial thinking to prepare teens for real-world financial independence.",
+        "details": "Practice budgets, mock debit/credit scenarios, beginner investing with simulations, and small business exercises with feedback."
+      }
+    ]
+  },
+  "Pricing": {
+    "title": "Simple, Transparent <accent>Pricing</accent>",
+    "subtitle": "Invest in your child's future for less than the cost of a weekly pizza night.",
+    "mostPopular": "Most Popular",
+    "perQuarter": "/quarter",
+    "quarterly": "Quarterly Subscription",
+    "installmentNote": "includes small installment fee",
+    "cta": "Start Quarterly Plan",
+    "plans": [
+      {
+        "title": "Standard",
+        "description": "Perfect for families getting started with financial education.",
+        "price": "$199",
+        "installment": "Or 3 payments of $32",
+        "features": [
+          "30 live online classes",
+          "Interactive worksheets",
+          "Parent support group access",
+          "Completion certificate"
+        ],
+        "icon": "sparkles"
+      },
+      {
+        "title": "Premium Plan",
+        "description": "Best value for deeper learning and progress tracking.",
+        "price": "$249.99",
+        "installment": "Or 3 payments of $85",
+        "features": [
+          "Everything in Standard Plan",
+          "Bonus family coaching session",
+          "Class replays (on-demand access)",
+          "Early access to new programs"
+        ],
+        "icon": "crown",
+        "mostPopular": true
+      },
+      {
+        "title": "Family Bundle",
+        "description": "Ideal for families with multiple children learning together.",
+        "price": "$499.99",
+        "installment": "Or 3 payments of $140",
+        "features": [
+          "Full access for up to 3 children",
+          "All Premium features included",
+          "One household, shared parent dashboard",
+          "Priority family support & onboarding"
+        ],
+        "icon": "users"
+      }
+    ]
+  },
+  "DashboardBilling": {
+    "title": "Billing & Plan",
+    "back": "Back to dashboard",
+    "currentPlan": "Current plan",
+    "statusActive": "Active",
+    "popular": "Popular",
+    "priceSuffix": "/month",
+    "nextBilling": "Next billing date",
+    "paymentMethod": "Payment method",
+    "paymentMethodMasked": "•••• •••• •••• 4242",
+    "installmentStatus": "Installment status",
+    "remaining": "{amount} remaining",
+    "progressLabel": "Payment progress",
+    "nextInstallment": "Next installment due: {date}",
+    "updatePayment": "Update payment method",
+    "cancel": "Cancel subscription",
+    "usageTitle": "Usage this month",
+    "childrenActive": "Children active",
+    "videosWatched": "Videos watched",
+    "liveSessions": "Live sessions",
+    "plansTitle": "Choose your plan",
+    "plansSubtitle": "Pick the option that fits your family.",
+    "upgradeOnly": "Only plans above your current plan are shown.",
+    "historyTitle": "Billing history",
+    "historyPaid": "Paid",
+    "needHelp": "Need help?",
+    "supportCopy": "Questions about your subscription? Our support team is here.",
+    "contactSupport": "Contact support"
+  },
+  "CallToAction": {
+    "title": "Give Your Children the Gift of Financial Confidence",
+    "subtitle": "Join thousands of families who are setting their children up for financial success. Start your free trial today — no credit card required.",
+    "cta": "Get Started"
+  },
+  "GetStarted": {
+    "title": "Get Started in <accent>4 Easy Steps</accent>",
+    "subtitle": "From sign-up to first lesson in just a few minutes. No complicated setup required.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Create Parent Account",
+        "description": "Create your secure parent account in just a few clicks. Get full control over your child's learning progress, activity, and personalized experience from one dashboard."
+      },
+      {
+        "number": "02",
+        "title": "Choose Your Plan",
+        "description": "Pick the plan that fits your family's goals. Unlock structured lessons, interactive content, and progress tracking designed to support your child's growth."
+      },
+      {
+        "number": "03",
+        "title": "Add Your Children",
+        "description": "Create a profile for each child. We tailor lessons to their age, level, and interests so learning stays engaging and effective."
+      },
+      {
+        "number": "04",
+        "title": "Start Learning",
+        "description": "Begin the journey with fun video lessons, interactive activities, and guided sessions that build real skills and confidence."
+      }
+    ]
+  },
+  "FounderQuote": {
+    "quote": "School teaches our children how to work for money. At Zaza Academy, we teach them how to make money work for them.",
+    "body": [
+      "As parents, we all want our children to succeed. But in today's complex economic world, good grades alone are no longer enough. At Zaza Academy, we help children build strong financial intelligence from an early age.",
+      "This academy was created to close an important gap with one clear goal: learning that feels like play, yet delivers real-life confidence and results."
+    ],
+    "name": "Stéphanie Mbida",
+    "role": "Founder, Zaza Academy"
+  },
+  "Testimonials": {
+    "title": "What Parents <accent>Hope For</accent>",
+    "subtitle": "Early adopters sharing what they want most from Zaza's first release.",
+    "items": [
+      {
+        "quote": "I want my kids to get simple, concrete habits—save a little, think before spending, and feel proud of their choices.",
+        "name": "Amina D.",
+        "role": "Parent of 2"
+      },
+      {
+        "quote": "Give us short lessons we can do together, plus reminders so we keep the momentum at home.",
+        "name": "Kwame A.",
+        "role": "Accra"
+      },
+      {
+        "quote": "I’m looking for real-life scenarios—allowance, small projects, first savings goals—so my teen sees the point right away.",
+        "name": "Lebo M.",
+        "role": "Johannesburg"
+      }
+    ]
+  },
+  "Login": {
+    "back": "Back to home",
+    "title": "Welcome back!",
+    "subtitle": "Sign in to continue your child's learning journey.",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "jhonros93@gmail.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Log in",
+    "submitting": "Logging in...",
+    "noAccount": "Don't have an account? ",
+    "signupLink": "Sign up",
+    "errors": {
+      "email": "Please enter a valid email address",
+      "password": "Password is required"
+    }
+  },
+  "Signup": {
+    "progress": "Step {step} of {total}",
+    "stepTitles": {
+      "1": "Create Account",
+      "2": "Choose Plan",
+      "3": "Billing Cycle",
+      "4": "Review Order",
+      "5": "Payment Details",
+      "6": "Processing",
+      "7": "Success",
+      "8": "Child Profile",
+      "9": "Summary"
+    },
+    "stepSubtitles": {
+      "1": "Let's get you started with Zaza",
+      "2": "Select the best plan for your family",
+      "3": "Choose how you want to pay",
+      "4": "Please review your subscription details",
+      "5": "Enter your payment information securely",
+      "6": "We are confirming your payment",
+      "7": "Welcome to the Zaza Family!",
+      "8": "Create a profile for your child",
+      "9": "Your family summary"
+    },
+    "step1": {
+      "firstNameLabel": "First Name",
+      "firstNamePlaceholder": "Zaza",
+      "lastNameLabel": "Last Name",
+      "lastNamePlaceholder": "Academy",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "zazaacademy@gmail.com",
+      "countryLabel": "Country",
+      "countryPlaceholder": "Search country...",
+      "countryEmpty": "No country found",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "********",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "********",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "next": "Next Step",
+      "haveAccount": "Already have an account? ",
+      "loginLink": "Log in"
+    },
+    "errors": {
+      "firstNameMin": "First name must be at least 2 characters",
+      "lastNameMin": "Last name must be at least 2 characters",
+      "email": "Please enter a valid email address",
+      "country": "Please select a country",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordUpper": "Password must contain at least one uppercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordMatch": "Passwords do not match"
+    },
+    "step2": {
+      "soloTitle": "Solo",
+      "soloSub": "Perfect for one child",
+      "familyTitle": "Family",
+      "familySub": "Most Popular",
+      "familyPlusTitle": "Family Plus",
+      "familyPlusSub": "For larger families",
+      "note": "Quarterly price",
+      "tagPopular": "Popular",
+      "childLimit": "Up to {count, plural, one {# child} other {# children}}",
+      "next": "Next Step"
+    },
+    "step3": {
+      "monthly": "Monthly",
+      "monthlyPrice": "$89/mo",
+      "quarterly": "Quarterly",
+      "quarterlyPrice": "$249/qtr",
+      "quarterlySave": "Save 10%",
+      "next": "Next Step"
+    },
+    "step4": {
+      "title": "Order Summary",
+      "plan": "Plan",
+      "billing": "Billing Cycle",
+      "total": "Total",
+      "confirm": "Confirm & Pay"
+    },
+    "step5": {
+      "cardGateway": "Debit / Credit Card",
+      "mobileGateway": "Mobile Money",
+      "networkProvider": "Network Provider",
+      "countryLabel": "Country",
+      "countryPlaceholder": "Search country...",
+      "countryEmpty": "No country found",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "+243 000 000 000",
+      "cardHolder": "Card Holder Name",
+      "cardHolderPlaceholder": "JOHN DOE",
+      "cardNumber": "Card Number",
+      "cardNumberPlaceholder": "0000 0000 0000 0000",
+      "expiry": "Expiry Date",
+      "expiryPlaceholder": "MM/YY",
+      "cvv": "CVV / CVC",
+      "cvvPlaceholder": "123",
+      "payNow": "Pay Now"
+    },
+    "step6": {
+      "title": "Processing Payment",
+      "body": "Please wait while we secure your subscription. Do not close this window."
+    },
+    "step7": {
+      "title": "You're all set!",
+      "body": "Your payment has been confirmed and your account is now active. Let's set up profiles for your children.",
+      "cta": "Setup Child Profile"
+    },
+    "step8": {
+      "chooseAvatar": "Choose Avatar",
+      "childName": "Child's Name",
+      "namePlaceholder": "Name",
+      "ageLabel": "Age",
+      "agePlaceholder": "Age",
+      "ageError": "Age must be between 5 and 16.",
+      "genderLabel": "Gender (Optional)",
+      "genderBoy": "Boy",
+      "genderGirl": "Girl",
+      "saveProfile": "Save Profile"
+    },
+    "step9": {
+      "title": "Your Children",
+      "ageDisplay": "{age} years old",
+      "addChild": "Add Another Child",
+      "complete": "Complete Registration"
+    }
+  },
+  "FAQ": {
+    "title": "Frequently Asked <accent>Questions</accent>",
+    "subtitle": "Answers to help you feel confident about your child's learning journey with Zaza Academy.",
+    "items": [
+      {
+        "question": "What if my child misses a class?",
+        "answer": "All live classes are recorded and added to your dashboard within 24 hours. Your child can watch the replay anytime and complete the activities at their own pace."
+      },
+      {
+        "question": "Do parents need to attend?",
+        "answer": "For ages 5-7, we suggest parents stay nearby for the first sessions. For 8+, the program is built for independent learning, and parents are always welcome to observe."
+      },
+      {
+        "question": "What ages can enroll?",
+        "answer": "We offer tailored programs for three age groups: 5-7 (Money Basics), 8-11 (Smart Money Explorers), and 12-16 (Teen Wealth Builders)."
+      },
+      {
+        "question": "How do I pay?",
+        "answer": "We accept major credit cards, PayPal, and Apple Pay. Choose between quarterly or annual billing to suit your family."
+      },
+      {
+        "question": "Is it available in English and French?",
+        "answer": "Yes. Zaza Academy is fully bilingual. You can choose your preferred language for lessons and materials in your account settings."
+      }
+    ]
+  },
+  "Footer": {
+    "brand": "Zaza Academy",
+    "tagline": "Empowering the next generation with essential financial skills through fun, engaging, and age-appropriate education.",
+    "product": "Product",
+    "productLinks": [
+      { "name": "Features", "href": "#curriculum" },
+      { "name": "How It Works", "href": "#how-it-works" },
+      { "name": "Pricing", "href": "#pricing" },
+      { "name": "Stories", "href": "#testimonials" },
+      { "name": "FAQ", "href": "#faq" }
+    ],
+    "support": "Support",
+    "supportLinks": ["Contact us", "Return Policy", "Product Guaranteed"],
+    "contact": "Contact",
+    "phone": "123819210",
+    "email": "zazaacademy@gmail.com",
+    "address": "Cameroon",
+    "paymentsLabel": "We Accept",
+    "aria": {
+      "instagram": "Follow us on Instagram",
+      "facebook": "Follow us on Facebook",
+      "youtube": "Subscribe to our YouTube channel",
+      "tiktok": "Follow us on TikTok"
+    },
+    "poweredBy": "Zaza Academy Powered by Fivro Studio"
+  }
+}
