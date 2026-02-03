@@ -76,7 +76,7 @@ const PricingCard = ({
       ${isPremium ? "bg-white text-[#8B5CF6]" : "bg-gradient-to-br from-[#A655F7] to-[#F46AA3] text-white"}
     `}
       >
-        <Icon size={30} strokeWidth={1.5} />
+        <Icon className="w-8 h-8" strokeWidth={1.5} />
       </div>
 
       <h3 className="font-display font-bold text-[28px] mb-2 leading-tight">
