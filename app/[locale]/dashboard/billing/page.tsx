@@ -12,6 +12,12 @@ import {
 } from "lucide-react";
 import React from "react";
 
+// Define strict props for Lucide icons to avoid TS errors
+type LucideIconProps = React.SVGProps<SVGSVGElement> & {
+  size?: number | string;
+  strokeWidth?: number | string;
+};
+
 type PlanMessage = {
   title: string;
   description: string;
@@ -24,7 +30,7 @@ type PlanMessage = {
 
 const planIconMap: Record<
   string,
-  React.ElementType
+  React.ComponentType<LucideIconProps>
 > = {
   sparkles: Sparkles,
   crown: Crown,
@@ -32,7 +38,7 @@ const planIconMap: Record<
 };
 
 type PricingPlan = PlanMessage & {
-  icon: React.ElementType;
+  icon: React.ComponentType<LucideIconProps>;
   isPopular: boolean;
 };
 
