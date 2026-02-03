@@ -102,7 +102,7 @@ export const Step8ChildSetup = () => {
           </div>
 
           <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            {avatars.map((_, idx) => {
+            {avatars.map((avatarSrc, idx) => {
               const isActive = currentChild.avatar === idx;
               return (
                 <button
@@ -121,7 +121,7 @@ export const Step8ChildSetup = () => {
                     `}
                     aria-hidden
                   />
-                  <Image src={src} alt="avatar" fill className="object-cover" />
+                  <Image src={avatarSrc} alt="avatar" fill className="object-cover" />
                   {isActive && (
                     <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-[#A655F7] text-white flex items-center justify-center shadow-md">
                       <Check size={14} strokeWidth={3} />
