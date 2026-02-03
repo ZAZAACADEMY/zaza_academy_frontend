@@ -28,16 +28,13 @@ type PlanMessage = {
   mostPopular?: boolean;
 };
 
-const planIconMap: Record<
-  string,
-  React.ComponentType<LucideIconProps>
-> = {
+const planIconMap: Record<string, React.ComponentType<LucideIconProps>> = {
   sparkles: Sparkles,
   crown: Crown,
   users: Users,
 };
 
-type PricingPlan = PlanMessage & {
+type PricingPlan = Omit<PlanMessage, "icon"> & {
   icon: React.ComponentType<LucideIconProps>;
   isPopular: boolean;
 };
