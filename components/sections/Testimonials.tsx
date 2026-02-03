@@ -86,7 +86,6 @@ export const Testimonials = () => {
             <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-[16px] tracking-tight relative inline-block">
               <SparkleDoodle
                 className="w-8 h-8 text-[#F472B6] -top-6 -left-6"
-                delay={0.5}
               />
               {t.rich("title", {
                 accent: (chunks) => (
