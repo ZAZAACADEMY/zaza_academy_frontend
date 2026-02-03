@@ -24,7 +24,7 @@ type PlanMessage = {
 
 const planIconMap: Record<
   string,
-  React.ComponentType<React.SVGProps<SVGSVGElement>>
+  React.ElementType
 > = {
   sparkles: Sparkles,
   crown: Crown,
@@ -32,7 +32,7 @@ const planIconMap: Record<
 };
 
 type PricingPlan = PlanMessage & {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon: React.ElementType;
   isPopular: boolean;
 };
 
