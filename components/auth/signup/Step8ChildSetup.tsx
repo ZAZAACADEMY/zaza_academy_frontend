@@ -102,11 +102,11 @@ export const Step8ChildSetup = () => {
           </div>
 
           <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            {avatars.map((src, idx) => {
+            {avatars.map((_, idx) => {
               const isActive = currentChild.avatar === idx;
               return (
                 <button
-                  key={src}
+                  key={`avatar-${idx}`}
                   type="button"
                   onClick={() =>
                     setCurrentChild({ ...currentChild, avatar: idx })
