@@ -9,7 +9,7 @@ export const FounderQuote = () => {
   const t = useTranslations("FounderQuote");
   const body = t.raw("body") as string[];
   return (
-    <section className="w-full bg-brand-cream py-10 md:py-20">
+    <section className="w-full bg-white py-10 md:py-20">
       <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
         <FadeIn>
           <div

@@ -1,9 +1,11 @@
 "use client";
 import React from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/navigation";
 import { JellyButton } from "../ui/motion/JellyButton";
 import { useTranslations, useLocale } from "next-intl";
+import Image from "next/image";
+import Logo from "../../public/vectors/logo.svg";
 
 interface LanguageSwitcherProps {
   currentLang: string;
@@ -68,6 +70,7 @@ export const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [isVisible, setIsVisible] = React.useState(true);
+  const [isLangMenuOpen, setIsLangMenuOpen] = React.useState(false);
 
   const handleLanguageChange = async (newLocale: string) => {
     if (!pathname) return;
@@ -130,9 +133,12 @@ export const Navbar = () => {
               className="relative cursor-pointer ml-0 md:ml-[10px]"
               aria-label={tAria("home")}
             >
-              <span className="font-display font-bold text-2xl md:text-[32px] text-brand-dark tracking-tight">
-                zaza<span className="text-brand-accent">.</span>
-              </span>
+              <Image
+                src={Logo}
+                alt="Zaza Financial Education"
+                className="h-[36px] w-auto md:h-[42px]"
+                priority
+              />
             </a>
           </div>
 
@@ -174,22 +180,74 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden text-brand-dark p-2 hover:bg-gray-50 rounded-full transition-colors"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? tAria("closeMenu") : tAria("openMenu")}
-            aria-expanded={isOpen}
-            aria-controls="mobile-menu"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Actions: Language Switcher and Menu Button */}
+          <div className="lg:hidden flex items-center gap-2 relative">
+            {/* Mobile Language Switcher - Dropdown style */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-full bg-brand-cream/50 text-brand-dark font-bold text-xs border border-brand-dark/10 active:bg-gray-100 transition-colors"
+                aria-label={tAria("switcher")}
+                aria-expanded={isLangMenuOpen}
+              >
+                {locale.toUpperCase()}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${
+                    isLangMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isLangMenuOpen && (
+                <div className="absolute top-full mt-2 right-0 w-20 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden z-[60]">
+                  <button
+                    onClick={() => {
+                      handleLanguageChange("fr");
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                      locale === "fr"
+                        ? "font-bold text-brand-dark bg-brand-cream/30"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    FR
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleLanguageChange("en");
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                      locale === "en"
+                        ? "font-bold text-brand-dark bg-brand-cream/30"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    EN
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="text-brand-dark p-2 hover:bg-gray-50 rounded-full transition-colors relative z-50"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? tAria("closeMenu") : tAria("openMenu")}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
 
           {/* Mobile Menu Dropdown */}
           {isOpen && (
             <div
               id="mobile-menu"
-              className="absolute top-[70px] md:top-[80px] left-0 right-0 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-4 lg:hidden animate-fade-in z-50 border border-gray-100"
+              className="absolute top-[70px] md:top-[80px] left-0 right-0 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-4 lg:hidden animate-fade-in z-50 border border-gray-100 mx-4"
             >
               {navLinks.map((item) => (
                 <a
@@ -201,12 +259,6 @@ export const Navbar = () => {
                   {item.name}
                 </a>
               ))}
-              <div className="flex justify-center py-2">
-                <LanguageSwitcher
-                  currentLang={locale}
-                  onLanguageChange={handleLanguageChange}
-                />
-              </div>
               <div className="flex flex-col gap-3 mt-2">
                 <button
                   onClick={() => {

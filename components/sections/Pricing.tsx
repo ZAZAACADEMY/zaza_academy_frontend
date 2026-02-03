@@ -39,12 +39,13 @@ const PricingCard = ({
 }) => (
   <TiltEffect className="h-full">
     <motion.div
+      whileTap={{ scale: 0.98 }}
       className={`
     relative flex flex-col p-6 md:p-8 rounded-[32px] transition-all duration-300 h-full w-full text-left
     ${
       isPremium
         ? "text-white shadow-[0px_20px_40px_-10px_rgba(168,85,247,0.4)] scale-100 lg:scale-105 z-10"
-        : "bg-white border border-[#F3F4F6] text-brand-black shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] hover:shadow-[0px_10px_30px_0px_rgba(0,0,0,0.06)]"
+        : "bg-white border border-[#F3F4F6] text-brand-black shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] lg:hover:shadow-[0px_10px_30px_0px_rgba(0,0,0,0.06)]"
     }
   `}
       style={
@@ -143,18 +144,19 @@ const PricingCard = ({
       </ul>
 
       {/* Button */}
-      <button
+      <motion.button
+        whileTap={{ scale: 0.95 }}
         className={`
-      w-full py-4 rounded-[50px] font-bold text-[16px] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
+      w-full py-4 rounded-[50px] font-bold text-[16px] transition-all duration-300 lg:hover:scale-[1.02] active:scale-[0.98]
       ${
         isPremium
-          ? "bg-[#F46AA3] text-white shadow-lg hover:bg-[#311F54] border border-white/20"
-          : "bg-white border-2 border-[#1F2937] text-[#1F2937] hover:bg-[#311F54] hover:text-white hover:border-[#311F54]"
+          ? "bg-[#F46AA3] text-white shadow-lg lg:hover:bg-[#311F54] border border-white/20"
+          : "bg-white border-2 border-[#1F2937] text-[#1F2937] lg:hover:bg-[#311F54] lg:hover:text-white lg:hover:border-[#311F54]"
       }
     `}
       >
         {ctaLabel}
-      </button>
+      </motion.button>
     </motion.div>
   </TiltEffect>
 );

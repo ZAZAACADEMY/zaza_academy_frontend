@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Phone,
@@ -10,6 +12,8 @@ import {
 import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
 import { FadeIn } from "../ui/motion/FadeIn";
 import { useTranslations } from "next-intl";
+import { Link } from "@/navigation";
+import { ContactModal } from "../ui/ContactModal";
 
 // Custom TikTok icon since it might not be in the installed version of lucide-react
 const TikTok = ({
@@ -37,11 +41,17 @@ const TikTok = ({
 export const Footer = () => {
   const t = useTranslations("Footer");
   const tAria = useTranslations("Footer.aria");
+  const [isContactOpen, setIsContactOpen] = React.useState(false);
+
   type LinkItem = { name: string; href: string };
   const productLinks = t.raw("productLinks") as LinkItem[];
-  const supportLinks = t.raw("supportLinks") as string[];
+
   return (
     <footer className="w-full bg-[#311F54] text-white pt-20 pb-10 overflow-hidden">
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+      />
       <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
         {/* Main Footer Content */}
         <StaggerContainer
@@ -59,14 +69,14 @@ export const Footer = () => {
             {/* Social Icons */}
             <div className="flex items-center gap-4 mt-2">
               <a
-                href="#"
+                href="https://www.instagram.com/zazaa_cademy"
                 aria-label={tAria("instagram")}
                 className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-[#F46AA3] transition-all duration-300 transform hover:scale-110"
               >
                 <Instagram size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61587371184860&sk=directory_contact_info&fb_profile_edit_entry_point=%7B%22feature%22%3A%22profile_directory%22%2C%22click_point%22%3A%22pencil_edit_directory_section%22%2C%22additional_metadata%22%3A%7B%22section_type%22%3A%22contact_info%22%7D%7D"
                 aria-label={tAria("facebook")}
                 className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-[#F46AA3] transition-all duration-300 transform hover:scale-110"
               >
@@ -80,7 +90,7 @@ export const Footer = () => {
                 <Youtube size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@zazaacademy?lang=en-GB"
                 aria-label={tAria("tiktok")}
                 className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-[#F46AA3] transition-all duration-300 transform hover:scale-110"
               >
@@ -114,16 +124,22 @@ export const Footer = () => {
               {t("support")}
             </h4>
             <ul className="flex flex-col gap-4 text-white/70 font-sans text-[15px]">
-              {supportLinks.map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="hover:text-white transition-colors hover:translate-x-1 inline-block"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <button
+                  onClick={() => setIsContactOpen(true)}
+                  className="hover:text-white transition-colors hover:translate-x-1 inline-block text-left"
+                >
+                  {t("contactUs")}
+                </button>
+              </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="hover:text-white transition-colors hover:translate-x-1 inline-block"
+                >
+                  {t("privacyPolicy")}
+                </Link>
+              </li>
             </ul>
           </StaggerItem>
 
@@ -161,13 +177,16 @@ export const Footer = () => {
         </StaggerContainer>
 
         {/* Bottom Footer */}
-        <FadeIn
-          direction="up"
-          delay={0.4}
-          className="flex flex-col md:flex-row items-center justify-between gap-6"
-        >
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-white/50 text-[14px] font-sans text-center md:text-left">
             © {new Date().getFullYear()} {t("poweredBy")}
+            <span className="mx-2 hidden md:inline">|</span>
+            <Link
+              href="/privacy"
+              className="block md:inline mt-2 md:mt-0 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white"
+            >
+              {t("privacyPolicy")}
+            </Link>
           </p>
 
           <div className="flex items-center gap-4">
@@ -208,7 +227,7 @@ export const Footer = () => {
               </div>
             </div>
           </div>
-        </FadeIn>
+        </div>
       </div>
     </footer>
   );

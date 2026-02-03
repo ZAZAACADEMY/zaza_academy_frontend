@@ -286,12 +286,15 @@
     "submitting": "Connexion...",
     "noAccount": "Pas encore de compte ? ",
     "signupLink": "Inscription",
+    "illustrationAlt": "Re-bonjour",
     "errors": {
       "email": "Veuillez saisir une adresse e-mail valide",
       "password": "Le mot de passe est requis"
     }
   },
   "Signup": {
+    "title": "Rejoindre Zaza Academy",
+    "illustrationAlt": "Enfants apprenant la finance",
     "progress": "Étape {step} sur {total}",
     "stepTitles": {
       "1": "Créer un compte",
@@ -457,15 +460,11 @@
       { "name": "FAQ", "href": "#faq" }
     ],
     "support": "Support",
-    "supportLinks": [
-      "Contactez-nous",
-      "Politique de retour",
-      "Produit garanti"
-    ],
+    "contactUs": "Contactez-nous",
     "contact": "Contact",
     "phone": "123819210",
     "email": "zazaacademy@gmail.com",
-    "address": "Cameroun",
+    "address": "USA",
     "paymentsLabel": "Moyens de paiement",
     "aria": {
       "instagram": "Suivez-nous sur Instagram",
@@ -473,6 +472,46 @@
       "youtube": "Abonnez-vous à notre chaîne YouTube",
       "tiktok": "Suivez-nous sur TikTok"
     },
-    "poweredBy": "Zaza Academy propulsé par Fivro Studio"
+    "poweredBy": "Zaza Academy",
+    "privacyPolicy": "Politique de Confidentialité"
+  },
+  "PrivacyPolicy": {
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour : Février 2026",
+    "intro": "Bienvenue sur Zaza Academy. Nous nous engageons à protéger votre vie privée et à garantir un environnement en ligne sécurisé pour tous les utilisateurs, en particulier les enfants. Cette politique décrit comment nous recueillons, utilisons et traitons les informations personnelles conformément à la COPPA (Children's Online Privacy Protection Act) et au RGPD (Règlement Général sur la Protection des Données).",
+    "sections": [
+      {
+        "title": "1. Informations que nous recueillons",
+        "content": "Nous recueillons les informations nécessaires pour fournir nos services éducatifs. Pour les parents : coordonnées détaillées et informations de facturation. Pour les enfants : informations minimales telles qu'un nom d'utilisateur (nous encourageons à ne pas utiliser de vrais noms) et les données de progression. Nous ne recueillons pas d'identifiants persistants à des fins de publicité comportementale auprès des enfants."
+      },
+      {
+        "title": "2. Confidentialité des enfants (Conformité COPPA)",
+        "content": "Zaza Academy est conçu pour les enfants. Conformément à la COPPA, nous exigeons un consentement parental vérifiable avant de recueillir des informations personnelles d'un enfant de moins de 13 ans. Les parents ont un contrôle total sur le compte de leur enfant et peuvent consulter, modifier ou supprimer les informations de leur enfant à tout moment."
+      },
+      {
+        "title": "3. Droits RGPD",
+        "content": "Si vous résidez dans l'UE, vous avez le droit d'accéder, de corriger, de supprimer ou de limiter le traitement de vos données personnelles. Vous disposez spécifiquement du « droit à l'oubli ». Pour exercer ces droits, veuillez contacter notre délégué à la protection des données."
+      },
+      {
+        "title": "4. Sécurité des données",
+        "content": "Nous mettons en œuvre des mesures de sécurité conformes aux normes de l'industrie pour protéger vos données. Cela inclut le chiffrement en transit et au repos, ainsi que des contrôles d'accès stricts."
+      },
+      {
+        "title": "5. Nous contacter",
+        "content": "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante : <br/>Email : privacy@zazaacademy.com"
+      }
+    ]
+  },
+  "Contact": {
+    "title": "Contactez-nous",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Jean Dupont",
+    "emailLabel": "Email",
+    "emailPlaceholder": "jean@exemple.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Comment pouvons-nous vous aider ?",
+    "sendButton": "Envoyer le message",
+    "successTitle": "Message envoyé !",
+    "successMessage": "Nous vous répondrons dès que possible."
   }
 }

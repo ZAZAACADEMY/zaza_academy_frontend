@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FadeIn } from "../ui/motion/FadeIn";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import GetStartedImage1 from "../../public/images/GetStarted1.png";
 import GetStartedImage2 from "../../public/images/GetStarted2.png";
 import GetStartedImage3 from "../../public/images/GetStarted3.png";
@@ -27,13 +27,26 @@ const Step = ({
   stepRef: React.Ref<HTMLDivElement>;
 }) => (
   <div
-    className="flex gap-4 cursor-pointer group isolate flex-1"
+    className="flex gap-4 md:gap-4 cursor-pointer group isolate flex-1"
     onClick={onClick}
     ref={stepRef}
   >
-    <div className="w-[24px]" aria-hidden />
+    {/* Mobile Number Bubble (On the Timeline) */}
+    <div
+      className={`md:hidden shrink-0 flex items-center justify-center w-[44px] h-[44px] rounded-full border-2 transition-all duration-300 z-10
+      ${
+        isActive
+          ? "bg-brand-accent text-white border-brand-accent scale-110 shadow-lg"
+          : "bg-white text-gray-300 border-gray-200"
+      }`}
+    >
+      <span className="font-display font-bold text-[18px]">{number}</span>
+    </div>
 
-    <div className={`w-full flex flex-col ${isLast ? "" : "pb-4"}`}>
+    {/* Desktop Spacer */}
+    <div className="hidden md:block w-[24px]" aria-hidden />
+
+    <div className={`w-full flex flex-col ${isLast ? "" : "pb-8 md:pb-4"}`}>
       <div
         className={`relative flex-1 overflow-hidden flex items-start gap-4 p-4 md:p-5 rounded-[16px] border shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] transition-all duration-300 w-full
         ${
@@ -50,9 +63,11 @@ const Step = ({
             : {}
         }
       >
-        <div className="w-[50px] h-[50px] rounded-full bg-gradient-to-br from-[#A655F7] to-[#F46AA3] flex items-center justify-center text-white font-display font-bold text-[20px] shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
+        {/* Desktop Number Bubble (Inside Card) */}
+        <div className="hidden md:flex w-[50px] h-[50px] rounded-full bg-gradient-to-br from-[#A655F7] to-[#F46AA3] items-center justify-center text-white font-display font-bold text-[20px] shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
           {number}
         </div>
+
         <div className="flex flex-col gap-2 pt-1">
           <h3 className="font-display font-bold text-[20px] md:text-[22px] text-brand-black leading-tight">
             {title}
@@ -71,8 +86,20 @@ export const GetStarted = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [highlightTop, setHighlightTop] = useState(0);
   const [highlightHeight, setHighlightHeight] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Fluid scroll progress for mobile line
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"],
+  });
+  const mobileLineHeight = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["0%", "100%"],
+  );
 
   type StepMessage = {
     number: string;
@@ -96,12 +123,22 @@ export const GetStarted = () => {
   );
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return; // Only process this logic on desktop for the jumping highlight
+
     const measure = () => {
       const container = containerRef.current;
       const currentStep = stepRefs.current[activeStep];
       if (container && currentStep) {
         const containerRect = container.getBoundingClientRect();
         const stepRect = currentStep.getBoundingClientRect();
+
         setHighlightTop(stepRect.top - containerRect.top);
         setHighlightHeight(stepRect.height);
       }
@@ -111,6 +148,38 @@ export const GetStarted = () => {
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [activeStep]);
+
+  // Mobile/Tablet Scroll Spy for Active Bubble State
+  useEffect(() => {
+    if (!isMobile) return;
+
+    // Mobile: We rely on scroll progress for the line, but we still update activeStep
+    // so the bubbles pop up as being "active" when they reach the reading zone.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = stepRefs.current.indexOf(
+              entry.target as HTMLDivElement,
+            );
+            if (index !== -1) {
+              setActiveStep(index);
+            }
+          }
+        });
+      },
+      {
+        rootMargin: "-20% 0px -50% 0px", // Expanded trigger zone
+        threshold: 0,
+      },
+    );
+
+    stepRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, [isMobile]);
 
   return (
     <section className="w-full bg-brand-cream py-20" id="how-it-works">
@@ -150,12 +219,13 @@ export const GetStarted = () => {
             ref={containerRef}
           >
             <div
-              className="absolute left-[22px] top-0 bottom-0 w-[2px] bg-[#E5E7EB] rounded-full"
+              className="absolute left-[21px] md:left-[22px] top-0 bottom-0 w-[2px] bg-[#E5E7EB] rounded-full"
               aria-hidden
             />
+            {/* Desktop Jumping Highlight */}
             <FadeIn direction="down" delay={0.1}>
               <motion.div
-                className="absolute left-[20px] w-[4px] rounded-full"
+                className="hidden lg:block absolute left-[20px] w-[4px] rounded-full"
                 style={{
                   background:
                     "linear-gradient(180deg, #7F26D9 0%, #C23CDD 50%, #F25A73 100%)",
@@ -179,6 +249,19 @@ export const GetStarted = () => {
                 aria-hidden
               />
             </FadeIn>
+
+            {/* Mobile Fluid Highlight */}
+            <motion.div
+              className="lg:hidden absolute left-[20px] top-0 w-[4px] rounded-full"
+              style={{
+                background:
+                  "linear-gradient(180deg, #7F26D9 0%, #C23CDD 50%, #F25A73 100%)",
+                height: mobileLineHeight,
+                opacity: 1,
+              }}
+              aria-hidden
+            />
+
             {steps.map((step, index) => (
               <FadeIn
                 key={index}
@@ -188,7 +271,9 @@ export const GetStarted = () => {
               >
                 <Step
                   {...step}
-                  isActive={activeStep === index}
+                  isActive={
+                    isMobile ? index <= activeStep : activeStep === index
+                  }
                   onClick={() => setActiveStep(index)}
                   isLast={index === steps.length - 1}
                   stepRef={(el) => {

@@ -31,7 +31,8 @@ const ProgramCard = ({
 }) => (
   <motion.div
     whileHover={{ y: -5 }}
-    className="bg-white rounded-[24px] overflow-hidden border border-[#F3F4F6] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] hover:shadow-[0px_12px_40px_0px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full group cursor-pointer"
+    whileTap={{ scale: 0.98 }}
+    className="bg-white rounded-[24px] overflow-hidden border border-[#F3F4F6] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] lg:hover:shadow-[0px_12px_40px_0px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col h-full group cursor-pointer"
   >
     <div className="h-[240px] w-full overflow-hidden bg-gray-100 relative">
       <div className="absolute inset-0 bg-brand-light/20 z-10 mix-blend-multiply"></div>
@@ -39,7 +40,7 @@ const ProgramCard = ({
         src={imageSrc}
         alt={title}
         fill
-        className="object-cover transition-transform duration-700 group-hover:scale-110"
+        className="object-cover transition-transform duration-700 lg:group-hover:scale-110"
       />
     </div>
     <div className="p-[32px] flex flex-col flex-grow items-start">
@@ -52,10 +53,11 @@ const ProgramCard = ({
       <p className="font-sans text-[#6B7280] text-[15px] leading-[160%] mb-8 flex-grow">
         {description}
       </p>
-      <button
+      <motion.button
+        whileTap={{ scale: 0.95 }}
         type="button"
         onClick={(e) => onLearnMore(e.currentTarget)}
-        className="flex items-center gap-2 font-semibold text-[16px] group-hover:gap-3 transition-all duration-300"
+        className="flex items-center gap-2 font-semibold text-[16px] lg:group-hover:gap-3 transition-all duration-300"
         style={{
           background:
             "linear-gradient(90deg, #7F26D9 0%, #C23CDD 46.63%, #DC2663 100%)",
@@ -70,7 +72,7 @@ const ProgramCard = ({
           size={20}
           stroke={gradientId ? `url(#${gradientId})` : "currentColor"}
         />
-      </button>
+      </motion.button>
     </div>
   </motion.div>
 );

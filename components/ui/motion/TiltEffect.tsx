@@ -13,8 +13,18 @@ export const TiltEffect = ({
   rotationRange?: number;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [disabled, setDisabled] = React.useState(false);
+
+  React.useEffect(() => {
+    // Disable tilt on mobile/tablet
+    const checkMobile = () => setDisabled(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const x = useMotionValue(0);
+
   const y = useMotionValue(0);
 
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
@@ -32,7 +42,7 @@ export const TiltEffect = ({
   );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current || disabled) return;
 
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;
@@ -58,12 +68,16 @@ export const TiltEffect = ({
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d",
-        perspective: "1000px",
-      }}
+      style={
+        disabled
+          ? {}
+          : {
+              rotateX,
+              rotateY,
+              transformStyle: "preserve-3d",
+              perspective: "1000px",
+            }
+      }
       className={className}
     >
       {/* 

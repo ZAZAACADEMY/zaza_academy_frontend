@@ -14,8 +14,10 @@ import { useRouter, Link } from "@/navigation";
 import { z } from "zod";
 import { getLoginSchema } from "./loginValidation";
 import { authService } from "@/lib/api/auth";
+import { Step2Plans } from "./signup/Step2Plans";
+import ImageCreate from "../../public/images/CreateAccount.png";
+import { useTranslations, useLocale } from "next-intl";
 import { ApiError } from "@/lib/api/client";
-import { useLocale, useTranslations } from "next-intl";
 
 export const Login = () => {
   const t = useTranslations("Login");
@@ -29,6 +31,14 @@ export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const bypassLogin = process.env.NEXT_PUBLIC_BYPASS_LOGIN === "true";
   const forceRedirect = process.env.NEXT_PUBLIC_FORCE_LOGIN_REDIRECT === "true";
+
+  // Redirect if already logged in
+  React.useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      router.replace("/dashboard", { locale });
+    }
+  }, [router, locale]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,78 +226,30 @@ export const Login = () => {
         </div>
       </div>
 
-      {/* Right Side - Image/Illustration */}
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-bl from-[#A655F7] to-[#F46AA3] relative overflow-hidden items-center justify-center p-12">
-        {/* Background Particles */}
+      {/* Right Side - Image/Illustration (Adapted from Signup style) */}
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-6">
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#7E2EE8] via-[#A63BDC] to-[#F668A3]" />
+
+        {/* Sparkle/Glow Overlay */}
         <div
-          className="absolute inset-0 opacity-20 pointer-events-none"
+          className="absolute inset-0 opacity-25 pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(#FFF 2px, transparent 2px)",
-            backgroundSize: "30px 30px",
+            backgroundImage:
+              "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.7) 0, rgba(255,255,255,0) 30%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.6) 0, rgba(255,255,255,0) 30%), radial-gradient(circle at 50% 80%, rgba(255,255,255,0.4) 0, rgba(255,255,255,0) 25%)",
           }}
         ></div>
 
-        <div className="relative z-10 w-full max-w-[600px] aspect-square flex items-center justify-center">
-          {/* Main Image */}
-          <div className="relative w-[90%] h-[90%]">
-            {/* Glow effect behind */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-white/30 blur-[80px] rounded-full"></div>
-
-            <div className="relative w-full h-full z-10 drop-shadow-2xl">
-              <Image
-                src="https://images.unsplash.com/photo-1628260412297-a3377e45006f?q=80&w=1000&auto=format&fit=crop"
-                alt="Girl using app"
-                fill
-                className="object-contain"
-              />
-            </div>
-
-            {/* Floating UI Elements (Forms) */}
-            {/* Card 1: Top Left - Profile/Progress */}
-            <div className="absolute top-[15%] left-[5%] animate-[bounce_4s_infinite] bg-white p-4 rounded-[20px] shadow-xl z-20 w-[160px] rotate-[-6deg]">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-                  <span role="img" aria-label="avatar">
-                    👦
-                  </span>
-                </div>
-                <div className="h-2 w-12 bg-gray-100 rounded-full"></div>
-              </div>
-              <div className="space-y-2">
-                <div className="h-2 w-full bg-gray-50 rounded-full"></div>
-                <div className="h-2 w-3/4 bg-gray-50 rounded-full"></div>
-              </div>
-              <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#86EFAC] rounded-lg flex items-center justify-center shadow-lg transform rotate-12 border-2 border-white">
-                <Check size={16} className="text-white stroke-[4px]" />
-              </div>
-            </div>
-
-            {/* Card 2: Center Right - Achievement */}
-            <div className="absolute top-[40%] right-[5%] animate-[bounce_5s_infinite] bg-white p-4 rounded-[20px] shadow-xl z-20 w-[150px] rotate-[8deg]">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center">
-                  <Star size={18} className="fill-yellow-400 text-yellow-400" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="h-2 w-full bg-gray-50 rounded-full"></div>
-                <div className="h-2 w-1/2 bg-gray-50 rounded-full"></div>
-              </div>
-              <div className="absolute -left-3 bottom-2 w-8 h-8 bg-[#86EFAC] rounded-lg flex items-center justify-center shadow-lg transform -rotate-12 border-2 border-white">
-                <Check size={16} className="text-white stroke-[4px]" />
-              </div>
-            </div>
-
-            {/* Element 3: Bottom Left - Money Bag */}
-            <div className="absolute bottom-[20%] left-[10%] animate-[bounce_6s_infinite] bg-gradient-to-br from-yellow-300 to-yellow-500 p-3 rounded-[24px] shadow-xl z-20 flex items-center justify-center w-14 h-14 rotate-[-12deg]">
-              <span className="text-2xl font-bold text-yellow-900">$</span>
-            </div>
-
-            {/* Element 4: Bottom Right - Books */}
-            <div className="absolute bottom-[15%] right-[20%] animate-[bounce_5.5s_infinite] bg-white p-3 rounded-[16px] shadow-xl z-20 rotate-[12deg]">
-              <BookOpen size={24} className="text-[#A655F7]" />
-            </div>
-          </div>
+        <div className="relative z-10 w-full max-w-[540px] drop-shadow-2xl">
+          <Image
+            src={ImageCreate}
+            alt={t("illustrationAlt", { default: "Welcome Back" })}
+            width={600}
+            height={600}
+            className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)]
+      [-webkit-mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)"
+            priority
+          />
         </div>
       </div>
     </div>

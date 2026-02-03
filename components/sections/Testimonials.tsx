@@ -22,7 +22,10 @@ const TestimonialCard = ({
   imageSrc: string;
 }) => (
   <TiltEffect className="h-full">
-    <motion.div className="bg-white p-[32px] rounded-[24px] border border-[#F0F0FF] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] hover:shadow-[0px_10px_30px_0px_rgba(0,0,0,0.05)] transition-all duration-300 flex flex-col gap-[24px] h-full">
+    <motion.div
+      whileTap={{ scale: 0.98 }}
+      className="bg-white p-[32px] rounded-[24px] border border-[#F0F0FF] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] lg:hover:shadow-[0px_10px_30px_0px_rgba(0,0,0,0.05)] transition-all duration-300 flex flex-col gap-[24px] h-full"
+    >
       <div className="flex gap-1">
         {[...Array(5)].map((_, i) => (
           <Star
@@ -76,10 +79,7 @@ export const Testimonials = () => {
   );
 
   return (
-    <section
-      id="testimonials"
-      className="w-full bg-brand-cream py-20 scroll-mt-24"
-    >
+    <section id="testimonials" className="w-full bg-white py-20 scroll-mt-24">
       <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
         <div className="text-center mb-[60px]">
           <FadeIn direction="up">

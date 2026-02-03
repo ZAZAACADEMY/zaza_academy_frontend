@@ -11,9 +11,12 @@ import { UnderlineDoodle, SparkleDoodle } from "../ui/Doodles";
 import { FloatingElements } from "../ui/FloatingElements";
 import HeroChild1 from "../../public/images/HeroChild1.png";
 import { useTranslations } from "next-intl";
-import HeroChild2 from "../../public../../public/images/HeroChild2.png";
+import HeroChild2 from "../../public/images/HeroChild2.png";
 import HeroChild3 from "../../public/images/HeroChild3.png";
 import HeroChild4 from "../../public/images/HeroChild4.png";
+import Icon1 from "../../public/vectors/tirelire.svg";
+import Icon2 from "../../public/vectors/money.svg";
+import Icon3 from "../../public/vectors/plant.svg";
 
 // Custom components to match the specific design needs
 const FloatingImage = ({
@@ -35,8 +38,8 @@ const FloatingImage = ({
     initial={{ opacity: 0, scale: 0.8, y: 20 }}
     animate={{ opacity: 1, scale: 1, y: 0 }}
     transition={{ duration: 0.8, delay, ease: "easeOut" }}
-    className={`absolute rounded-2xl overflow-hidden shadow-lg border-[3px] border-white z-20 hidden lg:block ${className}`}
-    style={{ transform: rotation ? `rotate(${rotation})` : undefined }}
+    className={`absolute rounded-2xl overflow-hidden shadow-lg border-[3px] border-white z-20 ${className}`}
+    style={{ rotate: rotation ?? undefined }}
     whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
   >
     <Image
@@ -77,6 +80,7 @@ const FeatureCard = ({
     className={`relative bg-white rounded-[20px] p-[20px] pt-[18px] flex flex-col gap-[14px] w-full max-w-[280px] md:w-[234px] lg:w-[320px] min-h-[245px] ${shadowClass} ${rotateClass}`}
     style={{ ...style, zIndex }}
     whileHover={{ scale: 1.05, zIndex: 50, transition: { duration: 0.3 } }}
+    whileTap={{ scale: 0.95, rotate: [0, -1, 1, 0], transition: { duration: 0.2 } }}
   >
     <div className="flex items-center gap-[14px]">
       <div className="w-[56px] h-[56px] shrink-0 flex items-center justify-center rounded-2xl bg-gray-50 text-brand-dark">
@@ -150,6 +154,33 @@ export const Hero = () => {
     },
   ];
 
+  const mobileLayouts = [
+    {
+      wrapperClass:
+        "relative z-30 w-full max-w-[420px] rotate-[-1deg] -translate-x-[4%]",
+      rotateClass: "-rotate-2",
+      shadowClass: "shadow-card-1 border border-gray-100",
+      style: {},
+      delay: 0.2,
+    },
+    {
+      wrapperClass:
+        "relative z-40 w-full max-w-[420px] -mt-16 translate-x-[12%] rotate-[12deg]",
+      rotateClass: "rotate-2",
+      shadowClass: "shadow-card-2",
+      style: {},
+      delay: 0.3,
+    },
+    {
+      wrapperClass:
+        "relative z-50 w-full max-w-[420px] -mt-16 translate-x-[3%] rotate-[0.5deg]",
+      rotateClass: "rotate-0",
+      shadowClass: "shadow-card-3",
+      style: {},
+      delay: 0.4,
+    },
+  ];
+
   return (
     <section
       id="home"
@@ -171,8 +202,8 @@ export const Hero = () => {
       <FloatingImage
         src={HeroChild1.src}
         alt="Kids playing together"
-        className="w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[180px] left-[20px] xl:top-[209px] xl:left-[90px]"
-        rotation="15deg"
+        className="w-[70px] h-[70px] top-[450px] left-0 lg:w-25 lg:h-25 lg:top-45 lg:left-5 xl:top-52.25 xl:left-22.5"
+        rotation="-15deg"
         priority={true}
         delay={0.2}
       />
@@ -196,7 +227,7 @@ export const Hero = () => {
       <FloatingImage
         src={HeroChild2.src}
         alt="Boy reading"
-        className="w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[140px] right-[40px] xl:top-[158px] xl:right-[140px]"
+        className="w-[70px] h-[70px] top-[450px] right-0 lg:w-[100px] lg:h-[100px] lg:top-[140px] lg:right-[40px] xl:top-[158px] xl:right-[140px]"
         rotation="15deg"
         delay={0.4}
       />
@@ -205,7 +236,7 @@ export const Hero = () => {
       <FloatingImage
         src={HeroChild3.src}
         alt="Girl saving money"
-        className="w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[500px] left-[40px] xl:top-[548px] xl:left-[95px]"
+        className="hidden lg:block w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[500px] left-[40px] xl:top-[548px] xl:left-[95px]"
         rotation="-8deg"
         delay={0.6}
       />
@@ -244,7 +275,7 @@ export const Hero = () => {
       <FloatingImage
         src={HeroChild4.src}
         alt="Group of friends"
-        className="w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[480px] right-[60px] xl:top-[526px] xl:right-[195px]"
+        className="hidden lg:block w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[480px] right-[60px] xl:top-[526px] xl:right-[195px]"
         rotation="-15deg"
         delay={0.8}
       />
@@ -313,16 +344,17 @@ export const Hero = () => {
         <FadeIn delay={0.5}>
           <div className="flex flex-col sm:flex-row items-center gap-[12px] mb-[40px]">
             <div className="flex -space-x-4">
-              {[1, 2, 3].map((i) => (
+              {["image1.jpg", "image2.png", "image1.jpg"].map((fileName, i) => (
                 <div
                   key={i}
-                  className="w-[40px] md:w-[44px] h-[40px] md:h-[44px] rounded-full border border-white bg-[#D9D9D9] overflow-hidden relative"
+                  className="w-10 md:w-11 h-10 md:h-11 rounded-full border border-white bg-[#D9D9D9] overflow-hidden relative"
                 >
                   <Image
-                    src={`https://i.pravatar.cc/150?img=${i + 20}`}
+                    src={`/images/${fileName}`}
                     alt="Avatar"
                     fill
                     className="object-cover"
+                    priority={i === 0}
                   />
                 </div>
               ))}
@@ -350,7 +382,7 @@ export const Hero = () => {
         {/* Buttons */}
         <FadeIn delay={0.6}>
           <div className="flex flex-col sm:flex-row items-center gap-[16px] md:gap-[28px] mb-[60px] md:mb-0 w-full sm:w-auto px-4 sm:px-0">
-            <JellyButton className="group flex items-center justify-center gap-[10px] w-full sm:w-[242px] h-[54px] bg-brand-dark rounded-[50px] shadow-btn-enroll transition-all duration-300">
+            <JellyButton className="group flex items-center justify-center gap-[10px] w-auto min-w-[200px] px-8 sm:px-0 sm:w-[242px] h-[54px] bg-brand-dark rounded-[50px] shadow-btn-enroll transition-all duration-300">
               <span className="font-montserrat font-medium text-[16px] md:text-[18px] text-[#FDFDFD]">
                 {t("enroll")}
               </span>
@@ -362,7 +394,7 @@ export const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center justify-center gap-[10px] w-full sm:w-[233px] h-[54px] bg-brand-light border-2 border-[#AFA6FB] rounded-[50px] hover:bg-white transition-all duration-300"
+              className="flex items-center justify-center gap-[10px] w-auto min-w-[200px] px-8 sm:px-0 sm:w-[233px] h-[54px] bg-brand-light border-2 border-[#AFA6FB] rounded-[50px] hover:bg-white transition-all duration-300"
             >
               <div className="w-[24px] h-[24px] flex items-center justify-center bg-transparent">
                 <svg
@@ -397,20 +429,18 @@ export const Hero = () => {
           {/* Card 1: Saving Milestone (Left, Bottom Layer) */}
           {featureCards.map((card, index) => {
             const layout = desktopLayouts[index] ?? desktopLayouts[0];
-            const Icon = card.Icon;
+            const iconImages = [Icon1, Icon2, Icon3];
+            const iconImage = iconImages[index] ?? Icon1;
+
             return (
               <div key={card.title} className={layout.wrapperClass}>
                 <FeatureCard
                   icon={
-                    <Icon
-                      size={36}
-                      className={
-                        index === 0
-                          ? "text-pink-500"
-                          : index === 1
-                            ? "text-green-500"
-                            : "text-yellow-500"
-                      }
+                    <Image
+                      src={iconImage}
+                      alt="Feature icon"
+                      width={56}
+                      height={56}
                     />
                   }
                   title={card.title}
@@ -458,28 +488,39 @@ export const Hero = () => {
         </div>
       </div>
 
-      {/* Mobile/Tablet View for Cards (Stacked Vertically) */}
-      <div className="lg:hidden flex flex-col gap-6 px-4 mt-8 pb-4 items-center w-full">
-        {featureCards.map((card, index) => {
-          const Icon = card.Icon;
-          const colorClass =
-            index === 0
-              ? "text-pink-500"
-              : index === 1
-                ? "text-green-500"
-                : "text-yellow-500";
-          return (
-            <FeatureCard
-              key={card.title}
-              icon={<Icon size={32} className={colorClass} />}
-              title={card.title}
-              subtitle={card.subtitle}
-              description={card.description}
-              rotateClass="rotate-0"
-              shadowClass="shadow-lg"
-            />
-          );
-        })}
+      {/* Mobile/Tablet View for Cards (Stacked with staggered offsets) */}
+      <div className="lg:hidden relative flex flex-col items-center w-full px-4 mt-10 pb-12">
+
+        <div className="relative w-full flex flex-col items-center gap-0">
+          {featureCards.map((card, index) => {
+            const layout =
+              mobileLayouts[index] ?? mobileLayouts[mobileLayouts.length - 1];
+            const iconImages = [Icon1, Icon2, Icon3];
+            const iconImage = iconImages[index] ?? Icon1;
+
+            return (
+              <div key={card.title} className={layout.wrapperClass}>
+                <FeatureCard
+                  icon={
+                    <Image
+                      src={iconImage}
+                      alt="Feature icon"
+                      width={56}
+                      height={56}
+                    />
+                  }
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  description={card.description}
+                  rotateClass={layout.rotateClass}
+                  shadowClass={layout.shadowClass}
+                  style={layout.style}
+                  delay={layout.delay}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

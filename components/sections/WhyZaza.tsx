@@ -95,7 +95,7 @@ export const WhyZaza = () => {
   return (
     <section
       id="about"
-      className="w-full bg-brand-cream py-20 md:py-32 scroll-mt-24 relative"
+      className="w-full bg-white py-20 md:py-32 scroll-mt-24 relative"
     >
       <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
         <svg width="0" height="0" className="absolute pointer-events-none">

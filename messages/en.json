@@ -286,12 +286,15 @@
     "submitting": "Logging in...",
     "noAccount": "Don't have an account? ",
     "signupLink": "Sign up",
+    "illustrationAlt": "Welcome Back",
     "errors": {
       "email": "Please enter a valid email address",
       "password": "Password is required"
     }
   },
   "Signup": {
+    "title": "Join Zaza Academy",
+    "illustrationAlt": "Kids learning finance",
     "progress": "Step {step} of {total}",
     "stepTitles": {
       "1": "Create Account",
@@ -457,11 +460,11 @@
       { "name": "FAQ", "href": "#faq" }
     ],
     "support": "Support",
-    "supportLinks": ["Contact us", "Return Policy", "Product Guaranteed"],
+    "contactUs": "Contact Us",
     "contact": "Contact",
     "phone": "123819210",
     "email": "zazaacademy@gmail.com",
-    "address": "Cameroon",
+    "address": "USA",
     "paymentsLabel": "We Accept",
     "aria": {
       "instagram": "Follow us on Instagram",
@@ -469,6 +472,46 @@
       "youtube": "Subscribe to our YouTube channel",
       "tiktok": "Follow us on TikTok"
     },
-    "poweredBy": "Zaza Academy Powered by Fivro Studio"
+    "poweredBy": "Zaza Academy",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "PrivacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: February 2026",
+    "intro": "Welcome to Zaza Academy. We are committed to protecting your privacy and ensuring a safe online environment for all users, especially children. This policy outlines how we collect, use, and handle personal information in accordance with COPPA (Children's Online Privacy Protection Act) and GDPR (General Data Protection Regulation).",
+    "sections": [
+      {
+        "title": "1. Information We Collect",
+        "content": "We collect information necessary to provide our educational services. For parents: detailed contact and billing information. For children: minimal information such as a username (we encourage not using real names) and progress data. We do not collect persistent identifiers for behavioral advertising from children."
+      },
+      {
+        "title": "2. Children's Privacy (COPPA Compliance)",
+        "content": "Zaza Academy is designed for children. In compliance with COPPA, we require verifiable parental consent before collecting any personal information from a child under 13. Parents have full control over their child's account and can review, edit, or delete their child's information at any time."
+      },
+      {
+        "title": "3. GDPR Rights",
+        "content": "If you are a resident of the EEU, you have the right to access, correct, delete, or restrict processing of your personal data. You specifically have the 'Right to be Forgotten'. To exercise these rights, please contact our Data Protection Officer."
+      },
+      {
+        "title": "4. Data Security",
+        "content": "We implement industry-standard security measures to protect your data. This includes encryption in transit and at rest, and strict access controls."
+      },
+      {
+        "title": "5. Contact Us",
+        "content": "If you have any questions about this Privacy Policy, please contact us at: <br/>Email: privacy@zazaacademy.com"
+      }
+    ]
+  },
+  "Contact": {
+    "title": "Contact Us",
+    "nameLabel": "Name",
+    "namePlaceholder": "John Doe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "john@example.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "How can we help you?",
+    "sendButton": "Send Message",
+    "successTitle": "Message Sent!",
+    "successMessage": "We'll get back to you as soon as possible."
   }
 }

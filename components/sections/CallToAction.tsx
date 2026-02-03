@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn, ScaleIn } from "../ui/motion/FadeIn";
 import { SparkleDoodle } from "../ui/Doodles";
-import CtaImage from "../../public/images/HeroChild1.png";
+import CtaImage from "../../public/images/GetStarted4.png";
 import CtaImage2 from "../../public/images/AgeGroup2.png";
 import { useTranslations } from "next-intl";
 
@@ -91,9 +91,12 @@ export const CallToAction = () => {
           </FadeIn>
 
           <ScaleIn delay={0.4}>
-            <button className="bg-brand-dark text-white font-bold text-[16px] md:text-[18px] px-8 py-4 rounded-full shadow-[0px_10px_20px_rgba(0,0,0,0.2)] hover:bg-[#1F1235] hover:scale-105 transition-all duration-300 flex items-center gap-2">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              className="bg-brand-dark text-white font-bold text-[16px] md:text-[18px] px-8 py-4 rounded-full shadow-[0px_10px_20px_rgba(0,0,0,0.2)] lg:hover:bg-[#1F1235] lg:hover:scale-105 transition-all duration-300 flex items-center gap-2"
+            >
               {t("cta")} <ChevronRight size={20} />
-            </button>
+            </motion.button>
           </ScaleIn>
         </div>
       </motion.div>
