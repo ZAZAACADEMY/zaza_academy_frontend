@@ -22,7 +22,11 @@ export interface RegisterData {
   password: string;
   firstName: string;
   lastName: string;
-  // Ajoutez d'autres champs requis pour l'inscription
+  country?: string;
+  plan?: string;
+  paymentFrequency?: string;
+  // For payment & other details
+  [key: string]: any;
 }
 
 export interface UserProfile extends User {

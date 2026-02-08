@@ -4,7 +4,8 @@ import "gotham-fonts/css/gotham-rounded.css";
 import "../globals.css";
 import { MouseTrail } from "@/components/ui/MouseTrail";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
+import StoreProvider from "@/app/StoreProvider";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -19,9 +20,6 @@ const fredoka = Fredoka({
 });
 
 const siteUrl = "https://zaza-finance.com";
-const baseTitle = "Zaza - Financial Education for Kids";
-const baseDescription =
-  "Empowering young minds with smart financial habits through fun, interactive lessons.";
 
 export async function generateMetadata({
   params,
@@ -33,14 +31,15 @@ export async function generateMetadata({
     ? resolvedParams.locale
     : "en";
   const ogLocale = locale === "fr" ? "fr_FR" : "en_US";
+  const t = await getTranslations({ locale, namespace: "Metadata" });
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: baseTitle,
+      default: t("title"),
       template: "%s | Zaza",
     },
-    description: baseDescription,
+    description: t("description"),
     keywords: [
       "financial education",
       "kids",
@@ -63,27 +62,24 @@ export async function generateMetadata({
       locale: ogLocale,
       alternateLocale: ogLocale === "en_US" ? ["fr_FR"] : ["en_US"],
       url: `${siteUrl}/${locale}`,
-      title: baseTitle,
-      description: baseDescription,
-      siteName: "Zaza",
+      title: t("title"),
+      description: t("description"),
+      siteName: "Zaza Academy",
       images: [
         {
           url: `/${locale}/opengraph-image.png`,
           width: 1200,
           height: 630,
-          alt: "Zaza financial education for kids",
+          alt: t("title"),
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: baseTitle,
-      description: baseDescription,
+      title: t("title"),
+      description: t("description"),
       creator: "@zazafinance",
       images: [`/${locale}/twitter-image.png`],
-    },
-    icons: {
-      icon: "/favicon.ico",
     },
   };
 }
@@ -105,8 +101,10 @@ export default async function RootLayout({
         className={`${montserrat.variable} ${fredoka.variable} font-sans bg-brand-cream antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <MouseTrail />
-          {children}
+          <StoreProvider>
+            <MouseTrail />
+            {children}
+          </StoreProvider>
         </NextIntlClientProvider>
       </body>
     </html>

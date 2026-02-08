@@ -19,20 +19,18 @@ export const authService = {
   },
 
   // Récupérer le profil utilisateur actuel
-  getCurrentUser: async (token: string): Promise<UserProfile> => {
-    return apiClient.get<UserProfile>(ENDPOINTS.AUTH.ME, token);
+  getCurrentUser: async (): Promise<UserProfile> => {
+    return apiClient.get<UserProfile>(ENDPOINTS.AUTH.ME);
   },
 
-  // Refresh token (si on utilise JWT standard)
+  // Refresh token (handled effectively by cookie rotation in proxy or skipped for MVP)
+  // For now we keep the signature but it might not be needed client-side
   refreshToken: async (refresh: string): Promise<{ access: string }> => {
     return apiClient.post(ENDPOINTS.AUTH.REFRESH, { refresh });
   },
 
-  // Logout (souvent géré côté client juste en supprimant le token,
-  // mais parfois le backend a besoin d'invalider le refresh token)
-  logout: async (token?: string) => {
-    if (token) {
-      return apiClient.post(ENDPOINTS.AUTH.LOGOUT, {}, token);
-    }
+  // Logout
+  logout: async () => {
+    return apiClient.post(ENDPOINTS.AUTH.LOGOUT, {});
   },
 };

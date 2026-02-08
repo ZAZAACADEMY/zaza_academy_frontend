@@ -1,7 +1,7 @@
 # Zaza Financial Education Platform
 
 <div align="center">
-  <h2>Financial Literacy Education for Children Ages 5-16</h2>
+  <h2>🧒 Financial Literacy Education for Children Ages 5-16</h2>
   <p>Empowering young minds with smart financial skills through engaging, age-appropriate learning experiences.</p>
 </div>
 
@@ -21,71 +21,32 @@ Zaza Academy is a comprehensive financial education platform designed to teach c
 
 ## ✨ Key Features
 
-### 🔐 Authentication System
-
-- Secure login with email and password
-- Multi-step signup flow with email verification
-- Support for multiple account types
-- Token-based authentication
-
-### 📚 Multi-Step Signup
-
-1. Account creation with email and password
-2. Plan selection (Standard, Premium, Family Bundle)
-3. Billing cycle choice (Monthly or Quarterly)
-4. Order review and confirmation
-5. Secure payment processing (Card or Mobile Money)
-6. Child profile setup (name, age, gender, avatar)
-7. Family summary and registration completion
-
-### 💳 Pricing & Subscription Management
-
-- **Three subscription tiers** with distinct features
-- Flexible payment options (3-payment installments available)
-- Dashboard showing current plan, usage, and billing history
-- Easy upgrade path to higher tiers
-
-### 📊 Dashboard
-
-- Welcome personalized to user
-- Statistics overview (progress, videos watched, achievements, study time)
-- Children management
-- Recent activity tracking
-- Achievements display
-
-### 🌍 Multi-Language Support
-
-- English and French interfaces
-- Fully translated content across all pages
-- Automatic language detection and switching
-
-### 📱 Responsive Design
-
-- Mobile-first approach
-- Tablet and desktop optimization
-- Touch-friendly interface
-
-### 🎨 Modern UI/UX
-
-- Smooth animations and transitions
-- Engaging visual design with gradient accents
-- Accessible color schemes and typography
-- Interactive components with visual feedback
+| Feature                        | Description                                                        |
+| ------------------------------ | ------------------------------------------------------------------ |
+| 🔐 **Secure Authentication**   | Login & multi-step signup with HttpOnly cookie-based sessions      |
+| 📊 **Dashboard**               | Personalized stats, children management, recent activity           |
+| 💳 **Subscription Management** | 3 tiers (Solo, Family, Family Plus), billing history               |
+| 🌍 **Multi-Language**          | Full English & French support (next-intl)                          |
+| 📱 **Responsive**              | Mobile-first design, tablet & desktop optimized                    |
+| 🎨 **Modern UI**               | Framer Motion animations, gradient accents, interactive components |
+| 🛡️ **Security Hardened**       | CSP, HSTS, XSS protection, Middleware auth guard                   |
+| 🔍 **SEO Optimized**           | Dynamic OG images, sitemap, robots.txt, structured metadata        |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component                | Technology            |
-| ------------------------ | --------------------- |
-| **Framework**            | Next.js 16 (React 19) |
-| **Language**             | TypeScript            |
-| **Styling**              | Tailwind CSS 4        |
-| **Animations**           | Framer Motion         |
-| **Icons**                | Lucide React          |
-| **Form Validation**      | Zod                   |
-| **Internationalization** | next-intl             |
-| **Testing**              | Playwright E2E        |
+| Layer                    | Technology                        |
+| ------------------------ | --------------------------------- |
+| **Framework**            | Next.js 16 (App Router, React 19) |
+| **Language**             | TypeScript                        |
+| **State Management**     | Redux Toolkit + RTK Query         |
+| **Styling**              | Tailwind CSS 4                    |
+| **Animations**           | Framer Motion                     |
+| **Icons**                | Lucide React                      |
+| **Form Validation**      | Zod                               |
+| **Internationalization** | next-intl                         |
+| **Testing**              | Playwright (E2E)                  |
 
 ---
 
@@ -93,8 +54,8 @@ Zaza Academy is a comprehensive financial education platform designed to teach c
 
 ### Prerequisites
 
-- Node.js 18 or higher
-- npm v9 or higher
+- **Node.js** 18 or higher
+- **npm** v9 or higher
 
 ### Installation
 
@@ -106,9 +67,6 @@ cd zaza-financial-education
 # Install dependencies
 npm install
 
-# Configure environment (optional)
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
-
 # Start development server
 npm run dev
 ```
@@ -117,21 +75,14 @@ Visit `http://localhost:3000` in your browser.
 
 ### Environment Variables
 
-```env
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
+Create `.env.local` at project root:
 
-# Testing/Demo Mode
-NEXT_PUBLIC_BYPASS_LOGIN=true
-NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true
+```env
+# Backend API URL (Django)
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
 ```
 
----
-
-## 📖 Documentation
-
-- **[FEATURES.md](FEATURES.md)** - Complete feature documentation
-- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development guide and architecture
+> **Note**: The frontend works without the backend running. API calls will fail gracefully, and a demo fallback is active in development mode for the signup flow.
 
 ---
 
@@ -139,126 +90,174 @@ NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true
 
 ```
 zaza-financial-education/
-├── app/                        # Next.js App Router
-│   └── [locale]/              # Locale-based routing
-│       ├── dashboard/         # Protected dashboard routes
-│       ├── login/             # Login page
-│       ├── signup/            # Multi-step signup
-│       └── layout.tsx         # Root layout
-├── components/                 # Reusable React components
-│   ├── auth/                  # Authentication flows
-│   ├── dashboard/             # Dashboard components
-│   ├── sections/              # Landing page sections
-│   └── ui/                    # UI primitives and animations
-├── lib/                       # Utility functions
-│   └── api/                   # API client and endpoints
-├── messages/                  # i18n translations
-│   ├── en.json               # English strings
-│   └── fr.json               # French strings
-├── tests/                     # End-to-end tests
-│   └── e2e/
-├── public/                    # Static assets
-├── FEATURES.md                # Feature documentation
-├── DEVELOPMENT.md             # Development guide
-└── README.md                  # This file
+├── app/                            # Next.js App Router
+│   ├── api/                       # 🔒 Server-side API Proxy (BFF)
+│   │   ├── auth/login/route.ts    #   Login proxy (sets HttpOnly cookies)
+│   │   ├── auth/logout/route.ts   #   Logout proxy (clears cookies)
+│   │   └── [...path]/route.ts     #   Catch-all proxy to Django backend
+│   ├── [locale]/                  # Locale-based routing (en, fr)
+│   │   ├── dashboard/             #   Protected dashboard routes
+│   │   ├── login/                 #   Login page
+│   │   ├── signup/                #   Multi-step signup
+│   │   ├── privacy/               #   Privacy policy
+│   │   └── layout.tsx             #   Root layout (fonts, providers)
+│   └── StoreProvider.tsx          # Redux Provider wrapper
+├── components/                     # React components
+│   ├── auth/                      #   Login + Signup flows
+│   ├── dashboard/                 #   Dashboard views (videos, billing, etc.)
+│   ├── sections/                  #   Landing page sections
+│   ├── layout/                    #   Navbar, Footer
+│   └── ui/                        #   Reusable UI & motion components
+├── lib/                            # Shared logic
+│   ├── api/                       #   API types, endpoints definitions
+│   ├── data/                      #   Mock data (programs, videos, etc.)
+│   └── store/                     #   Redux store
+│       ├── store.ts               #     Store configuration
+│       ├── hooks.ts               #     Typed hooks (useAppDispatch, etc.)
+│       └── services/              #     RTK Query API slices
+│           ├── api.ts             #       Base API configuration
+│           └── authApi.ts         #       Auth endpoints & hooks
+├── messages/                       # i18n translations
+│   ├── en.json                    #   English
+│   └── fr.json                    #   French
+├── middleware.ts                   # Auth guard + i18n routing
+├── tests/e2e/                     # Playwright E2E tests
+└── public/                        # Static assets (images, avatars, vectors)
 ```
+
+---
+
+## 🏗️ Architecture Overview
+
+### Backend-for-Frontend (BFF) Proxy Pattern
+
+```
+┌─────────────┐         ┌─────────────────┐         ┌──────────────┐
+│   Browser    │  ──►    │   Next.js API    │  ──►    │ Django API   │
+│  (React UI)  │         │   Route Handlers │         │  (Backend)   │
+│              │  ◄──    │   (/api/...)     │  ◄──    │              │
+└─────────────┘         └─────────────────┘         └──────────────┘
+     │                        │
+     │  No tokens exposed     │  HttpOnly cookies
+     │  to JavaScript         │  set/read server-side
+```
+
+- **Client** calls `/api/*` (internal Next.js routes)
+- **Proxy** attaches the `auth_token` cookie as `Authorization: Bearer` header
+- **Tokens never reach the browser's JavaScript** — immune to XSS theft
+
+### State Management (Redux Toolkit)
+
+```
+┌─────────────────────────────────────────────┐
+│               Redux Store                    │
+│  ┌─────────────────────────────────────┐    │
+│  │  RTK Query (baseApi)                │    │
+│  │  ├── authApi  (login, register...)  │    │
+│  │  └── (future: contentApi, etc.)     │    │
+│  └─────────────────────────────────────┘    │
+└─────────────────────────────────────────────┘
+```
+
+- **RTK Query** handles caching, loading states, and error handling automatically
+- New API slices can be added via `baseApi.injectEndpoints()` (code splitting)
 
 ---
 
 ## 📋 Available Scripts
 
-```bash
-# Development
-npm run dev              # Start dev server
+| Command                   | Description                          |
+| ------------------------- | ------------------------------------ |
+| `npm run dev`             | Start development server (Turbopack) |
+| `npm run build`           | Production build                     |
+| `npm start`               | Start production server              |
+| `npm run lint`            | Run ESLint                           |
+| `npm run test:e2e`        | Run Playwright E2E tests             |
+| `npm run test:e2e:ui`     | Run tests with Playwright UI         |
+| `npm run test:e2e:report` | View last test report                |
 
-# Production
-npm run build            # Build for production
-npm start               # Start production server
+---
 
-# Code Quality
-npm run lint            # Run linter
+## 🔐 Security
 
-# Testing
-npm run test:e2e        # Run E2E tests
-npm run test:e2e:ui     # Run tests with UI
-npm run test:e2e:report # View test report
-```
+| Protection            | Implementation                                               |
+| --------------------- | ------------------------------------------------------------ |
+| **XSS (Token Theft)** | Tokens stored in HttpOnly cookies, never in localStorage     |
+| **XSS (Injection)**   | No `dangerouslySetInnerHTML`; all content rendered as text   |
+| **CSRF**              | `SameSite: Lax` cookies + same-origin proxy                  |
+| **Clickjacking**      | `X-Frame-Options: SAMEORIGIN`                                |
+| **HSTS**              | `Strict-Transport-Security` with 2-year max-age              |
+| **Content Sniffing**  | `X-Content-Type-Options: nosniff`                            |
+| **CSP**               | Content-Security-Policy restricting script/style/img sources |
+| **Info Leak**         | `poweredByHeader: false` in Next.js config                   |
+| **Dashboard Access**  | Middleware redirects unauthenticated users to login          |
 
 ---
 
 ## 🎓 Curriculum Overview
 
-### Age Groups
-
-**Ages 5-7**: Money Basics for Little Learners
-
-- Needs vs wants sorting
-- Simple saving goals
-- Positive money habits
-
-**Ages 8-11**: Smart Money Explorers
-
-- Budgeting fundamentals
-- Earning and allowance
-- Saving challenges
-
-**Ages 12-16**: Teen Wealth Builders
-
-- Banking and credit
-- Investing basics
-- Entrepreneurial thinking
+| Age Group     | Focus Area                                                   |
+| ------------- | ------------------------------------------------------------ |
+| **5-7 yrs**   | Needs vs wants, simple saving goals, positive money habits   |
+| **8-11 yrs**  | Budgeting, earning & allowance, saving challenges            |
+| **12-16 yrs** | Banking & credit, investing basics, entrepreneurial thinking |
 
 ---
 
 ## ✅ Implementation Status
 
-### Completed
+### Completed ✅
 
-- [x] Authentication (Login/Signup)
+- [x] Authentication (Login + Multi-step Signup)
+- [x] Redux Toolkit + RTK Query integration
+- [x] BFF Proxy API (HttpOnly cookie auth)
 - [x] Multi-language support (EN/FR)
-- [x] Dashboard layout
+- [x] Dashboard layout + all sub-pages
 - [x] Billing & pricing page
-- [x] Plan selection
-- [x] Responsive design
-- [x] E2E testing setup
+- [x] Subscription plan selection
+- [x] Responsive design (mobile, tablet, desktop)
+- [x] SEO (OG images, sitemap, robots.txt, favicon)
+- [x] Security headers (CSP, HSTS, etc.)
+- [x] Middleware auth guard
+- [x] E2E testing setup (Playwright)
 
-### In Progress
+### In Progress 🚧
 
-- [ ] Backend API integration
-- [ ] Payment gateway
+- [ ] Backend API integration (Django endpoints)
+- [ ] Payment gateway (Stripe / Mobile Money)
 
-### Planned
+### Planned 📋
 
-- [ ] Video content system
-- [ ] Progress tracking
-- [ ] Gamification/Achievements
+- [ ] Video content delivery system
+- [ ] Real-time progress tracking
+- [ ] Gamification / Achievement system
 - [ ] Admin dashboard
+- [ ] Analytics & reporting
+
+---
+
+## 📖 Documentation
+
+| Document                         | Description                                               |
+| -------------------------------- | --------------------------------------------------------- |
+| [DEVELOPMENT.md](DEVELOPMENT.md) | Architecture, API guide, coding standards, Redux patterns |
+| [FEATURES.md](FEATURES.md)       | Detailed feature inventory with component references      |
 
 ---
 
 ## 🌐 Browser Support
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
----
-
-## 📞 Support
-
-For development help, see [DEVELOPMENT.md](DEVELOPMENT.md)  
-For feature documentation, see [FEATURES.md](FEATURES.md)
+Chrome (latest) · Firefox (latest) · Safari (latest) · Edge (latest)
 
 ---
 
 ## 📜 License
 
-Proprietary - Zaza Academy
+Proprietary — Zaza Academy
 
 ---
 
 <div align="center">
-  <p><strong>Zaza Academy</strong> - Empowering Young Minds with Financial Skills</p>
-  <p><em>Last Updated: February 2, 2026</em></p>
+  <p><strong>Zaza Academy</strong> — Empowering Young Minds with Financial Skills</p>
+  <p><em>Last Updated: February 8, 2026</em></p>
 </div>

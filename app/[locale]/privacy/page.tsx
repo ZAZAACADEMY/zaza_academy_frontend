@@ -32,12 +32,9 @@ export default function PrivacyPolicy() {
                   <h2 className="text-2xl font-display font-bold text-brand-purple mb-4">
                     {section.title}
                   </h2>
-                  <p
-                    className="text-brand-purple/70 leading-relaxed whitespace-pre-wrap"
-                    {...(section.content.includes("<")
-                      ? { dangerouslySetInnerHTML: { __html: section.content } }
-                      : { children: section.content })}
-                  />
+                  <p className="text-brand-purple/70 leading-relaxed whitespace-pre-wrap">
+                    {section.content}
+                  </p>
                 </section>
               ))}
             </div>

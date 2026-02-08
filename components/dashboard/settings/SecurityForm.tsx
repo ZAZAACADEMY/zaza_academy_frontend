@@ -2,19 +2,22 @@
 
 import React from "react";
 import { Lock } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const SecurityForm = () => {
+  const t = useTranslations("dashboard.settings.security");
+
   return (
     <div className="bg-[#F8F7FF] rounded-[24px] p-8">
       <div className="flex items-center gap-3 mb-6">
         <Lock className="w-5 h-5 text-brand-purple" />
-        <h2 className="text-lg font-bold text-brand-dark">Security</h2>
+        <h2 className="text-lg font-bold text-brand-dark">{t("title")}</h2>
       </div>
 
       <form className="space-y-6">
         <div className="space-y-2">
           <label className="text-sm font-bold text-brand-dark">
-            Current Password
+            {t("currentPassword")}
           </label>
           <input
             type="password"
@@ -24,7 +27,7 @@ export const SecurityForm = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-brand-dark">
-            New Password
+            {t("newPassword")}
           </label>
           <input
             type="password"
@@ -34,7 +37,7 @@ export const SecurityForm = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-brand-dark">
-            Confirm New Password
+            {t("confirmNewPassword")}
           </label>
           <input
             type="password"
@@ -47,7 +50,7 @@ export const SecurityForm = () => {
             type="button"
             className="bg-transparent border border-[#2D1B4E] text-[#2D1B4E] font-bold py-3 px-8 rounded-full hover:bg-gray-50 transition-colors"
           >
-            Update Password
+            {t("updateButton")}
           </button>
         </div>
       </form>

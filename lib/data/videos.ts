@@ -33,7 +33,7 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     totalLessons: 5,
     upNext: [
       { title: "Needs vs Wants", duration: "11 min" },
-      { title: "Earning Money", duration: "10 min" },
+      { title: "Earning Your Allowance", duration: "12 min" },
     ],
   },
   {
@@ -85,7 +85,7 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     totalLessons: 4,
     upNext: [
       { title: "Introduction to Banking", duration: "8 min" },
-      { title: "Types of Savings Accounts", duration: "10 min" },
+      { title: "Budgeting Basics", duration: "14 min" },
     ],
   },
   {
@@ -111,9 +111,9 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     completedLessons: 4,
     totalLessons: 6,
     upNext: [
-      { title: "Types of Savings Accounts", duration: "10 min" },
-      { title: "Setting Savings Goals", duration: "12 min" },
-      { title: "Creating Your Savings Plan", duration: "8 min" },
+      { title: "How Banks Work", duration: "15 min" },
+      { title: "The Piggy Bank Challenge", duration: "16 min" },
+      { title: "Budgeting Basics", duration: "14 min" },
     ],
   },
   {
@@ -138,8 +138,8 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     completedLessons: 0,
     totalLessons: 3,
     upNext: [
-      { title: "Needs vs Wants Review", duration: "5 min" },
-      { title: "Budgeting Basics", duration: "12 min" },
+      { title: "Needs vs Wants", duration: "11 min" },
+      { title: "Budgeting Basics", duration: "14 min" },
     ],
   },
   {
@@ -164,8 +164,8 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     completedLessons: 0,
     totalLessons: 5,
     upNext: [
-      { title: "Stock Market for Kids", duration: "14 min" },
-      { title: "Starting a Business", duration: "20 min" },
+      { title: "Credit Card Basics for Teens", duration: "18 min" },
+      { title: "Earning Your Allowance", duration: "12 min" },
     ],
   },
   {
@@ -189,8 +189,8 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     completedLessons: 0,
     totalLessons: 4,
     upNext: [
-      { title: "Smart Shopping", duration: "12 min" },
-      { title: "Saving Goals", duration: "10 min" },
+      { title: "Smart Shopping Tips", duration: "11 min" },
+      { title: "The Piggy Bank Challenge", duration: "16 min" },
     ],
   },
   {
@@ -240,7 +240,7 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     totalLessons: 5,
     upNext: [
       { title: "Introduction to Investing", duration: "16 min" },
-      { title: "Banking Security", duration: "10 min" },
+      { title: "How Banks Work", duration: "15 min" },
     ],
   },
   {
@@ -265,7 +265,7 @@ export const MOCK_VIDEOS: VideoDetail[] = [
     totalLessons: 4,
     upNext: [
       { title: "Introduction to Banking", duration: "8 min" },
-      { title: "Savings Accounts", duration: "10 min" },
+      { title: "Introduction to Investing", duration: "16 min" },
     ],
   },
 ];

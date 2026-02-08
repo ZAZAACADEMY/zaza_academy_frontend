@@ -1,5 +1,4 @@
 import { ImageResponse } from "next/og";
-
 export const size = {
   width: 1200,
   height: 630,
@@ -7,130 +6,188 @@ export const size = {
 
 export const contentType = "image/png";
 
-const background =
-  "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%)," +
-  "radial-gradient(circle at 80% 30%, rgba(255,255,255,0.08), transparent 35%)," +
-  "linear-gradient(135deg, #311F54 0%, #F46AA3 100%)";
+const DICTIONARY = {
+  en: {
+    title: "Money confidence for kids",
+    subtitle: "Turn 'I want this!' into 'I'm saving for this.' 🧸💰",
+    ages: "Ages 5–16",
+    cta: "zaza-finance.com",
+  },
+  fr: {
+    title: "La confiance financière pour les enfants",
+    subtitle: "Transformez les « Je veux ! » en « J'économise. » 🧸💰",
+    ages: "5–16 ans",
+    cta: "zaza-finance.com",
+  },
+};
 
-const card = (
-  <div
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      padding: "64px 72px",
-      color: "#FDFCF8",
-      background,
-      position: "relative",
-      overflow: "hidden",
-      fontFamily:
-        "'Gotham Rounded', 'Montserrat', 'Inter', 'Segoe UI', sans-serif",
-    }}
-  >
+export default async function OgImage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const lang = (
+    ["en", "fr"].includes(locale) ? locale : "en"
+  ) as keyof typeof DICTIONARY;
+  const t = DICTIONARY[lang];
+
+  // Try to fetch text font if needed, but for now we rely on system/fallback or imported google fonts if configured nicely.
+  // We will load the custom background image.
+  // Ideally this image is placed at public/images/og-whatsapp.png
+  const imageData = await fetch(
+    new URL("../../public/images/og-whatsapp.png", import.meta.url),
+  )
+    .then((res) => {
+      // If file doesn't exist, we fall back to a gradient
+      if (res.status === 404) return null;
+      return res.arrayBuffer();
+    })
+    .catch(() => null);
+
+  return new ImageResponse(
     <div
       style={{
-        position: "absolute",
-        inset: "28px",
-        borderRadius: "32px",
-        border: "1px solid rgba(255,255,255,0.14)",
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        width: "180px",
-        height: "180px",
-        background: "rgba(255,255,255,0.08)",
-        borderRadius: "50%",
-        top: "-60px",
-        right: "-20px",
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        width: "260px",
-        height: "260px",
-        background: "rgba(255,255,255,0.04)",
-        borderRadius: "50%",
-        bottom: "-80px",
-        left: "-40px",
-      }}
-    />
-    <div
-      style={{
+        width: "100%",
+        height: "100%",
         display: "flex",
-        alignItems: "center",
-        gap: "12px",
-        fontSize: 26,
-        fontWeight: 700,
-        letterSpacing: 1.5,
-        textTransform: "uppercase",
-        zIndex: 1,
+        flexDirection: "column",
+        justifyContent: "space-between",
+        // If image exists, use it as background
+        background: imageData
+          ? undefined // Background image is handled by <img /> or absolute positioning div if we want overlay
+          : "linear-gradient(135deg, #311F54 0%, #F46AA3 100%)",
+        color: "#FDFCF8",
+        fontFamily: "'Gotham Rounded', 'Montserrat', sans-serif",
+        position: "relative",
       }}
     >
-      <div
-        style={{
-          background: "rgba(255,255,255,0.18)",
-          padding: "12px 18px",
-          borderRadius: "999px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-        }}
-      >
-        Zaza
-      </div>
-      <div style={{ opacity: 0.85 }}>Financial Education</div>
-    </div>
+      {/* Background Image Layer */}
+      {imageData && (
+        <img
+          // @ts-ignore
+          src={imageData}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+          }}
+        />
+      )}
 
-    <div style={{ maxWidth: "720px", zIndex: 1 }}>
+      {/* Gradient Overlay for Text Readability */}
       <div
         style={{
-          fontSize: 70,
-          fontWeight: 800,
-          lineHeight: 1.05,
-          marginBottom: 18,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background:
+            "linear-gradient(to top, rgba(49, 31, 84, 0.85) 0%, rgba(49, 31, 84, 0.4) 50%, rgba(49, 31, 84, 0.1) 100%)",
+          zIndex: 1,
         }}
-      >
-        Money confidence for kids
-      </div>
-      <div style={{ fontSize: 32, opacity: 0.9 }}>
-        Build smart habits with stories, challenges, and real-life practice.
-      </div>
-    </div>
+      />
 
-    <div
-      style={{ display: "flex", alignItems: "center", gap: "14px", zIndex: 1 }}
-    >
+      {/* Content Layer */}
       <div
         style={{
-          padding: "12px 18px",
-          background: "rgba(255,255,255,0.16)",
-          borderRadius: "12px",
-          fontSize: 22,
-          fontWeight: 700,
+          position: "relative",
+          zIndex: 2,
+          padding: "64px 72px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         }}
       >
-        Ages 5–16
-      </div>
-      <div
-        style={{
-          padding: "12px 18px",
-          background: "rgba(255,255,255,0.12)",
-          borderRadius: "12px",
-          fontSize: 22,
-          fontWeight: 700,
-        }}
-      >
-        zaza-finance.com
-      </div>
-    </div>
-  </div>
-);
+        {/* Header: Logo */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            fontSize: 26,
+            fontWeight: 700,
+            letterSpacing: 1.5,
+            textTransform: "uppercase",
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+              padding: "12px 24px",
+              borderRadius: "99px",
+              border: "1px solid rgba(255,255,255,0.3)",
+            }}
+          >
+            Zaza
+          </div>
+        </div>
 
-export default function OgImage() {
-  return new ImageResponse(card, {
-    ...size,
-  });
+        {/* Main Text */}
+        <div style={{ maxWidth: "800px" }}>
+          <div
+            style={{
+              fontSize: 64,
+              fontWeight: 800,
+              lineHeight: 1.1,
+              marginBottom: 20,
+              textShadow: "0 4px 12px rgba(0,0,0,0.3)",
+            }}
+          >
+            {t.title}
+          </div>
+          <div
+            style={{
+              fontSize: 32,
+              opacity: 0.95,
+              fontWeight: 500,
+              textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+            }}
+          >
+            {t.subtitle}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div
+            style={{
+              padding: "12px 20px",
+              background: "#FFD233",
+              color: "#311F54",
+              borderRadius: "16px",
+              fontSize: 24,
+              fontWeight: 800,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            }}
+          >
+            {t.ages}
+          </div>
+          <div
+            style={{
+              padding: "12px 20px",
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(4px)",
+              borderRadius: "16px",
+              fontSize: 24,
+              fontWeight: 700,
+              border: "1px solid rgba(255,255,255,0.2)",
+            }}
+          >
+            {t.cta}
+          </div>
+        </div>
+      </div>
+    </div>,
+    {
+      ...size,
+    },
+  );
 }

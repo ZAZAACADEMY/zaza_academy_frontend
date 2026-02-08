@@ -5,12 +5,18 @@ import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowLeft,
   Check,
+  ChevronDown,
+  ChevronUp,
   CreditCard,
   Crown,
+  Download,
+  HelpCircle,
   Sparkles,
   Users,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { ContactModal } from "@/components/ui/ContactModal";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Define strict props for Lucide icons to avoid TS errors
 type LucideIconProps = React.SVGProps<SVGSVGElement> & {
@@ -113,10 +119,57 @@ const PlanCard = ({
   );
 };
 
+const FAQItem = ({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border border-[#E5E7EB] rounded-2xl overflow-hidden bg-[#F9FAFB] hover:bg-[#F3F4F6] transition-colors">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-5 text-left"
+      >
+        <span className="text-[#1F1235] font-bold text-base">{question}</span>
+        {isOpen ? (
+          <ChevronUp size={20} className="text-[#7F26D9]" />
+        ) : (
+          <ChevronDown size={20} className="text-gray-400" />
+        )}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="px-5 pb-5 text-sm text-gray-600 leading-relaxed border-t border-[#E5E7EB] pt-4 mt-[-4px]">
+              {answer}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 export default function BillingPage() {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const t = useTranslations("DashboardBilling");
   const tPricing = useTranslations("Pricing");
   const locale = useLocale();
+
+  // Safety check for faqItems
+  const rawFaqItems = t.raw("faqItems");
+  const faqItems = Array.isArray(rawFaqItems)
+    ? (rawFaqItems as { question: string; answer: string }[])
+    : [];
 
   const plans = (tPricing.raw("plans") as PlanMessage[]).map((plan) => {
     const Icon = plan.icon ? planIconMap[plan.icon] || Sparkles : Sparkles;
@@ -235,23 +288,55 @@ export default function BillingPage() {
             {t("usageTitle")}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-2xl bg-[#EFE9FF] p-4 shadow-sm">
-              <p className="text-sm text-gray-700">{t("childrenActive")}</p>
-              <p className="text-2xl font-display font-bold text-[#1F1235]">
-                2 / 3
+            {/* Children Usage */}
+            <div className="rounded-2xl bg-[#EFE9FF] p-4 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Users size={64} className="text-[#7F26D9]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium mb-1">
+                {t("childrenActive")}
               </p>
+              <div className="flex items-end gap-2 mb-3">
+                <p className="text-3xl font-display font-bold text-[#1F1235]">
+                  2
+                </p>
+                <p className="text-sm text-gray-500 mb-1.5 font-medium">/ 3</p>
+              </div>
+              <div className="h-2 w-full bg-white/60 rounded-full overflow-hidden">
+                <div className="h-full bg-[#7F26D9] w-[66%] rounded-full" />
+              </div>
             </div>
-            <div className="rounded-2xl bg-[#E9E9FF] p-4 shadow-sm">
-              <p className="text-sm text-gray-700">{t("videosWatched")}</p>
-              <p className="text-2xl font-display font-bold text-[#1F1235]">
+
+            {/* Videos Usage */}
+            <div className="rounded-2xl bg-[#E9E9FF] p-4 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Sparkles size={64} className="text-[#5B4AF0]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium mb-1">
+                {t("videosWatched")}
+              </p>
+              <p className="text-3xl font-display font-bold text-[#1F1235]">
                 24
               </p>
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/60 text-[10px] font-bold text-[#5B4AF0]">
+                <Sparkles size={10} /> Top 10%
+              </div>
             </div>
-            <div className="rounded-2xl bg-[#F0F2FF] p-4 shadow-sm">
-              <p className="text-sm text-gray-700">{t("liveSessions")}</p>
-              <p className="text-2xl font-display font-bold text-[#1F1235]">
+
+            {/* Live Usage */}
+            <div className="rounded-2xl bg-[#F0F2FF] p-4 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Crown size={64} className="text-[#2F6BEB]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium mb-1">
+                {t("liveSessions")}
+              </p>
+              <p className="text-3xl font-display font-bold text-[#1F1235]">
                 8
               </p>
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/60 text-[10px] font-bold text-[#2F6BEB]">
+                <Check size={10} strokeWidth={3} /> On track
+              </div>
             </div>
           </div>
         </div>
@@ -308,11 +393,17 @@ export default function BillingPage() {
                       <p className="text-sm text-gray-500">{date}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-[#1F1235] mb-1">$39</p>
-                    <span className="inline-block px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] text-xs font-bold">
-                      {t("historyPaid")}
-                    </span>
+                  <div className="text-right flex flex-col items-end gap-2">
+                    <div>
+                      <p className="font-bold text-[#1F1235] mb-1">$39</p>
+                      <span className="inline-block px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] text-xs font-bold">
+                        {t("historyPaid")}
+                      </span>
+                    </div>
+                    <button className="text-xs text-gray-500 hover:text-[#7F26D9] flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-100 transition-all">
+                      <Download size={14} />
+                      {t("downloadInvoice")}
+                    </button>
                   </div>
                 </div>
               ),
@@ -324,35 +415,7 @@ export default function BillingPage() {
         <div className="rounded-[24px] border border-[#E9D5FF] bg-[#FAF5FF] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="flex items-start gap-4">
             <div className="mt-1 shrink-0 text-[#1F1235]">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 8V12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 16H12.01"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <HelpCircle size={24} />
             </div>
             <div>
               <h4 className="text-lg font-bold text-[#1F1235] mb-1">
@@ -363,11 +426,40 @@ export default function BillingPage() {
               </p>
             </div>
           </div>
-          <button className="whitespace-nowrap px-8 py-3 rounded-full bg-white text-[#1F1235] font-bold shadow-sm border border-[#E5E7EB] hover:shadow-md hover:border-[#D1D5DB] transition-all">
+          <button
+            onClick={() => setIsContactModalOpen(true)}
+            className="whitespace-nowrap px-8 py-3 rounded-full bg-white text-[#1F1235] font-bold shadow-sm border border-[#E5E7EB] hover:shadow-md hover:border-[#D1D5DB] transition-all"
+          >
             {t("contactSupport")}
           </button>
         </div>
+
+        {/* FAQ Section */}
+        <div className="rounded-[32px] bg-white border border-[#E5E7EB] p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-[#F3F0FF] rounded-lg text-[#7F26D9]">
+              <HelpCircle size={24} />
+            </div>
+            <h3 className="text-2xl font-display font-bold text-[#1F1235]">
+              {t("faqTitle")}
+            </h3>
+          </div>
+          <div className="space-y-4">
+            {faqItems.map((item, index) => (
+              <FAQItem
+                key={index}
+                question={item.question}
+                answer={item.answer}
+              />
+            ))}
+          </div>
+        </div>
       </section>
+
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
+  // Point to internal Proxy API instead of direct external URL
+  BASE_URL: "/api",
   TIMEOUT: 10000,
   HEADERS: {
     "Content-Type": "application/json",
     Accept: "application/json",
-  },
+  } as Record<string, string>,
 };
 
 export class ApiError extends Error {
@@ -37,6 +38,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export const apiClient = {
   get: async <T>(endpoint: string, token?: string) => {
     const headers = { ...API_CONFIG.HEADERS };
+    // Token is now handled by the Proxy via HttpOnly cookie
+    // But we keep this for potential overrides if needed
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
     const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {

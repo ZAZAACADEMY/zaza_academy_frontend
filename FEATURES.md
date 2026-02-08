@@ -1,8 +1,6 @@
-# Zaza Financial Education - Features Documentation
+# Zaza Financial Education — Features Documentation
 
-## 🎯 Overview
-
-Zaza Academy is a financial literacy platform designed for children ages 5-16. This document outlines all current features implemented in the application.
+> Complete inventory of all implemented features, their status, and component references.
 
 ---
 
@@ -10,12 +8,13 @@ Zaza Academy is a financial literacy platform designed for children ages 5-16. T
 
 **Status**: ✅ Fully Implemented
 
-- **Supported Languages**: English (en), French (fr)
-- **Routing**: Dynamic route-based localization using `[locale]` parameter
-- **Translations**: Centralized in `/messages` directory
-  - [messages/en.json](messages/en.json)
-  - [messages/fr.json](messages/fr.json)
-- **Coverage**: All UI text, error messages, and form labels are translatable
+| Feature             | Detail                                                 |
+| ------------------- | ------------------------------------------------------ |
+| Supported Languages | English (`en`), French (`fr`)                          |
+| Routing             | Dynamic `[locale]` segment in URL                      |
+| Translation Files   | `messages/en.json`, `messages/fr.json`                 |
+| Coverage            | All UI text, error messages, form labels, SEO metadata |
+| Library             | next-intl                                              |
 
 ---
 
@@ -23,58 +22,60 @@ Zaza Academy is a financial literacy platform designed for children ages 5-16. T
 
 ### Login (`/[locale]/login`)
 
-**Status**: ✅ Functional (API integration ready)
+**Status**: ✅ Functional — Uses Redux (RTK Query)
 
 **Features**:
-- Email and password validation using Zod schema
+
+- Email + password validation (Zod schema)
 - Show/hide password toggle
-- Error handling and display
-- Smooth redirect to dashboard on success
-- Support for login bypass via `NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true` environment variable
-- Locale-aware navigation
+- Error handling with localized messages
+- Redirect to dashboard on success
+- Redirect if already authenticated (cookie check)
+
+**State Management**: `useLoginMutation` hook from RTK Query
 
 **Components**:
-- [components/auth/Login.tsx](components/auth/Login.tsx)
-- [components/auth/loginValidation.ts](components/auth/loginValidation.ts)
 
-**Environment Variables**:
-- `NEXT_PUBLIC_BYPASS_LOGIN=true` - Skip API validation, redirect directly to dashboard
-- `NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true` - Force redirect to dashboard even if login fails
+- `components/auth/Login.tsx`
+- `components/auth/loginValidation.ts`
 
 ---
 
 ### Signup (`/[locale]/signup`)
 
-**Status**: ✅ Multi-Step Flow Implemented
+**Status**: ✅ Multi-Step Flow — Uses Redux (RTK Query)
 
 **Steps**:
-1. **Step 1 - Account Creation**: First name, last name, email, country, password
-2. **Step 2 - Plan Selection**: Solo, Family, or Family Plus
-3. **Step 3 - Billing Cycle**: Monthly or Quarterly
-4. **Step 4 - Order Review**: Subscription details confirmation
-5. **Step 5 - Payment Details**: Card or Mobile Money payment gateway
-6. **Step 6 - Processing**: Payment confirmation in progress
-7. **Step 7 - Success**: Welcome message and child profile setup
-8. **Step 8 - Child Profile**: Add child details (name, age, gender, avatar)
-9. **Step 9 - Summary**: Review all children and complete registration
 
-**Components**:
-- [components/auth/signup/](components/auth/signup/)
-  - `Step1Account.tsx` - Account information
-  - `Step2Plans.tsx` - Plan selection
-  - `Step3Billing.tsx` - Billing cycle
-  - `Step4Review.tsx` - Order summary
-  - `Step5Payment.tsx` - Payment methods
-  - `Step6Processing.tsx` - Payment processing
-  - `Step7Success.tsx` - Success confirmation
-  - `Step8ChildSetup.tsx` - Child profile creation
-  - `SignupContext.tsx` - Shared state management
-  - `validation.ts` - Form validations
+| Step | Component             | Description                                     |
+| ---- | --------------------- | ----------------------------------------------- |
+| 1    | `Step1Account.tsx`    | First name, last name, email, country, password |
+| 2    | `Step2Plans.tsx`      | Plan selection (Solo, Family, Family Plus)      |
+| 3    | `Step3Billing.tsx`    | Billing cycle (Monthly / Quarterly)             |
+| 4    | `Step4Review.tsx`     | Order review & confirmation                     |
+| 5    | `Step5Payment.tsx`    | Payment details (Card or Mobile Money)          |
+| 6    | `Step6Processing.tsx` | API registration call (`useRegisterMutation`)   |
+| 7    | `Step7Success.tsx`    | Welcome message                                 |
+| 8    | `Step8ChildSetup.tsx` | Add child profiles (name, age, gender, avatar)  |
+| 9    | `Step8ChildSetup.tsx` | Family summary & complete                       |
 
-**Data Management**:
-- Context-based state management across all steps
-- Form validation at each step
-- Plan pricing and features from translation files
+**State Management**: `SignupContext.tsx` (shared state across steps) + Redux for API calls
+
+**Dev Mode**: If the backend is unavailable (502), the signup flow proceeds in demo mode in development.
+
+---
+
+### Authentication Security
+
+**Status**: ✅ Hardened
+
+| Mechanism        | Implementation                                                        |
+| ---------------- | --------------------------------------------------------------------- |
+| Token Storage    | HttpOnly cookies (not localStorage)                                   |
+| Login Proxy      | `app/api/auth/login/route.ts` — sets cookies server-side              |
+| Logout Proxy     | `app/api/auth/logout/route.ts` — clears cookies                       |
+| API Proxy        | `app/api/[...path]/route.ts` — attaches token as Authorization header |
+| Route Protection | `middleware.ts` — redirects unauthenticated users from `/dashboard`   |
 
 ---
 
@@ -85,147 +86,263 @@ Zaza Academy is a financial literacy platform designed for children ages 5-16. T
 **Status**: ✅ Implemented
 
 **Components**:
-- Welcome header with user greeting
-- Stats cards showing:
-  - Total Progress (73%)
-  - Videos Watched (24)
-  - Achievements (12)
-  - Study Time (8.5h)
-- Children list
-- Recent activity
-- Recent achievements
 
-**Layout**:
-- Left sidebar navigation
-- Main content area with responsive grid
+- Welcome header with user greeting
+- Stats cards (Progress, Videos, Achievements, Study Time)
+- Children list with avatars
+- Recent activity tracking
+- Recent achievements display
+
+**Layout**: Fixed sidebar + responsive main content area
+
+---
+
+### Video Library (`/[locale]/dashboard/videos`)
+
+**Status**: ✅ Implemented
+
+**Features**:
+
+- Video card grid with thumbnails, ratings, duration
+- Video detail page with learning points
+- Progress tracking (completed lessons / total)
+- "Up Next" lesson queue
+
+**Components**: `components/dashboard/videos/`
+
+---
+
+### Live Sessions (`/[locale]/dashboard/live`)
+
+**Status**: ✅ Implemented
+
+**Features**:
+
+- Upcoming live session cards
+- Recording archive (`/live/archive`)
+- Session details (instructor, date, topic)
+
+**Components**: `components/dashboard/live/`
 
 ---
 
 ### Billing & Plan Management (`/[locale]/dashboard/billing`)
 
-**Status**: ✅ Fully Designed
+**Status**: ✅ Implemented
 
-**Current Plan Display**:
-- Plan name (Standard, Premium Plan, Family Bundle)
-- Active status badge
-- Price per quarter
-- Next billing date
-- Payment method (masked)
-- Installment status (2 of 3 payments)
-- Payment progress bar
-- Update payment method button
-- Cancel subscription button
+**Features**:
 
-**Usage Statistics**:
-- Children active (2/3)
-- Videos watched (24)
-- Live sessions (8)
+- Current plan display with status badge
+- Price, billing date, payment method
+- Installment progress bar (e.g., 2 of 3 payments)
+- Usage statistics (children active, videos watched)
+- Plan upgrade section (shows only higher-tier plans)
+- Billing history with transaction list
+- Support contact card
 
-**Plan Upgrade Section**:
-- Display only plans above current plan ($199 default)
-- Premium Plan ($249.99)
-- Family Bundle ($499.99)
-- Feature comparison for each plan
-- Call-to-action buttons
+**Components**: `components/dashboard/billing/`
 
-**Billing History**:
-- List of past transactions
-- Transaction date
-- Amount and status (Paid)
-- Payment method icon
+---
 
-**Support Section**:
-- "Need Help?" card
-- Contact support button
+### Children Management (`/[locale]/dashboard/children`)
 
-**Translations**: [DashboardBilling in messages](messages/en.json#L279)
+**Status**: ✅ Implemented
+
+**Features**:
+
+- Child profile cards with avatar, age, program
+- Individual child detail view (`/children/[id]`)
+- Recent milestones per child
+
+**Components**: `components/dashboard/children/`
+
+---
+
+### Programs (`/[locale]/dashboard/programs`)
+
+**Status**: ✅ UI Implemented
+
+**Features**:
+
+- Program cards with progress bars
+- Age group categorization
+- Module tracking
+
+**Data**: Mock data in `lib/data/programs.ts`
+
+---
+
+### Achievements (`/[locale]/dashboard/achievements`)
+
+**Status**: ✅ UI Implemented
+
+**Features**:
+
+- Achievement cards with icons and descriptions
+- Unlock status
+
+**Data**: Mock data in `lib/data/achievements.ts`
+
+---
+
+### Settings (`/[locale]/dashboard/settings`)
+
+**Status**: ✅ UI Implemented
+
+---
+
+### Sidebar Navigation
+
+**Status**: ✅ Implemented
+
+**Menu Items**: Dashboard, Video Library, Live Sessions, Billing, Settings
+
+**Features**:
+
+- Active state highlighting (exact match for `/dashboard`, prefix match for sub-routes)
+- Language switcher (FR/EN) with animated toggle
+- Logout button → Confirmation modal → `useLogoutMutation` → Cookie cleared → Redirect
+- Responsive: hidden on mobile with overlay toggle
+
+**Component**: `components/dashboard/Sidebar.tsx`
 
 ---
 
 ## 💳 Pricing
 
-### Pricing Plans
+**Status**: ✅ Implemented
 
-**Status**: ✅ Defined and Integrated
+| Plan                  | Price           | Key Features                                             |
+| --------------------- | --------------- | -------------------------------------------------------- |
+| **Solo**              | $199/quarter    | 30 live classes, worksheets, parent support, certificate |
+| **Premium** (Popular) | $249.99/quarter | + Family coaching, replays, early access                 |
+| **Family Bundle**     | $499.99/quarter | Up to 3 children, all Premium features, priority support |
 
-**Three Tiers**:
+All plans available with 3-payment installments.
 
-1. **Standard** ($199/quarter)
-   - 30 live online classes
-   - Interactive worksheets
-   - Parent support group access
-   - Completion certificate
-   - Icon: Sparkles
-
-2. **Premium Plan** ($249.99/quarter) - **Most Popular**
-   - Everything in Standard
-   - Bonus family coaching session
-   - Class replays (on-demand access)
-   - Early access to new programs
-   - Icon: Crown
-
-3. **Family Bundle** ($499.99/quarter)
-   - Full access for up to 3 children
-   - All Premium features
-   - Shared parent dashboard
-   - Priority family support & onboarding
-   - Icon: Users
-
-**Installment Options**:
-- All plans available with 3-payment installments
-- Installment fee included
-
-**Components**:
-- [components/sections/Pricing.tsx](components/sections/Pricing.tsx)
-- Plan cards with feature lists
-- Framer Motion animations
+**Component**: `components/sections/Pricing.tsx`
 
 ---
 
-## 🧭 Navigation
+## 🗂️ State Management (Redux Toolkit)
 
 **Status**: ✅ Implemented
 
-### Sidebar Navigation (`/[locale]/dashboard/layout`)
+### Architecture
 
-**Menu Items**:
-1. Dashboard
-2. Children
-3. Programs
-4. Video Library
-5. Live Sessions
-6. Achievements
-7. Billing / Plan
-8. Settings
+| File                            | Role                                             |
+| ------------------------------- | ------------------------------------------------ |
+| `lib/store/store.ts`            | Store configuration                              |
+| `lib/store/hooks.ts`            | Typed hooks (`useAppDispatch`, `useAppSelector`) |
+| `lib/store/services/api.ts`     | Base RTK Query API (fetchBaseQuery to `/api`)    |
+| `lib/store/services/authApi.ts` | Auth endpoints with auto-generated hooks         |
+| `app/StoreProvider.tsx`         | Provider component (wraps app in layout)         |
 
-**Features**:
-- Active state highlighting
-- Locale-aware links
-- Logout button
-- Fixed position on desktop
+### Available Hooks
 
-**Logic Fix**:
-- Exact match for dashboard (avoids active state on subpages)
-- Substring match for other routes (allows nested pages)
+| Hook                     | Type     | Endpoint                |
+| ------------------------ | -------- | ----------------------- |
+| `useLoginMutation`       | Mutation | `POST /auth/login/`     |
+| `useRegisterMutation`    | Mutation | `POST /auth/register/`  |
+| `useLogoutMutation`      | Mutation | `POST /auth/logout/`    |
+| `useGetCurrentUserQuery` | Query    | `GET /auth/users/me/`   |
+| `useAddChildMutation`    | Mutation | `POST /users/children/` |
+
+### Cache & Tags
+
+- Tag `"User"` is provided by `getCurrentUser` and invalidated by login/register/logout
+- Logout triggers `baseApi.util.resetApiState()` to clear all cached data
+
+---
+
+## 🔒 Security Features
+
+**Status**: ✅ Implemented
+
+### HTTP Security Headers (`next.config.js`)
+
+| Header                            | Purpose                               |
+| --------------------------------- | ------------------------------------- |
+| `Strict-Transport-Security`       | Force HTTPS (2-year max-age, preload) |
+| `X-Frame-Options: SAMEORIGIN`     | Prevent clickjacking                  |
+| `X-Content-Type-Options: nosniff` | Block MIME-type sniffing              |
+| `Referrer-Policy`                 | Limit referrer information            |
+| `Permissions-Policy`              | Deny camera, microphone, geolocation  |
+| `Content-Security-Policy`         | Restrict resource loading sources     |
+
+### Application Security
+
+| Risk                   | Mitigation                                 |
+| ---------------------- | ------------------------------------------ |
+| XSS (token theft)      | Tokens in HttpOnly cookies, never in JS    |
+| XSS (HTML injection)   | No `dangerouslySetInnerHTML` anywhere      |
+| Unauthenticated access | Middleware redirects to login if no cookie |
+| Info disclosure        | `poweredByHeader: false`                   |
+| Login bypass           | Removed all bypass environment variables   |
+
+---
+
+## 🔍 SEO & Social Sharing
+
+**Status**: ✅ Implemented
+
+| Feature                   | File                                         |
+| ------------------------- | -------------------------------------------- |
+| Dynamic OG images (EN/FR) | `app/[locale]/opengraph-image.tsx`           |
+| Twitter cards (EN/FR)     | `app/[locale]/twitter-image.tsx`             |
+| Sitemap                   | `app/sitemap.ts`                             |
+| Robots.txt                | `app/robots.ts`                              |
+| Web App Manifest          | `app/manifest.ts`                            |
+| Favicon                   | `public/icon.png`                            |
+| Structured Metadata       | `app/[locale]/layout.tsx` (generateMetadata) |
+
+### Metadata Includes
+
+- Localized title & description
+- Open Graph (type, locale, images)
+- Twitter card (large image)
+- Keywords, authors, canonical URLs
 
 ---
 
 ## 🎨 UI Components
 
-### Motion Components
+### Motion Components (`components/ui/motion/`)
 
-**Status**: ✅ Implemented in `/components/ui/motion/`
+| Component         | Description                                         |
+| ----------------- | --------------------------------------------------- |
+| `FadeIn.tsx`      | Directional fade-in (up/down/left/right) with delay |
+| `Stagger.tsx`     | Staggered animations for list items                 |
+| `JellyButton.tsx` | Interactive button with jelly press effect          |
+| `TiltEffect.tsx`  | 3D tilt on hover                                    |
 
-- **FadeIn.tsx**: Fade-in animation with customizable direction and delay
-- **Stagger.tsx**: Staggered animations for list items
-- **JellyButton.tsx**: Interactive button with jelly effect
-- **TiltEffect.tsx**: 3D tilt effect on hover
+### Utility Components (`components/ui/`)
 
-### Utility Components
+| Component              | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `Doodles.tsx`          | Decorative SVG doodles (sparkles, arrows) |
+| `FloatingElements.tsx` | Animated floating background elements     |
+| `FloatingDoodles.tsx`  | Floating decorative backgrounds           |
+| `MouseTrail.tsx`       | Mouse trail cursor effect                 |
+| `WavyDivider.tsx`      | Wavy section divider                      |
+| `ContactModal.tsx`     | Contact form modal                        |
 
-- **Doodles.tsx**: Decorative SVG elements (SparkleDoodle, ArrowDoodle)
-- **FloatingElements.tsx**: Animated floating background elements
-- **MouseTrail.tsx**: Mouse trail effect animation
+---
+
+## 📝 Public Site Sections (`components/sections/`)
+
+| Component             | Description                              |
+| --------------------- | ---------------------------------------- |
+| `Hero.tsx`            | Main landing hero with CTA               |
+| `WhyZaza.tsx`         | Benefits and value proposition           |
+| `WhatWillLearn.tsx`   | Curriculum highlights                    |
+| `AgeGroupProgram.tsx` | Age-specific programs (5-7, 8-11, 12-16) |
+| `Pricing.tsx`         | Plan comparison cards                    |
+| `Testimonials.tsx`    | Parent testimonials carousel             |
+| `FAQ.tsx`             | Frequently asked questions               |
+| `CallToAction.tsx`    | Secondary engagement section             |
+| `GetStarted.tsx`      | Step-by-step onboarding overview         |
+| `FounderQuote.tsx`    | Founder's message                        |
 
 ---
 
@@ -233,175 +350,89 @@ Zaza Academy is a financial literacy platform designed for children ages 5-16. T
 
 **Status**: ✅ Fully Responsive
 
-- Mobile-first approach using Tailwind CSS
-- Responsive grid layouts
-- Adaptive navigation (sidebar hides on mobile)
+- Mobile-first approach (Tailwind CSS)
+- Responsive grid layouts across all pages
+- Sidebar: hidden on mobile with hamburger toggle + overlay
 - Touch-friendly buttons and spacing
-- Responsive typography
-
----
-
-## 🔧 API Integration
-
-**Status**: ✅ Structure Ready
-
-**Base Configuration**: [lib/api/client.ts](lib/api/client.ts)
-
-- Base URL: `http://localhost:8000/api` (configurable via `NEXT_PUBLIC_API_URL`)
-- Timeout: 10 seconds
-- Default headers: JSON content-type
-
-**Endpoints**: [lib/api/endpoints.ts](lib/api/endpoints.ts)
-
-```
-AUTH:
-  - POST /auth/login/
-  - POST /auth/register/
-  - POST /auth/logout/
-  - POST /auth/token/refresh/
-  - GET /auth/users/me/
-
-USERS:
-  - GET/POST /users/profile/
-  - PUT /users/profile/update/
-  - GET/POST /users/children/
-
-SUBSCRIPTION:
-  - GET /subscription/plans/
-  - POST /subscription/create-checkout-session/
-  - GET /subscription/status/
-
-CONTENT:
-  - GET /content/courses/
-  - GET /content/courses/{courseId}/lessons/
-  - GET /content/progress/
-```
+- Responsive typography scaling
 
 ---
 
 ## 🧪 Testing
 
-**Status**: ✅ E2E Testing Setup
+**Status**: ✅ E2E Setup
 
 **Framework**: Playwright
 
 **Test Files**:
-- [tests/e2e/home.spec.ts](tests/e2e/home.spec.ts)
-- [tests/e2e/signup-flow.spec.ts](tests/e2e/signup-flow.spec.ts)
+
+- `tests/e2e/home.spec.ts` — Landing page tests
+- `tests/e2e/signup-flow.spec.ts` — Full signup flow
 
 **Commands**:
+
 ```bash
-npm run test:e2e              # Run all tests
-npm run test:e2e:ui          # Run with Playwright UI
-npm run test:e2e:report      # View test report
+npm run test:e2e              # Headless
+npm run test:e2e:ui           # Interactive UI
+npm run test:e2e:report       # HTML report
 ```
 
 ---
 
-## 📝 Content Sections (Public Site)
+## 🔗 Backend API Endpoints
 
-**Status**: ✅ Components Built
-
-- **Hero**: Main landing section with call-to-action
-- **Why Zaza**: Benefits and value proposition
-- **What Will Learn**: Curriculum highlights
-- **Age Group Program**: Age-specific curriculum (5-7, 8-11, 12-16)
-- **Pricing**: Full pricing comparison
-- **Testimonials**: Parent testimonials
-- **FAQ**: Frequently asked questions
-- **Call to Action**: Secondary engagement section
-- **Get Started**: Step-by-step onboarding overview
-
----
-
-## 🛠️ Development Setup
-
-**Status**: ✅ Ready
-
-### Prerequisites
-- Node.js 18+
-- npm or yarn
-
-### Installation
-```bash
-npm install
-```
-
-### Environment Variables
-```env
-# Optional: API URL (defaults to http://localhost:8000/api)
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
-
-# Optional: Login bypass for UI testing
-NEXT_PUBLIC_BYPASS_LOGIN=true
-
-# Optional: Force redirect to dashboard even if login fails
-NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true
-```
-
-### Development Server
-```bash
-npm run dev
-```
-
-Opens at `http://localhost:3000`
-
-### Production Build
-```bash
-npm run build
-npm start
-```
-
----
-
-## 📦 Project Structure
+All defined in `lib/api/endpoints.ts`. The frontend proxy at `/api/*` forwards to Django.
 
 ```
-zaza-financial-education/
-├── app/                           # Next.js app directory
-│   └── [locale]/                  # Locale-based routing
-│       ├── login/
-│       ├── signup/
-│       ├── dashboard/
-│       │   └── billing/
-│       └── layout.tsx
-├── components/
-│   ├── auth/                      # Authentication components
-│   ├── dashboard/                 # Dashboard components
-│   ├── sections/                  # Public site sections
-│   ├── layout/                    # Layout components (Navbar, Footer)
-│   └── ui/                        # Reusable UI components
-├── lib/
-│   └── api/                       # API client and endpoints
-├── messages/                      # i18n translation files
-│   ├── en.json
-│   └── fr.json
-├── public/                        # Static assets
-├── tests/                         # E2E tests
-└── package.json
+AUTH:
+  POST  /auth/login/              # Login
+  POST  /auth/register/           # Register
+  POST  /auth/logout/             # Logout
+  POST  /auth/token/refresh/      # Refresh token
+  GET   /auth/users/me/           # Current user profile
+
+USERS:
+  GET   /users/profile/           # Get profile
+  PUT   /users/profile/update/    # Update profile
+  GET   /users/children/          # List children
+  POST  /users/children/          # Add child
+
+SUBSCRIPTION:
+  GET   /subscription/plans/      # List plans
+  POST  /subscription/create-checkout-session/  # Start checkout
+  GET   /subscription/status/     # Subscription status
+
+CONTENT:
+  GET   /content/courses/         # List courses
+  GET   /content/courses/{id}/lessons/  # Course lessons
+  GET   /content/progress/        # Learning progress
 ```
 
 ---
 
 ## 🚀 Next Steps / TODO
 
-- [ ] Connect backend API for login/signup
-- [ ] Implement real subscription management
-- [ ] Add payment gateway integration (Stripe, etc.)
-- [ ] Create user profile management interface
-- [ ] Build video content delivery system
-- [ ] Implement progress tracking
-- [ ] Add achievement/gamification system
-- [ ] Create admin dashboard
-- [ ] Add analytics tracking
-- [ ] Deploy to production environment
+### Backend Integration (Priority)
+
+- [ ] Connect Django auth endpoints (login, register, logout)
+- [ ] Implement subscription/payment API
+- [ ] Video content delivery API
+- [ ] Progress tracking API
+
+### Frontend Features
+
+- [ ] Real video player integration
+- [ ] Gamification / achievement unlock system
+- [ ] Push notifications
+- [ ] Admin dashboard
+
+### Infrastructure
+
+- [ ] CI/CD pipeline
+- [ ] Staging environment
+- [ ] Performance monitoring
+- [ ] Analytics integration
 
 ---
 
-## 📞 Support
-
-For issues or questions about specific features, refer to the component documentation in their respective files.
-
----
-
-**Last Updated**: February 2, 2026
+**Last Updated**: February 8, 2026

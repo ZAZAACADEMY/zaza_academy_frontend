@@ -1,4 +1,8 @@
 {
+  "Metadata": {
+    "title": "Zaza: Money Smarts for Kids 🚀",
+    "description": "Turn 'I want this!' into 'I'm saving for this.' 🧸💰 The fun app that teaches kids 5-16 to earn, save, and spend wisely. Start their financial journey today!"
+  },
   "Navbar": {
     "programs": "Programs",
     "about": "Why Zaza",
@@ -15,6 +19,14 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu"
     }
+  },
+  "Sidebar": {
+    "dashboard": "Dashboard",
+    "videoLibrary": "Video Library",
+    "liveSessions": "Live Sessions",
+    "billing": "Billing / Plan",
+    "settings": "Settings",
+    "logout": "Log Out"
   },
   "Hero": {
     "title": "<strong1>Empowering</strong1> <strong2>Young Minds with Smart</strong2> <highlight>Financial Skills</highlight>",
@@ -198,6 +210,23 @@
     "nextInstallment": "Next installment due: {date}",
     "updatePayment": "Update payment method",
     "cancel": "Cancel subscription",
+    "usageLimit": "{current} / {max}",
+    "downloadInvoice": "Download Invoice",
+    "faqTitle": "Billing FAQ",
+    "faqItems": [
+      {
+        "question": "How do I cancel my subscription?",
+        "answer": "You can cancel your subscription at any time by clicking the 'Cancel subscription' button in your plan details above. Your access will continue until the end of your current billing period."
+      },
+      {
+        "question": "Can I switch plans later?",
+        "answer": "Yes! You can upgrade or downgrade your plan at any time. Upgrades take effect immediately, while downgrades start at the next billing cycle."
+      },
+      {
+        "question": "Where can I find my invoices?",
+        "answer": "All your past invoices are listed in the 'Billing History' section on this page. You can download them as PDF files."
+      }
+    ],
     "usageTitle": "Usage this month",
     "childrenActive": "Children active",
     "videosWatched": "Videos watched",
@@ -210,6 +239,92 @@
     "needHelp": "Need help?",
     "supportCopy": "Questions about your subscription? Our support team is here.",
     "contactSupport": "Contact support"
+  },
+  "dashboard": {
+    "videos": {
+      "title": "Video Library",
+      "description": "Explore our complete collection of financial education videos designed for ages 5-16",
+      "searchPlaceholder": "Search videos...",
+      "filterBy": "Filter by:",
+      "filters": {
+        "allAges": "All Ages",
+        "ages5_7": "Ages 5-7",
+        "ages8_11": "Ages 8-11",
+        "ages12_16": "Ages 12-16",
+        "allTopics": "All Topics",
+        "myFavorites": "My Favorites",
+        "basics": "Basics",
+        "saving": "Saving",
+        "spending": "Spending",
+        "banking": "Banking",
+        "investing": "Investing",
+        "business": "Business"
+      }
+    },
+    "live": {
+      "title": "Live Sessions",
+      "description": "Join our expert educators for interactive learning sessions...",
+      "upcomingTitle": "Upcoming Sessions",
+      "recordingsTitle": "Recordings",
+      "viewArchive": "View all archives",
+      "backToLive": "Back to Live Sessions",
+      "archiveTitle": "Session Archive",
+      "archiveDescription": "Missed a live session? Don't worry! All our past interactive sessions are recorded and available here for you to watch anytime.",
+      "recordingBadge": "Recorded",
+      "watchNow": "Watch Now",
+      "session": {
+        "age": "Age",
+        "spotsLeft": "Only {count} spots left",
+        "recommended": "Recommended",
+        "instructor": "Instructor",
+        "time": "Time",
+        "reserveSpot": "RESERVE SPOT",
+        "spotReserved": "SPOT RESERVED",
+        "sessionFull": "SESSION FULL",
+        "joinSession": "JOIN SESSION"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "tabs": {
+        "profile": "Profile",
+        "notifications": "Notifications",
+        "accounts": "Accounts",
+        "security": "Security"
+      },
+      "form": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "country": "Country",
+        "selectCountry": "Select a country",
+        "noCountries": "No countries found"
+      },
+      "security": {
+        "title": "Security",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm New Password",
+        "updateButton": "Update Password"
+      }
+    }
+  },
+  "DashboardHome": {
+    "welcomeTitle": "Welcome back, {name}! 👋",
+    "welcomeSubtitle": "Here's what's happening with your children's learning",
+    "whatsappTitle": "Join our Parents Community!",
+    "whatsappSubtitle": "Connect, share tips, and get exclusive updates.",
+    "whatsappButton": "Join WhatsApp Group"
+  },
+  "ChildrenList": {
+    "myChildren": "My Children",
+    "addChild": "Add a child",
+    "emptyState": "No children profiles yet.",
+    "addFirst": "Add your first child",
+    "videosWatched": "Videos Watched",
+    "age": "Age {age}",
+    "editProfile": "Edit Profile",
+    "deleteProfile": "Delete Profile"
   },
   "CallToAction": {
     "title": "Give Your Children the Gift of Financial Confidence",
@@ -498,7 +613,7 @@
       },
       {
         "title": "5. Contact Us",
-        "content": "If you have any questions about this Privacy Policy, please contact us at: <br/>Email: privacy@zazaacademy.com"
+        "content": "If you have any questions about this Privacy Policy, please contact us at: \nEmail: privacy@zazaacademy.com"
       }
     ]
   },

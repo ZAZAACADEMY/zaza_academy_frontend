@@ -1,4 +1,8 @@
 {
+  "Metadata": {
+    "title": "Zaza : L'argent expliqué aux enfants 🚀",
+    "description": "Transformez les « Je veux ! » en « J'économise. » 🧸💰 L'app ludique qui apprend aux 5-16 ans à gérer leur argent de poche. Commencez l'aventure financière !"
+  },
   "Navbar": {
     "programs": "Programmes",
     "about": "Pourquoi Zaza",
@@ -15,6 +19,14 @@
       "openMenu": "Ouvrir le menu",
       "closeMenu": "Fermer le menu"
     }
+  },
+  "Sidebar": {
+    "dashboard": "Tableau de Bord",
+    "videoLibrary": "Vidéothèque",
+    "liveSessions": "Sessions Live",
+    "billing": "Facturation / Plan",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
   },
   "Hero": {
     "title": "<strong1>Développer</strong1> <strong2>l’intelligence financière dès le</strong2> <highlight>plus jeune âge</highlight>",
@@ -198,6 +210,23 @@
     "nextInstallment": "Prochaine échéance : {date}",
     "updatePayment": "Mettre à jour le paiement",
     "cancel": "Annuler l'abonnement",
+    "usageLimit": "{current} / {max}",
+    "downloadInvoice": "Télécharger la facture",
+    "faqTitle": "FAQ Facturation",
+    "faqItems": [
+      {
+        "question": "Comment résilier mon abonnement ?",
+        "answer": "Vous pouvez résilier votre abonnement à tout moment en cliquant sur le bouton 'Annuler l'abonnement'. Votre accès continuera jusqu'à la fin de la période en cours."
+      },
+      {
+        "question": "Puis-je changer de forfait plus tard ?",
+        "answer": "Oui ! Vous pouvez changer de forfait à tout moment. Les surclassements sont immédiats, les déclassements s'appliquent au prochain cycle."
+      },
+      {
+        "question": "Où trouver mes factures ?",
+        "answer": "Toutes vos factures sont listées dans la section 'Historique de facturation'. Vous pouvez les télécharger en PDF."
+      }
+    ],
     "usageTitle": "Utilisation ce mois-ci",
     "childrenActive": "Enfants actifs",
     "videosWatched": "Vidéos regardées",
@@ -210,6 +239,92 @@
     "needHelp": "Besoin d'aide ?",
     "supportCopy": "Des questions sur votre abonnement ? Notre équipe est là pour vous.",
     "contactSupport": "Contacter le support"
+  },
+  "dashboard": {
+    "videos": {
+      "title": "Vidéothèque",
+      "description": "Explorez notre collection complète de vidéos d'éducation financière conçues pour les enfants de 5 à 16 ans",
+      "searchPlaceholder": "Rechercher des vidéos...",
+      "filterBy": "Filtrer par :",
+      "filters": {
+        "allAges": "Tous âges",
+        "ages5_7": "5-7 ans",
+        "ages8_11": "8-11 ans",
+        "ages12_16": "12-16 ans",
+        "allTopics": "Tous les sujets",
+        "myFavorites": "Mes favoris",
+        "basics": "Bases",
+        "saving": "Épargne",
+        "spending": "Dépenses",
+        "banking": "Banque",
+        "investing": "Investissement",
+        "business": "Entreprise"
+      }
+    },
+    "live": {
+      "title": "Sessions Live",
+      "description": "Rejoignez nos éducateurs experts pour des sessions d'apprentissage interactives...",
+      "upcomingTitle": "Sessions à venir",
+      "recordingsTitle": "Enregistrements",
+      "viewArchive": "Voir toutes les archives",
+      "backToLive": "Retour aux sessions en direct",
+      "archiveTitle": "Archives des sessions",
+      "archiveDescription": "Vous avez manqué une session en direct ? Pas de souci ! Toutes nos sessions interactives passées sont enregistrées et disponibles ici pour que vous puissiez les regarder à tout moment.",
+      "recordingBadge": "Enregistré",
+      "watchNow": "Regarder maintenant",
+      "session": {
+        "age": "Âge",
+        "spotsLeft": "Plus que {count} places",
+        "recommended": "Recommandé",
+        "instructor": "Instructeur",
+        "time": "Heure",
+        "reserveSpot": "RÉSERVER",
+        "spotReserved": "PLACE RÉSERVÉE",
+        "sessionFull": "COMPLET",
+        "joinSession": "REJOINDRE"
+      }
+    },
+    "settings": {
+      "title": "Paramètres",
+      "tabs": {
+        "profile": "Profil",
+        "notifications": "Notifications",
+        "accounts": "Comptes",
+        "security": "Sécurité"
+      },
+      "form": {
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Adresse e-mail",
+        "country": "Pays",
+        "selectCountry": "Sélectionner un pays",
+        "noCountries": "Aucun pays trouvé"
+      },
+      "security": {
+        "title": "Sécurité",
+        "currentPassword": "Mot de passe actuel",
+        "newPassword": "Nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe",
+        "updateButton": "Mettre à jour le mot de passe"
+      }
+    }
+  },
+  "DashboardHome": {
+    "welcomeTitle": "Bon retour, {name} ! 👋",
+    "welcomeSubtitle": "Voici où en sont vos enfants dans leur apprentissage",
+    "whatsappTitle": "Rejoignez notre communauté de parents !",
+    "whatsappSubtitle": "Échangez, partagez des astuces et suivez les nouveautés.",
+    "whatsappButton": "Rejoindre le groupe WhatsApp"
+  },
+  "ChildrenList": {
+    "myChildren": "Mes enfants",
+    "addChild": "Ajouter un enfant",
+    "emptyState": "Aucun profil d'enfant pour le moment.",
+    "addFirst": "Ajoutez votre premier enfant",
+    "videosWatched": "Vidéos regardées",
+    "age": "{age} ans",
+    "editProfile": "Modifier le profil",
+    "deleteProfile": "Supprimer le profil"
   },
   "CallToAction": {
     "title": "Offrez à vos enfants la confiance financière",
@@ -498,7 +613,7 @@
       },
       {
         "title": "5. Nous contacter",
-        "content": "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante : <br/>Email : privacy@zazaacademy.com"
+        "content": "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante : \nEmail : privacy@zazaacademy.com"
       }
     ]
   },

@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -14,6 +13,7 @@ module.exports = {
       colors: {
         brand: {
           dark: "#311F54", // The main dark purple
+          purple: "#7F26D9", // Primary purple
           light: "#EFEEFF", // Light purple bg
           accent: "#F46AA3", // Pink accent
           gray: "#404040", // Text gray

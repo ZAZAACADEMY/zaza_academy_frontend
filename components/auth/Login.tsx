@@ -13,11 +13,10 @@ import {
 import { useRouter, Link } from "@/navigation";
 import { z } from "zod";
 import { getLoginSchema } from "./loginValidation";
-import { authService } from "@/lib/api/auth";
+import { useLoginMutation } from "@/lib/store/services/authApi";
 import { Step2Plans } from "./signup/Step2Plans";
-import ImageCreate from "../../public/images/CreateAccount.png";
+import ImageLogin from "../../public/images/ImageLogin.png";
 import { useTranslations, useLocale } from "next-intl";
-import { ApiError } from "@/lib/api/client";
 
 export const Login = () => {
   const t = useTranslations("Login");
@@ -28,16 +27,19 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [generalError, setGeneralError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const bypassLogin = process.env.NEXT_PUBLIC_BYPASS_LOGIN === "true";
-  const forceRedirect = process.env.NEXT_PUBLIC_FORCE_LOGIN_REDIRECT === "true";
 
-  // Redirect if already logged in
+  const [login, { isLoading }] = useLoginMutation();
+
+  // Redirect if already logged in (session is validated by middleware,
+  // but we also check via API to auto-redirect from login page)
   React.useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      router.replace("/dashboard", { locale });
-    }
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((res) => {
+        if (res.ok) router.replace("/dashboard", { locale });
+      })
+      .catch(() => {
+        /* not logged in */
+      });
   }, [router, locale]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -48,35 +50,27 @@ export const Login = () => {
 
     if (result.success) {
       setErrors({});
-      setIsLoading(true);
 
       try {
-        if (bypassLogin) {
-          router.push("/dashboard", { locale });
-          return;
-        }
-
-        const response = await authService.login({ email, password });
+        const response = await login({ email, password }).unwrap();
 
         if (response.access_token) {
-          localStorage.setItem("accessToken", response.access_token);
-          if (response.refresh_token)
-            localStorage.setItem("refreshToken", response.refresh_token);
+          // Success! Cookies are set by the API route.
+          // We can optionally store user info if needed, but NOT the token.
+          // localStorage.setItem("user", JSON.stringify(response.user));
         }
 
         router.push("/dashboard", { locale });
-      } catch (err) {
-        if (forceRedirect) {
-          router.push("/dashboard", { locale });
-          return;
-        }
-        if (err instanceof ApiError) {
-          setGeneralError(err.message || "Invalid credentials");
+      } catch (err: any) {
+        if (err.status === 401 || err.data?.detail === "Invalid credentials") {
+          setGeneralError(t("errors.invalidCredentials"));
         } else {
-          setGeneralError("An error occurred during login");
+          setGeneralError(
+            err.data?.message ||
+              err.data?.detail ||
+              "An error occurred during login",
+          );
         }
-      } finally {
-        setIsLoading(false);
       }
     } else {
       const formattedErrors = result.error.flatten();
@@ -242,7 +236,7 @@ export const Login = () => {
 
         <div className="relative z-10 w-full max-w-[540px] drop-shadow-2xl">
           <Image
-            src={ImageCreate}
+            src={ImageLogin}
             alt={t("illustrationAlt", { default: "Welcome Back" })}
             width={600}
             height={600}

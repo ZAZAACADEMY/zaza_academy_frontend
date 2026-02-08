@@ -1,23 +1,21 @@
-# Zaza Financial Education - Development Guide
+# Zaza Financial Education — Development Guide
 
-## 🎯 Project Overview
-
-Zaza Academy is a Next.js-based financial education platform for children (ages 5-16). This guide covers setup, architecture, and development best practices.
+> This guide is for **developers** working on the Zaza Academy frontend. It covers setup, architecture, patterns, and conventions.
 
 ---
 
 ## 📋 Prerequisites
 
-- **Node.js**: v18 or higher
-- **npm**: v9 or higher
-- **Git**: For version control
-- **Code Editor**: VS Code recommended
+| Tool    | Version             |
+| ------- | ------------------- |
+| Node.js | v18+                |
+| npm     | v9+                 |
+| Git     | Any recent          |
+| Editor  | VS Code recommended |
 
 ---
 
 ## 🚀 Quick Start
-
-### 1. Clone and Install
 
 ```bash
 git clone <repository-url>
@@ -25,26 +23,19 @@ cd zaza-financial-education
 npm install
 ```
 
-### 2. Configure Environment
-
 Create `.env.local` at project root:
 
 ```env
-# API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:8000/api
-
-# Login Bypass (for UI testing without backend)
-NEXT_PUBLIC_BYPASS_LOGIN=true
-NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true
 ```
-
-### 3. Start Development Server
 
 ```bash
 npm run dev
 ```
 
-Visit `http://localhost:3000` in your browser.
+Visit `http://localhost:3000`.
+
+> The frontend runs fine without the Django backend. API calls will return 502 errors which are handled gracefully in dev mode.
 
 ---
 
@@ -52,447 +43,449 @@ Visit `http://localhost:3000` in your browser.
 
 ### Tech Stack
 
-| Layer                  | Technology              |
-| ---------------------- | ----------------------- |
-| **Frontend Framework** | Next.js 16 (App Router) |
-| **Language**           | TypeScript              |
-| **Styling**            | Tailwind CSS 4          |
-| **UI Library**         | Lucide React (icons)    |
-| **Animations**         | Framer Motion           |
-| **Form Validation**    | Zod                     |
-| **i18n**               | next-intl               |
-| **Testing**            | Playwright (E2E)        |
+| Layer                    | Technology                         |
+| ------------------------ | ---------------------------------- |
+| **Framework**            | Next.js 16 (App Router, Turbopack) |
+| **Language**             | TypeScript                         |
+| **State Management**     | Redux Toolkit + RTK Query          |
+| **Styling**              | Tailwind CSS 4                     |
+| **Animations**           | Framer Motion                      |
+| **Form Validation**      | Zod                                |
+| **Internationalization** | next-intl                          |
+| **Testing**              | Playwright (E2E)                   |
 
 ### Folder Structure
 
 ```
-app/                          # Next.js 13+ App Router
-├── [locale]/                 # Locale segment for i18n
-│   ├── (public)/            # Public pages
-│   ├── dashboard/           # Protected routes
-│   │   ├── billing/         # Billing & pricing
-│   │   ├── children/
-│   │   ├── programs/
-│   │   └── layout.tsx
-│   ├── login/
-│   ├── signup/
-│   └── layout.tsx           # Root layout with providers
+app/
+├── api/                           # Server-side API Proxy (BFF pattern)
+│   ├── auth/
+│   │   ├── login/route.ts         # POST - Login proxy (sets HttpOnly cookies)
+│   │   └── logout/route.ts        # POST - Logout proxy (clears cookies)
+│   └── [...path]/route.ts         # Catch-all reverse proxy to Django
+├── [locale]/                      # Locale-based pages (en, fr)
+│   ├── layout.tsx                 # Root layout (fonts, NextIntl, StoreProvider)
+│   ├── page.tsx                   # Landing page
+│   ├── login/page.tsx
+│   ├── signup/page.tsx
+│   ├── privacy/page.tsx
+│   └── dashboard/                 # Protected routes (auth required)
+│       ├── layout.tsx             # Dashboard layout with Sidebar
+│       ├── page.tsx               # Main dashboard
+│       ├── billing/page.tsx
+│       ├── children/page.tsx
+│       ├── videos/page.tsx
+│       ├── live/page.tsx
+│       ├── programs/page.tsx
+│       ├── settings/page.tsx
+│       └── achievements/page.tsx
+└── StoreProvider.tsx              # Redux Provider (client component)
 
 components/
-├── auth/                      # Auth flows (Login, Signup)
-├── dashboard/                 # Dashboard components
-├── sections/                  # Landing page sections
-├── layout/                    # Global layout (Navbar, Footer)
-└── ui/                        # Reusable UI components
-    ├── motion/               # Animated components
-    ├── Doodles.tsx
-    ├── FloatingElements.tsx
-    └── ...
+├── auth/
+│   ├── Login.tsx                  # Login form (uses useLoginMutation)
+│   ├── loginValidation.ts         # Zod schema for login
+│   └── signup/                    # Multi-step signup flow
+│       ├── Signup.tsx             # Step orchestrator
+│       ├── SignupContext.tsx       # Shared state across steps
+│       ├── Step1Account.tsx       # Account details
+│       ├── Step2Plans.tsx         # Plan selection
+│       ├── Step3Billing.tsx       # Billing cycle
+│       ├── Step4Review.tsx        # Order review
+│       ├── Step5Payment.tsx       # Payment (Card / Mobile Money)
+│       ├── Step6Processing.tsx    # API call (useRegisterMutation)
+│       ├── Step7Success.tsx       # Success confirmation
+│       ├── Step8ChildSetup.tsx    # Add child profiles
+│       ├── types.ts
+│       ├── validation.ts
+│       └── constants.ts           # Mobile money providers config
+├── dashboard/                     # Dashboard components
+│   ├── Sidebar.tsx                # Navigation (uses useLogoutMutation)
+│   ├── LogoutModal.tsx
+│   ├── StatsCard.tsx
+│   ├── ChildrenList.tsx
+│   ├── videos/
+│   ├── live/
+│   ├── billing/
+│   ├── children/
+│   ├── settings/
+│   ├── programs/
+│   └── achievements/
+├── sections/                      # Landing page sections
+├── layout/                        # Navbar, Footer
+└── ui/                            # Reusable UI components
+    └── motion/                    # FadeIn, Stagger, JellyButton, TiltEffect
 
 lib/
-└── api/                       # API client
-    ├── client.ts             # Fetch wrapper
-    ├── endpoints.ts          # API routes
-    ├── auth.ts               # Auth service
-    └── types.ts              # API types
+├── api/
+│   ├── client.ts                  # Base fetch wrapper (points to /api proxy)
+│   ├── endpoints.ts               # Endpoint URL constants
+│   ├── auth.ts                    # Legacy auth service (kept for reference)
+│   └── types.ts                   # API interfaces (User, AuthResponse, etc.)
+├── data/                          # Mock/static data
+│   ├── programs.ts
+│   ├── videos.ts
+│   ├── achievements.ts
+│   └── liveSessions.ts
+└── store/                         # Redux store
+    ├── store.ts                   # Store configuration (configureStore)
+    ├── hooks.ts                   # Typed hooks (useAppDispatch, useAppSelector)
+    └── services/                  # RTK Query API slices
+        ├── api.ts                 # Base API (createApi + fetchBaseQuery)
+        └── authApi.ts             # Auth endpoints (login, register, logout, etc.)
 
-messages/
-├── en.json                    # English translations
-└── fr.json                    # French translations
+messages/                          # i18n translations
+├── en.json
+└── fr.json
 
-tests/
-└── e2e/                       # Playwright tests
-
-public/                        # Static assets
-├── images/
-├── vectors/
-└── avatars/
+middleware.ts                      # Auth guard + next-intl routing
 ```
+
+---
+
+## 🔐 Authentication & Security
+
+### How Auth Works (BFF Proxy Pattern)
+
+```
+1. User submits login form
+     ↓
+2. Frontend calls POST /api/auth/login  (Next.js Route Handler)
+     ↓
+3. Route Handler forwards to Django POST /auth/login/
+     ↓
+4. Django returns { access_token, refresh_token }
+     ↓
+5. Route Handler sets HttpOnly cookies:
+   - auth_token    (maxAge: 1 day)
+   - refresh_token (maxAge: 7 days)
+     ↓
+6. All subsequent /api/* calls go through catch-all proxy
+   which reads the cookie and adds Authorization header
+     ↓
+7. Tokens NEVER reach browser JavaScript → XSS-immune
+```
+
+### Middleware Auth Guard
+
+The `middleware.ts` file runs on every request:
+
+- If the route matches `/dashboard/**` and no `auth_token` cookie exists → redirect to `/login`
+- Otherwise → pass through to next-intl routing
+
+### Security Headers (next.config.js)
+
+| Header                      | Value                                          |
+| --------------------------- | ---------------------------------------------- |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
+| `X-Frame-Options`           | `SAMEORIGIN`                                   |
+| `X-Content-Type-Options`    | `nosniff`                                      |
+| `Referrer-Policy`           | `origin-when-cross-origin`                     |
+| `Permissions-Policy`        | `camera=(), microphone=(), geolocation=()`     |
+| `Content-Security-Policy`   | Restricts script/style/img/font sources        |
+
+---
+
+## 🗂️ Redux Toolkit & RTK Query
+
+### Overview
+
+We use **RTK Query** as our data-fetching and caching solution. It replaces manual `fetch` calls with declarative hooks.
+
+### Store Setup (`lib/store/store.ts`)
+
+```tsx
+import { configureStore } from "@reduxjs/toolkit";
+import { baseApi } from "./services/api";
+
+export const makeStore = () =>
+  configureStore({
+    reducer: {
+      [baseApi.reducerPath]: baseApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(baseApi.middleware),
+  });
+```
+
+The store is wrapped in `StoreProvider.tsx` and injected in `app/[locale]/layout.tsx`.
+
+### Base API (`lib/store/services/api.ts`)
+
+```tsx
+export const baseApi = createApi({
+  reducerPath: "api",
+  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  tagTypes: ["User"],
+  endpoints: () => ({}), // Injected by feature files
+});
+```
+
+### Using Hooks in Components
+
+```tsx
+import {
+  useLoginMutation,
+  useGetCurrentUserQuery,
+} from "@/lib/store/services/authApi";
+
+// Mutation (POST/PUT/DELETE)
+const [login, { isLoading, error }] = useLoginMutation();
+await login({ email, password }).unwrap();
+
+// Query (GET) — auto-fetches on mount, caches, refetches on invalidation
+const { data: user, isLoading } = useGetCurrentUserQuery();
+```
+
+### Available Auth Hooks
+
+| Hook                     | Type     | Endpoint                |
+| ------------------------ | -------- | ----------------------- |
+| `useLoginMutation`       | Mutation | `POST /auth/login/`     |
+| `useRegisterMutation`    | Mutation | `POST /auth/register/`  |
+| `useLogoutMutation`      | Mutation | `POST /auth/logout/`    |
+| `useGetCurrentUserQuery` | Query    | `GET /auth/users/me/`   |
+| `useAddChildMutation`    | Mutation | `POST /users/children/` |
+
+### Adding a New API Slice (for Backend Team)
+
+```tsx
+// lib/store/services/contentApi.ts
+import { baseApi } from "./api";
+
+export const contentApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getCourses: builder.query<Course[], void>({
+      query: () => "/content/courses/",
+      providesTags: ["Courses"],
+    }),
+    getCourseById: builder.query<Course, string>({
+      query: (id) => `/content/courses/${id}/`,
+      providesTags: (_result, _err, id) => [{ type: "Courses", id }],
+    }),
+  }),
+});
+
+export const { useGetCoursesQuery, useGetCourseByIdQuery } = contentApi;
+```
+
+Then add `"Courses"` to `tagTypes` in `api.ts`.
+
+---
+
+## 🔗 Backend API Endpoints
+
+All API calls go through the Next.js proxy at `/api/*`. The proxy forwards to the Django backend.
+
+### Auth
+
+| Method | Endpoint               | Description              |
+| ------ | ---------------------- | ------------------------ |
+| `POST` | `/auth/login/`         | Login, returns tokens    |
+| `POST` | `/auth/register/`      | Register new user        |
+| `POST` | `/auth/logout/`        | Invalidate session       |
+| `POST` | `/auth/token/refresh/` | Refresh access token     |
+| `GET`  | `/auth/users/me/`      | Get current user profile |
+
+### Users
+
+| Method     | Endpoint                 | Description         |
+| ---------- | ------------------------ | ------------------- |
+| `GET`      | `/users/profile/`        | Get user profile    |
+| `PUT`      | `/users/profile/update/` | Update profile      |
+| `GET/POST` | `/users/children/`       | List / add children |
+
+### Subscription
+
+| Method | Endpoint                                 | Description                 |
+| ------ | ---------------------------------------- | --------------------------- |
+| `GET`  | `/subscription/plans/`                   | List available plans        |
+| `POST` | `/subscription/create-checkout-session/` | Start checkout              |
+| `GET`  | `/subscription/status/`                  | Current subscription status |
+
+### Content
+
+| Method | Endpoint                         | Description              |
+| ------ | -------------------------------- | ------------------------ |
+| `GET`  | `/content/courses/`              | List all courses         |
+| `GET`  | `/content/courses/{id}/lessons/` | Lessons for a course     |
+| `GET`  | `/content/progress/`             | User's learning progress |
+
+> **Important for Backend Team**: Django must end all URL patterns with a trailing slash `/`. The proxy preserves trailing slashes when forwarding.
 
 ---
 
 ## 🌐 Internationalization (i18n)
 
-### Adding New Translations
+### Adding Translations
 
-1. **Edit translation files** in `/messages`:
-   - `en.json` for English
-   - `fr.json` for French
-
-2. **Structure**: Namespace-based organization
+1. Edit `messages/en.json` and `messages/fr.json`
+2. Use namespace-based keys:
 
 ```json
 {
-  "ComponentName": {
-    "title": "Display text",
+  "MyComponent": {
+    "title": "Hello",
     "errors": {
-      "field": "Error message"
+      "required": "This field is required"
     }
   }
 }
 ```
 
-3. **Use in components**:
+3. Use in components:
 
 ```tsx
 import { useTranslations } from "next-intl";
 
 export function MyComponent() {
-  const t = useTranslations("ComponentName");
-
+  const t = useTranslations("MyComponent");
   return <h1>{t("title")}</h1>;
 }
 ```
 
-### Routing with Locale
+### Locale-aware Navigation
 
 ```tsx
-// Automatic locale routing
-import Link from "@/navigation";
+import { Link } from "@/navigation";
 
-export function MyLink() {
-  return <Link href="/dashboard">Go to Dashboard</Link>;
-  // Renders: /<current-locale>/dashboard
-}
+// Automatically prepends the current locale
+<Link href="/dashboard">Dashboard</Link>;
+// Renders: /en/dashboard or /fr/dashboard
 ```
-
----
-
-## 🔐 Authentication Flow
-
-### Login
-
-**File**: `components/auth/Login.tsx`
-
-```
-User enters email/password
-    ↓
-Validation (Zod schema)
-    ↓
-API call to POST /auth/login/ (or bypass)
-    ↓
-Store tokens (accessToken, refreshToken) in localStorage
-    ↓
-Redirect to dashboard
-```
-
-**Environment Variables**:
-
-- `NEXT_PUBLIC_BYPASS_LOGIN=true` - Skip API, redirect directly
-- `NEXT_PUBLIC_FORCE_LOGIN_REDIRECT=true` - Redirect even if API fails
-
-### Signup (Multi-Step)
-
-**File**: `components/auth/signup/`
-
-**Flow**:
-
-1. Step 1: Account details (firstname, lastname, email, country, password)
-2. Step 2: Plan selection (Solo, Family, Family Plus)
-3. Step 3: Billing cycle (Monthly or Quarterly)
-4. Step 4: Order review
-5. Step 5: Payment (Card or Mobile Money)
-6. Step 6: Payment processing
-7. Step 7: Success confirmation
-8. Step 8: Add child profile(s)
-9. Step 9: Summary
-
-**State Management**: `SignupContext.tsx` provides shared state across steps.
 
 ---
 
 ## 💅 Styling Guide
 
-### Tailwind CSS Configuration
+### Theme Colors
 
-**Theme Colors** (from design):
+| Name             | Hex       | Usage                   |
+| ---------------- | --------- | ----------------------- |
+| Primary (Purple) | `#7F26D9` | Buttons, links, accents |
+| Secondary (Pink) | `#F25A73` | Highlights, badges      |
+| Dark             | `#1F1235` | Text, sidebar bg        |
+| Cream            | `#F5F2FF` | Page backgrounds        |
 
-- Primary: `#7F26D9` (purple)
-- Secondary: `#F25A73` (pink/red)
-- Dark: `#1F1235` (navy)
-- Light: `#F5F2FF` (light purple)
-
-### Common Utilities
+### Common Patterns
 
 ```tsx
-// Rounded corners
-rounded-xl       // 12px
-rounded-2xl      // 16px
-rounded-3xl      // 24px
-rounded-full     // 9999px
+// Rounded pill buttons
+className = "px-6 py-3 rounded-full bg-brand-dark text-white font-bold";
 
-// Shadows
-shadow-sm        // Subtle shadow
-shadow-lg        // Large shadow
+// Card
+className = "bg-white rounded-3xl shadow-xl p-8";
 
-// Gradients
-bg-gradient-to-br from-[#7F26D9] to-[#F46AA3]
-
-// Responsive
-lg:flex           // Desktop flex
-md:p-8            // Tablet+ padding
+// Gradient background
+className = "bg-gradient-to-br from-[#7F26D9] to-[#F46AA3]";
 ```
 
 ### Typography
 
-Using custom `font-display` for headings:
-
 ```tsx
-<h1 className="font-display font-bold text-4xl">My Heading</h1>
+// Heading (Fredoka font)
+<h1 className="font-display font-bold text-4xl">Heading</h1>
+
+// Body (Montserrat font)
+<p className="font-sans text-base">Body text</p>
 ```
 
 ---
 
 ## 🎬 Animation Components
 
-### FadeIn Animation
+### FadeIn
 
 ```tsx
 import { FadeIn } from "@/components/ui/motion/FadeIn";
 
-export function MySection() {
-  return (
-    <FadeIn direction="up" delay={0.2}>
-      <h2>Animated Content</h2>
-    </FadeIn>
-  );
-}
+<FadeIn direction="up" delay={0.2}>
+  <h2>Animated Content</h2>
+</FadeIn>;
 ```
 
-**Props**:
-
-- `direction`: "up" | "down" | "left" | "right"
-- `delay`: Number (seconds)
-
-### Stagger Container
+### Stagger
 
 ```tsx
 import { StaggerContainer, StaggerItem } from "@/components/ui/motion/Stagger";
 
-export function MyList() {
-  return (
-    <StaggerContainer>
-      {items.map((item, i) => (
-        <StaggerItem key={i}>
-          <div>{item}</div>
-        </StaggerItem>
-      ))}
-    </StaggerContainer>
-  );
-}
+<StaggerContainer>
+  {items.map((item, i) => (
+    <StaggerItem key={i}>
+      <Card {...item} />
+    </StaggerItem>
+  ))}
+</StaggerContainer>;
 ```
-
----
-
-## 🔗 API Integration
-
-### Making Requests
-
-**File**: `lib/api/client.ts`
-
-```tsx
-import { apiClient } from "@/lib/api/client";
-import { ENDPOINTS } from "@/lib/api/endpoints";
-
-// GET request
-const data = await apiClient.get<MyType>(ENDPOINTS.USERS.PROFILE);
-
-// POST request
-const response = await apiClient.post<MyType>(ENDPOINTS.AUTH.LOGIN, {
-  email,
-  password,
-});
-
-// With authentication token
-const data = await apiClient.get<MyType>(ENDPOINTS.USERS.PROFILE, token);
-```
-
-### Error Handling
-
-```tsx
-import { ApiError } from "@/lib/api/client";
-
-try {
-  const response = await authService.login({ email, password });
-} catch (err) {
-  if (err instanceof ApiError) {
-    console.error("API Error:", err.message, err.status);
-  }
-}
-```
-
-### Available Endpoints
-
-See `lib/api/endpoints.ts` for complete list. Key endpoints:
-
-- `POST /auth/login/`
-- `POST /auth/register/`
-- `GET /subscription/plans/`
-- `GET /content/courses/`
 
 ---
 
 ## 🧪 Testing
 
-### Running E2E Tests
+### E2E Tests (Playwright)
 
 ```bash
-# Run all tests
-npm run test:e2e
-
-# Watch mode with UI
-npm run test:e2e:ui
-
-# View report
-npm run test:e2e:report
+npm run test:e2e          # Run all tests headless
+npm run test:e2e:ui       # Interactive Playwright UI
+npm run test:e2e:report   # View HTML report
 ```
 
 ### Writing Tests
 
-**File**: `tests/e2e/my-flow.spec.ts`
-
 ```typescript
+// tests/e2e/my-flow.spec.ts
 import { test, expect } from "@playwright/test";
 
-test("User can sign up", async ({ page }) => {
-  await page.goto("http://localhost:3000/en/signup");
-
+test("User can log in", async ({ page }) => {
+  await page.goto("http://localhost:3000/en/login");
   await page.fill('input[type="email"]', "test@example.com");
-  await page.fill('input[type="password"]', "Password123");
-
-  await page.click('button:has-text("Next Step")');
-
-  await expect(page).toHaveURL(/.*step2/);
+  await page.fill('input[type="password"]', "Password123!");
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL(/.*dashboard/);
 });
 ```
 
 ---
 
-## 📦 Adding Dependencies
-
-```bash
-# Install new package
-npm install package-name
-
-# Install dev dependency
-npm install --save-dev package-name
-
-# Check for vulnerabilities
-npm audit
-```
-
----
-
-## 🔨 Common Development Tasks
-
-### Create New Page
-
-1. **Create directory** under `app/[locale]/`:
-
-   ```
-   app/[locale]/my-page/
-   ```
-
-2. **Add `page.tsx`**:
-
-   ```tsx
-   export default function MyPage() {
-     return <div>My Page</div>;
-   }
-   ```
-
-3. **Access at**: `http://localhost:3000/[locale]/my-page`
-
-### Create New Component
-
-1. **Create file** in `components/`:
-
-   ```tsx
-   // components/MyComponent.tsx
-   export function MyComponent() {
-     return <div>Component</div>;
-   }
-   ```
-
-2. **Import and use**:
-   ```tsx
-   import { MyComponent } from "@/components/MyComponent";
-   ```
-
-### Add New Translation
-
-1. **Edit** `messages/en.json` and `messages/fr.json`
-2. **Add key**: `"MyNamespace": { "myKey": "value" }`
-3. **Use in component**:
-   ```tsx
-   const t = useTranslations("MyNamespace");
-   t("myKey");
-   ```
-
----
-
-## 🐛 Debugging
-
-### Enable Debug Logs
-
-```tsx
-// In environment or component
-console.log("Debug:", variable);
-```
-
-### Browser DevTools
-
-- F12 to open Developer Tools
-- **Console**: Check for errors
-- **Network**: Monitor API calls
-- **Application**: View localStorage tokens
-
-### Next.js Debug Mode
-
-```bash
-NODE_OPTIONS='--inspect' npm run dev
-```
-
----
-
-## 📋 Code Style Guidelines
+## 📋 Code Conventions
 
 ### Component Structure
 
 ```tsx
-"use client"; // For client components
+"use client"; // 1. Directive (if client component)
 
-import { useState } from "react";
-import { SomeIcon } from "lucide-react";
+import { useState } from "react"; // 2. React imports
+import { SomeIcon } from "lucide-react"; // 3. Library imports
 import { useTranslations } from "next-intl";
+import { MyHook } from "@/lib/..."; // 4. Internal imports
 
-interface ComponentProps {
+interface Props {
+  // 5. Types
   title: string;
-  onClick?: () => void;
 }
 
-/**
- * Brief description of what the component does
- */
-export function MyComponent({ title, onClick }: ComponentProps) {
-  const t = useTranslations("ComponentNamespace");
+export function MyComponent({ title }: Props) {
+  // 6. Component
+  const t = useTranslations("Namespace");
   const [state, setState] = useState(false);
 
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">{title}</h1>
-      <button onClick={onClick}>{t("action")}</button>
     </div>
   );
 }
 ```
 
-### Naming Conventions
+### Naming
 
-- **Files**: `PascalCase.tsx` for components, `camelCase.ts` for utilities
-- **Variables**: `camelCase`
-- **Constants**: `UPPER_SNAKE_CASE`
-- **Classes/Types**: `PascalCase`
+| Type       | Convention              | Example            |
+| ---------- | ----------------------- | ------------------ |
+| Components | PascalCase `.tsx`       | `VideoCard.tsx`    |
+| Utilities  | camelCase `.ts`         | `validation.ts`    |
+| Constants  | UPPER_SNAKE_CASE        | `MOCK_PROGRAMS`    |
+| Hooks      | camelCase, `use` prefix | `useLoginMutation` |
+| Interfaces | PascalCase              | `UserProfile`      |
 
 ---
 
@@ -507,32 +500,55 @@ npm start
 
 ### Environment Variables (Production)
 
-Update `.env.production` with production values:
-
 ```env
 NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api
+NODE_ENV=production
 ```
+
+In production:
+
+- Cookies are set with `secure: true` (HTTPS only)
+- Demo fallbacks are disabled
+- Security headers are enforced
 
 ---
 
-## 📚 Useful Resources
+## 🐛 Debugging
 
-- [Next.js Documentation](https://nextjs.org/docs)
+### Server-Side Logs
+
+The proxy logs backend errors to the terminal where `npm run dev` runs:
+
+- `[Proxy] Backend Error 500 at <url>: <response body>`
+- `[Proxy] Critical Error: <error details>`
+
+### Browser DevTools
+
+- **Console**: Check for RTK Query errors, component warnings
+- **Network**: Monitor `/api/*` calls, inspect request/response payloads
+- **Application > Cookies**: Verify `auth_token` and `refresh_token` presence
+
+### Redux DevTools
+
+Install the [Redux DevTools browser extension](https://chrome.google.com/webstore/detail/redux-devtools) to:
+
+- Inspect RTK Query cache
+- Monitor dispatched actions
+- Time-travel through state changes
+
+---
+
+## 📚 Resources
+
+- [Next.js Docs](https://nextjs.org/docs)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
+- [RTK Query](https://redux-toolkit.js.org/rtk-query/overview)
 - [Tailwind CSS](https://tailwindcss.com)
 - [next-intl](https://next-intl-docs.vercel.app/)
 - [Framer Motion](https://www.framer.com/motion/)
-- [Zod Validation](https://zod.dev/)
-- [Playwright Testing](https://playwright.dev/)
+- [Zod](https://zod.dev/)
+- [Playwright](https://playwright.dev/)
 
 ---
 
-## 💬 Getting Help
-
-1. Check existing component examples
-2. Review translation files for available keys
-3. Check test files for usage examples
-4. Refer to component documentation in JSDoc comments
-
----
-
-**Last Updated**: February 2, 2026
+**Last Updated**: February 8, 2026
