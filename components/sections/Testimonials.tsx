@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn } from "../ui/motion/FadeIn";
@@ -21,7 +21,7 @@ const TestimonialCard = ({
   quote: string;
   name: string;
   role: string;
-  imageSrc: string;
+  imageSrc: string | StaticImageData;
 }) => (
   <TiltEffect className="h-full">
     <motion.div
