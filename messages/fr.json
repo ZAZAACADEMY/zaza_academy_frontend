@@ -153,6 +153,7 @@
     "cta": "Choisir ce plan",
     "plans": [
       {
+        "planId": "Solo",
         "title": "Standard",
         "description": "Parfait pour démarrer l'éducation financière en famille.",
         "price": "199 $",
@@ -166,6 +167,7 @@
         "icon": "sparkles"
       },
       {
+        "planId": "Family",
         "title": "Plan Premium",
         "description": "Le meilleur rapport valeur/progression.",
         "price": "249,99 $",
@@ -180,6 +182,7 @@
         "mostPopular": true
       },
       {
+        "planId": "Family Plus",
         "title": "Pack Famille",
         "description": "Idéal pour plusieurs enfants qui apprennent ensemble.",
         "price": "499,99 $",

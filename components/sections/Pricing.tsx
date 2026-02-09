@@ -9,8 +9,11 @@ import { SparkleDoodle, ArrowDoodle } from "../ui/Doodles";
 import { FloatingElements } from "../ui/FloatingElements";
 import { TiltEffect } from "../ui/motion/TiltEffect";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/navigation";
+import { useLocale } from "next-intl";
 
 const PricingCard = ({
+  planId,
   title,
   description,
   price,
@@ -23,7 +26,9 @@ const PricingCard = ({
   subLabel,
   installmentNote,
   ctaLabel,
+  onSelect,
 }: {
+  planId: string;
   title: string;
   description: string;
   price: string;
@@ -36,6 +41,7 @@ const PricingCard = ({
   subLabel: string;
   installmentNote: string;
   ctaLabel: string;
+  onSelect: () => void;
 }) => (
   <TiltEffect className="h-full">
     <motion.div
@@ -146,6 +152,7 @@ const PricingCard = ({
       {/* Button */}
       <motion.button
         whileTap={{ scale: 0.95 }}
+        onClick={onSelect}
         className={`
       w-full py-4 rounded-[50px] font-bold text-[16px] transition-all duration-300 lg:hover:scale-[1.02] active:scale-[0.98]
       ${
@@ -163,7 +170,10 @@ const PricingCard = ({
 
 export const Pricing = () => {
   const t = useTranslations("Pricing");
+  const router = useRouter();
+  const locale = useLocale();
   type PlanMessage = {
+    planId: string;
     title: string;
     description: string;
     price: string;
@@ -236,6 +246,12 @@ export const Pricing = () => {
                 subLabel={t("quarterly")}
                 installmentNote={t("installmentNote")}
                 ctaLabel={t("cta")}
+                onSelect={() =>
+                  router.push(
+                    `/signup?plan=${encodeURIComponent(plan.planId)}`,
+                    { locale },
+                  )
+                }
               />
             </StaggerItem>
           ))}

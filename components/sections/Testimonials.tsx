@@ -9,6 +9,8 @@ import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
 import { SparkleDoodle } from "../ui/Doodles";
 import { TiltEffect } from "../ui/motion/TiltEffect";
 import { useTranslations } from "next-intl";
+import Profil1 from "../../public/images/amina.jpg";
+import Profil3 from "../../public/images/profil2.jpg";
 
 const TestimonialCard = ({
   quote,
@@ -66,9 +68,9 @@ export const Testimonials = () => {
   };
 
   const fallbackImages = [
-    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=150&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YWZyaWNhbiUyMHdvbWFufGVufDB8fDB8fA%3D%3D",
+    Profil1,
     "https://images.unsplash.com/photo-1589156191108-c762ff4b96ab?auto=format&fit=crop&q=80&w=150&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8YWZyaWNhbiUyMG1hbnxlbnwwfHwwfHw%3D",
-    "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&q=80&w=150&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWZyaWNhbiUyMG1hbGV8ZW58MHx8MHx8",
+    Profil3,
   ];
 
   const testimonials = (t.raw("items") as TestimonialMessage[]).map(
@@ -84,9 +86,7 @@ export const Testimonials = () => {
         <div className="text-center mb-[60px]">
           <FadeIn direction="up">
             <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-[16px] tracking-tight relative inline-block">
-              <SparkleDoodle
-                className="w-8 h-8 text-[#F472B6] -top-6 -left-6"
-              />
+              <SparkleDoodle className="w-8 h-8 text-[#F472B6] -top-6 -left-6" />
               {t.rich("title", {
                 accent: (chunks) => (
                   <span

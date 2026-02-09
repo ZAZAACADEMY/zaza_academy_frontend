@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { Child, PaymentFrequency, PaymentGateway } from "./types";
 
 interface SignupContextType {
@@ -58,6 +59,13 @@ interface SignupContextType {
 const SignupContext = createContext<SignupContextType | undefined>(undefined);
 
 export const SignupProvider = ({ children }: { children: ReactNode }) => {
+  const searchParams = useSearchParams();
+  const planFromUrl = searchParams.get("plan");
+
+  // Valid plan IDs that match Step2Plans
+  const validPlans = ["Solo", "Family", "Family Plus"];
+  const hasValidPlan = planFromUrl ? validPlans.includes(planFromUrl) : false;
+
   const [step, setStep] = useState(1);
 
   const [firstName, setFirstName] = useState("");
@@ -67,7 +75,7 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [country, setCountry] = useState("");
 
-  const [selectedPlan, setSelectedPlan] = useState("Family");
+  const [selectedPlan, setSelectedPlan] = useState(hasValidPlan ? planFromUrl! : "Family");
   const [paymentFrequency, setPaymentFrequency] =
     useState<PaymentFrequency>("Quarterly");
   const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>("Card");

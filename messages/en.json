@@ -153,6 +153,7 @@
     "cta": "Start Quarterly Plan",
     "plans": [
       {
+        "planId": "Solo",
         "title": "Standard",
         "description": "Perfect for families getting started with financial education.",
         "price": "$199",
@@ -166,6 +167,7 @@
         "icon": "sparkles"
       },
       {
+        "planId": "Family",
         "title": "Premium Plan",
         "description": "Best value for deeper learning and progress tracking.",
         "price": "$249.99",
@@ -180,6 +182,7 @@
         "mostPopular": true
       },
       {
+        "planId": "Family Plus",
         "title": "Family Bundle",
         "description": "Ideal for families with multiple children learning together.",
         "price": "$499.99",

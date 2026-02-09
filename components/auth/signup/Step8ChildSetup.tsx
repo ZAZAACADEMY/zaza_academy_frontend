@@ -26,16 +26,16 @@ import {
 import { useSignup } from "./SignupContext";
 
 const avatars = [
-    Avatar1,
-    Avatar2,
-    Avatar3,
-    Avatar4,
-    Avatar5,
-    Avatar6,
-    Avatar7,
-    Avatar8,
-    Avatar9,
-    Avatar10,
+  Avatar1,
+  Avatar2,
+  Avatar3,
+  Avatar4,
+  Avatar5,
+  Avatar6,
+  Avatar7,
+  Avatar8,
+  Avatar9,
+  Avatar10,
 ];
 
 export const Step8ChildSetup = () => {
@@ -121,7 +121,12 @@ export const Step8ChildSetup = () => {
                     `}
                     aria-hidden
                   />
-                  <Image src={avatarSrc} alt="avatar" fill className="object-cover" />
+                  <Image
+                    src={avatarSrc}
+                    alt="avatar"
+                    fill
+                    className="object-cover"
+                  />
                   {isActive && (
                     <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-[#A655F7] text-white flex items-center justify-center shadow-md">
                       <Check size={14} strokeWidth={3} />

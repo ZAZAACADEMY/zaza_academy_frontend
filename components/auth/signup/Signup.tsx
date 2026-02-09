@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -142,8 +142,10 @@ const SignupContent = () => {
 
 export const Signup = () => {
   return (
-    <SignupProvider>
-      <SignupContent />
-    </SignupProvider>
+    <Suspense fallback={null}>
+      <SignupProvider>
+        <SignupContent />
+      </SignupProvider>
+    </Suspense>
   );
 };

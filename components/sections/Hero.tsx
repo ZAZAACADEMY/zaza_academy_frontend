@@ -9,8 +9,8 @@ import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
 import { JellyButton } from "../ui/motion/JellyButton";
 import { UnderlineDoodle, SparkleDoodle } from "../ui/Doodles";
 import { FloatingElements } from "../ui/FloatingElements";
-import HeroChild1 from "../../public/images/HeroChild1.png";
 import { useTranslations } from "next-intl";
+import HeroChild1 from "../../public/images/HeroChild1.png";
 import HeroChild2 from "../../public/images/HeroChild2.png";
 import HeroChild3 from "../../public/images/HeroChild3.png";
 import HeroChild4 from "../../public/images/HeroChild4.png";
@@ -344,7 +344,7 @@ export const Hero = () => {
         <FadeIn delay={0.5}>
           <div className="flex flex-col sm:flex-row items-center gap-[12px] mb-[40px]">
             <div className="flex -space-x-4">
-              {["image1.jpg", "image2.png", "image1.jpg"].map((fileName, i) => (
+              {["image1.jpg", "image2.png", "profil2.jpg"].map((fileName, i) => (
                 <div
                   key={i}
                   className="w-10 md:w-11 h-10 md:h-11 rounded-full border border-white bg-[#D9D9D9] overflow-hidden relative"
