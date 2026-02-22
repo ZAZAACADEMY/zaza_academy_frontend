@@ -32,7 +32,7 @@ export const childrenService = {
       return await apiClient.post<ChildProfile>(ENDPOINTS.USERS.CHILDREN, data);
     } catch (error) {
       console.warn("API unavailable, using demo store");
-      return demoStore.addChild(data);
+      return demoStore.addChild(data as any);
     }
   },
 

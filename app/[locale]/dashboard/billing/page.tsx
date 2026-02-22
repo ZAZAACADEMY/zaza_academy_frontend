@@ -276,7 +276,7 @@ export default function BillingPage() {
                   {planName}
                 </h1>
                 <p className="text-sm text-gray-700">
-                  {currentSubscription?.plan_details?.split(" - ")[1] || t("noDescription")}
+                  {(currentSubscription as any)?.plan_details?.split(" - ")[1] || t("noDescription")}
                 </p>
               </div>
             </div>

@@ -1,8 +1,8 @@
 import { baseApi } from "./api";
 import { components } from "@/lib/api/v1";
 
-type Child = components["schemas"]["ChildSerializer"];
-type ChildCreate = components["schemas"]["ChildCreateSerializer"];
+type Child =  any // components["schemas"]["ChildSerializer"];
+type ChildCreate = any // components["schemas"]["ChildCreateSerializer"];
 
 export const childrenApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

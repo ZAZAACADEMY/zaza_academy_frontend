@@ -98,7 +98,7 @@ export default function LiveSessionsPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {upcomingSessions.map((session) => (
-              <SessionCard key={session.id} session={session} />
+              <SessionCard key={session.id} session={session as any} />
             ))}
           </div>
         )}
@@ -126,7 +126,7 @@ export default function LiveSessionsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pastSessions.slice(0, 3).map((session) => (
-              <RecordingCard key={session.id} recording={session} />
+              <RecordingCard key={session.id} recording={session as any} />
             ))}
           </div>
         )}

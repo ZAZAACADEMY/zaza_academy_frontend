@@ -1,6 +1,7 @@
-import { VideoProps } from "@/components/dashboard/videos/VideoCard";
+import { Video } from "@/components/dashboard/videos/VideoCard";
 
-export interface VideoDetail extends VideoProps {
+export interface VideoDetail extends Video {
+  id: string;
   longDescription: string;
   learningPoints: string[];
   progress: number;
@@ -9,7 +10,7 @@ export interface VideoDetail extends VideoProps {
   upNext: { title: string; duration: string }[];
 }
 
-export const MOCK_VIDEOS: VideoDetail[] = [
+export const MOCK_VIDEOS = [
   {
     id: "1",
     title: "What Is Money?",

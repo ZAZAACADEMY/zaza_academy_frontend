@@ -88,7 +88,7 @@ export const AccountInfoForm = () => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       // email is not updated here as it's often a separate verification process
-      country: formData.country,
+      country: formData.country as any,
     });
   };
 

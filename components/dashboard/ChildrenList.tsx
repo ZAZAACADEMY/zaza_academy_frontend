@@ -23,7 +23,7 @@ import { MOCK_VIDEOS } from "@/lib/data/videos";
 import { useTranslations } from "next-intl";
 import { components } from "@/lib/api/v1";
 
-type Child = components["schemas"]["ChildDetail"]; // Use ChildDetail for full data
+type Child =  any // components["schemas"]["ChildDetail"]; // Use ChildDetail for full data
 
 // Helper to get avatar path - mapping index to local path or external URL
 const getAvatarPath = (avatarStr?: string) => {

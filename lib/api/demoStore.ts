@@ -14,7 +14,7 @@ const getStoredChildren = (): ChildProfile[] => {
     console.warn("Failed to read from localStorage", e);
   }
   // Default demo data
-  return [{ id: "1", name: "Demo Child", age: 10, avatar: "2" }];
+  return [{ id: "1", first_name: "Demo Child", age: 10, avatar: "2" }];
 };
 
 const setStoredChildren = (children: ChildProfile[]) => {

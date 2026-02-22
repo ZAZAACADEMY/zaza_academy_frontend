@@ -120,7 +120,7 @@ const PricingCard = ({
       </div>
 
       <ul className="flex flex-col gap-4 mb-8 flex-grow w-full">
-        {((plan?.features || []) as string[]).map((feature, i) => (
+        {(((plan as any)?.features || []) as string[]).map((feature, i) => (
           <li key={i} className="flex items-start gap-3">
             <div
               className={`

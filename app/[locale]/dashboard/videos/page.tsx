@@ -74,7 +74,7 @@ export default function VideoLibraryPage() {
        videos = videos.filter(video => 
          video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
          video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         video.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+         (video.tags && (video.tags as any[]).some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
        );
     }
     

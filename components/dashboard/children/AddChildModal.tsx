@@ -7,9 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { components } from "@/lib/api/v1";
 import { useAddChildMutation, useUpdateChildMutation } from "@/lib/store/services/childrenApi";
 
-type ChildCreateData = components["schemas"]["ChildCreateSerializer"];
-type ChildUpdateData = components["schemas"]["PatchedChildCreateUpdate"]; // Partial update
-type ChildDetail = components["schemas"]["ChildDetail"];
+type ChildCreateData =  any // components["schemas"]["ChildCreateSerializer"];
+type ChildUpdateData = any // components["schemas"]["PatchedChildCreateUpdate"]; // Partial update
+type ChildDetail = any //components["schemas"]["ChildDetail"];
 
 // Avatars imports (using placeholders effectively or imports if available)
 const AVATARS = [

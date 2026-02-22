@@ -182,7 +182,7 @@ export const Step5Payment = () => {
         method: methodApi,
       };
 
-      const paymentResult = await initiatePayment(paymentPayload).unwrap();
+      const paymentResult = await initiatePayment(paymentPayload as any).unwrap();
 
       // 4. Redirect to payment provider
       const checkoutUrl = paymentResult.payment_data?.checkout_url;

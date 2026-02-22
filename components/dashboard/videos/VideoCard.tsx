@@ -5,7 +5,7 @@ import { Clock, Play, Heart } from "lucide-react";
 import { useFavorites } from "@/components/dashboard/videos/FavoritesContext";
 import { components } from "@/lib/api/v1";
 
-type Video = components["schemas"]["VideoDetail"];
+export type Video = components["schemas"]["VideoDetail"];
 
 const getCategoryColor = (category: string | null | undefined) => {
   switch (category?.toLowerCase()) {
