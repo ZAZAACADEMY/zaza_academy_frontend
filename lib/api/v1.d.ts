@@ -4,6 +4,62 @@
  */
 
 export interface paths {
+    "/api/children": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all children
+         * @description Returns the list of all children registered by the authenticated parent. Results are ordered alphabetically by name.
+         */
+        get: operations["children_list"];
+        put?: never;
+        /**
+         * Create a child profile
+         * @description Creates a new child profile for the authenticated parent. The ``parent`` field is automatically set — do **not** include it in the request body.
+         */
+        post: operations["children_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/children/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieve a child
+         * @description Returns the full profile of a single child identified by its UUID.
+         */
+        get: operations["children_retrieve"];
+        /**
+         * Update a child profile (full)
+         * @description Fully replaces all fields of the child profile. All required fields must be provided.
+         */
+        put: operations["children_update"];
+        post?: never;
+        /**
+         * Delete a child profile
+         * @description Permanently deletes the child profile. This action cannot be undone.
+         */
+        delete: operations["children_destroy"];
+        options?: never;
+        head?: never;
+        /**
+         * Partially update a child profile
+         * @description Updates only the provided fields of the child profile. Omitted fields are left unchanged.
+         */
+        patch: operations["children_partial_update"];
+        trace?: never;
+    };
     "/api/lives": {
         parameters: {
             query?: never;
@@ -120,7 +176,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/payments/": {
+    "/api/payments": {
         parameters: {
             query?: never;
             header?: never;
@@ -140,7 +196,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/payments/{id}/": {
+    "/api/payments/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -160,7 +216,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/payments/initiate/": {
+    "/api/payments/initiate": {
         parameters: {
             query?: never;
             header?: never;
@@ -180,7 +236,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/payments/my_payments/": {
+    "/api/payments/my_payments": {
         parameters: {
             query?: never;
             header?: never;
@@ -200,7 +256,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/plans/": {
+    "/api/plans": {
         parameters: {
             query?: never;
             header?: never;
@@ -224,7 +280,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/plans/{id}/": {
+    "/api/plans/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -256,7 +312,7 @@ export interface paths {
         patch: operations["plans_partial_update"];
         trace?: never;
     };
-    "/api/plans/active_plans/": {
+    "/api/plans/active_plans": {
         parameters: {
             query?: never;
             header?: never;
@@ -298,7 +354,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/subscriptions/": {
+    "/api/subscriptions": {
         parameters: {
             query?: never;
             header?: never;
@@ -322,7 +378,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/subscriptions/{id}/": {
+    "/api/subscriptions/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -384,7 +440,7 @@ export interface paths {
         patch: operations["subscriptions_partial_update"];
         trace?: never;
     };
-    "/api/subscriptions/my_active_subscriptions/": {
+    "/api/subscriptions/my_active_subscriptions": {
         parameters: {
             query?: never;
             header?: never;
@@ -406,7 +462,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/subscriptions/my_subscriptions/": {
+    "/api/subscriptions/my_subscriptions": {
         parameters: {
             query?: never;
             header?: never;
@@ -826,9 +882,57 @@ export interface components {
          *     * `13-16` - 13-16 years
          * @enum {string}
          */
-        AgeGroupEnum: "ALL" | "5-8" | "9-12" | "13-16";
+        AgeGroupE93Enum: "ALL" | "5-8" | "9-12" | "13-16";
         /** @enum {unknown} */
         BlankEnum: "";
+        /**
+         * @description Serializer for the Child model.
+         *
+         *     Used for both listing and detail views of a child profile.
+         *     The ``parent`` field is automatically set from the authenticated user
+         *     and is not exposed in the response.
+         *
+         *     Fields:
+         *         - id (UUID, read-only): Unique identifier of the child.
+         *         - name (str): Nickname / display name of the child.
+         *         - age (int): Age of the child in years (1–17).
+         *         - age_group (str): Age group (choices from AgeGroup enum).
+         *         - avatar (URL, optional): URL to child avatar stored in a bucket.
+         */
+        Child: {
+            /**
+             * Unique ID
+             * Format: uuid
+             */
+            readonly id: string;
+            /**
+             * Nom
+             * @description Nickname / display name of the child.
+             */
+            name: string;
+            /** @description Age of the child in years (between 1 and 17). */
+            age: number;
+            /**
+             * @description Age group of the child (e.g., TODDLER, CHILD, TEEN).
+             *
+             *     * `5-8` - 5-8 years
+             *     * `9-12` - 9-12 years
+             *     * `13-16` - 13-16 years
+             */
+            age_group: components["schemas"]["ChildAgeGroupEnum"];
+            /**
+             * Format: uri
+             * @description URL to child avatar image stored in a bucket.
+             */
+            avatar?: string | null;
+        };
+        /**
+         * @description * `5-8` - 5-8 years
+         *     * `9-12` - 9-12 years
+         *     * `13-16` - 13-16 years
+         * @enum {string}
+         */
+        ChildAgeGroupEnum: "5-8" | "9-12" | "13-16";
         /**
          * @description * `AF` - Afghanistan
          *     * `AX` - Åland Islands
@@ -1090,7 +1194,6 @@ export interface components {
         DurationEnum: "1_MONTH" | "3_MONTHS";
         /** @description Serializer for creating and updating live sessions. */
         LiveCreateUpdate: {
-            /** Titre */
             title: string;
             description: string;
             /**
@@ -1106,7 +1209,7 @@ export interface components {
              * Format: uuid
              */
             created_by?: string | null;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             meeting_platform?: components["schemas"]["MeetingPlatformEnum"];
             /**
              * Meeting / streaming link
@@ -1116,7 +1219,6 @@ export interface components {
             meeting_link: string;
             /** @description Password/code if required by the platform */
             meeting_password?: string;
-            /** État */
             status?: components["schemas"]["Status0fdEnum"];
             /**
              * Maximum participants
@@ -1141,7 +1243,6 @@ export interface components {
              * Format: uuid
              */
             readonly id: string;
-            /** Titre */
             title: string;
             description: string;
             /**
@@ -1159,7 +1260,7 @@ export interface components {
              */
             created_by?: string | null;
             readonly created_by_name: string;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             meeting_platform?: components["schemas"]["MeetingPlatformEnum"];
             /**
              * Meeting / streaming link
@@ -1169,7 +1270,6 @@ export interface components {
             meeting_link: string;
             /** @description Password/code if required by the platform */
             meeting_password?: string;
-            /** État */
             status?: components["schemas"]["Status0fdEnum"];
             /**
              * Maximum participants
@@ -1188,15 +1288,9 @@ export interface components {
             recording_link?: string | null;
             readonly is_upcoming: string;
             readonly is_past: string;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
             /**
              * Format: date-time
@@ -1216,7 +1310,6 @@ export interface components {
              * Format: uuid
              */
             readonly id: string;
-            /** Titre */
             title: string;
             description: string;
             /**
@@ -1234,9 +1327,8 @@ export interface components {
              */
             created_by?: string | null;
             readonly created_by_name: string;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             meeting_platform?: components["schemas"]["MeetingPlatformEnum"];
-            /** État */
             status?: components["schemas"]["Status0fdEnum"];
             /**
              * Maximum participants
@@ -1250,15 +1342,9 @@ export interface components {
             is_recorded?: boolean;
             readonly is_upcoming: string;
             readonly is_past: string;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         /** @description Serializer for user login (step 1). */
@@ -1403,9 +1489,49 @@ export interface components {
             email: string;
             otp: string;
         };
+        /**
+         * @description Serializer for the Child model.
+         *
+         *     Used for both listing and detail views of a child profile.
+         *     The ``parent`` field is automatically set from the authenticated user
+         *     and is not exposed in the response.
+         *
+         *     Fields:
+         *         - id (UUID, read-only): Unique identifier of the child.
+         *         - name (str): Nickname / display name of the child.
+         *         - age (int): Age of the child in years (1–17).
+         *         - age_group (str): Age group (choices from AgeGroup enum).
+         *         - avatar (URL, optional): URL to child avatar stored in a bucket.
+         */
+        PatchedChild: {
+            /**
+             * Unique ID
+             * Format: uuid
+             */
+            readonly id?: string;
+            /**
+             * Nom
+             * @description Nickname / display name of the child.
+             */
+            name?: string;
+            /** @description Age of the child in years (between 1 and 17). */
+            age?: number;
+            /**
+             * @description Age group of the child (e.g., TODDLER, CHILD, TEEN).
+             *
+             *     * `5-8` - 5-8 years
+             *     * `9-12` - 9-12 years
+             *     * `13-16` - 13-16 years
+             */
+            age_group?: components["schemas"]["ChildAgeGroupEnum"];
+            /**
+             * Format: uri
+             * @description URL to child avatar image stored in a bucket.
+             */
+            avatar?: string | null;
+        };
         /** @description Serializer for creating and updating live sessions. */
         PatchedLiveCreateUpdate: {
-            /** Titre */
             title?: string;
             description?: string;
             /**
@@ -1421,7 +1547,7 @@ export interface components {
              * Format: uuid
              */
             created_by?: string | null;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             meeting_platform?: components["schemas"]["MeetingPlatformEnum"];
             /**
              * Meeting / streaming link
@@ -1431,7 +1557,6 @@ export interface components {
             meeting_link?: string;
             /** @description Password/code if required by the platform */
             meeting_password?: string;
-            /** État */
             status?: components["schemas"]["Status0fdEnum"];
             /**
              * Maximum participants
@@ -1465,8 +1590,7 @@ export interface components {
             /** @description List of features */
             features?: unknown;
             description?: string;
-            /** État */
-            status?: components["schemas"]["StatusE1dEnum"];
+            status?: components["schemas"]["StatusE3aEnum"];
         };
         /**
          * @description Serializer for detailed subscription view.
@@ -1492,7 +1616,6 @@ export interface components {
             plan?: string;
             readonly plan_details?: string;
             /**
-             * État
              * @description Current subscription status
              *
              *     * `ACTIVE` - Active
@@ -1513,24 +1636,17 @@ export interface components {
             readonly active_until?: string;
             readonly payments?: components["schemas"]["PaymentList"][];
             readonly author?: string | null;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created?: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified?: string;
         };
         /** @description Serializer for creating and updating videos. */
         PatchedVideoCreateUpdate: {
-            /** Titre */
             title?: string;
             description?: string;
             category?: string | null;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             /** @description List of tags as JSON array */
             tags?: unknown;
             provider?: components["schemas"]["ProviderEnum"];
@@ -1577,7 +1693,7 @@ export interface components {
             readonly duration_display: string;
             /**
              * Format: decimal
-             * @description The amount paid
+             * @description Amount of payment
              */
             amount: string;
             /**
@@ -1591,7 +1707,6 @@ export interface components {
             method: components["schemas"]["MethodEnum"];
             readonly method_display: string;
             /**
-             * État
              * @description Payment status (Pending, Successful, Failed, Cancelled)
              *
              *     * `PENDING` - Pending
@@ -1623,15 +1738,9 @@ export interface components {
              */
             coverage_end_date: string;
             readonly author: string | null;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         /**
@@ -1713,7 +1822,6 @@ export interface components {
             method: components["schemas"]["MethodEnum"];
             readonly method_display: string;
             /**
-             * État
              * @description Payment status (Pending, Successful, Failed, Cancelled)
              *
              *     * `PENDING` - Pending
@@ -1744,15 +1852,9 @@ export interface components {
              * @description When the paid period ends (1 month or 3 months from start)
              */
             coverage_end_date: string;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         /**
@@ -1771,8 +1873,7 @@ export interface components {
             /** @description List of features */
             features?: unknown;
             description?: string;
-            /** État */
-            status?: components["schemas"]["StatusE1dEnum"];
+            status?: components["schemas"]["StatusE3aEnum"];
         };
         /**
          * @description Serializer for detailed plan view.
@@ -1795,18 +1896,11 @@ export interface components {
             /** @description List of features */
             features?: unknown;
             description?: string;
-            /** État */
-            status?: components["schemas"]["StatusE1dEnum"];
+            status?: components["schemas"]["StatusE3aEnum"];
             readonly author: string | null;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         /**
@@ -1828,17 +1922,10 @@ export interface components {
             /** Format: decimal */
             readonly price_three_months: string;
             description?: string;
-            /** État */
-            status?: components["schemas"]["StatusE1dEnum"];
-            /**
-             * Créé
-             * Format: date-time
-             */
+            status?: components["schemas"]["StatusE3aEnum"];
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         /**
@@ -2146,29 +2233,6 @@ export interface components {
              */
             email: string;
         };
-        UserSerializer: {
-            /** Format: uuid */
-            id?: string;
-            first_name?: string | null;
-            last_name?: string | null;
-            email?: string;
-            phone_number?: string | null;
-            /** Format: date */
-            date_of_birth?: string | null;
-            country?: {
-                code?: string;
-                name?: string;
-            };
-            roles?: {
-                id?: string;
-                name?: string;
-                display_name?: string;
-            }[];
-            age_group?: string | null;
-            /** Format: date-time */
-            email_verified_at?: string | null;
-            is_active?: boolean;
-        };
         /**
          * @description * `SCHEDULED` - Scheduled
          *     * `LIVE` - Currently live
@@ -2194,11 +2258,11 @@ export interface components {
          */
         Status839Enum: "PENDING" | "PROCESSING" | "SUCCESSFUL" | "FAILED" | "CANCELLED" | "REFUNDED";
         /**
-         * @description * `0` - inactif
-         *     * `1` - Actif
+         * @description * `0` - Inactive
+         *     * `1` - Active
          * @enum {integer}
          */
-        StatusE1dEnum: 0 | 1;
+        StatusE3aEnum: 0 | 1;
         /**
          * @description Serializer for creating a new subscription (parent subscribing to a plan).
          *
@@ -2237,7 +2301,6 @@ export interface components {
             plan: string;
             readonly plan_details: string;
             /**
-             * État
              * @description Current subscription status
              *
              *     * `ACTIVE` - Active
@@ -2258,15 +2321,9 @@ export interface components {
             readonly active_until: string;
             readonly payments: components["schemas"]["PaymentList"][];
             readonly author: string | null;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         /**
@@ -2295,7 +2352,6 @@ export interface components {
             plan: string;
             readonly plan_name: string;
             /**
-             * État
              * @description Current subscription status
              *
              *     * `ACTIVE` - Active
@@ -2314,15 +2370,9 @@ export interface components {
              */
             end_date?: string | null;
             readonly active_until: string;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
         };
         TokenRefresh: {
@@ -2352,11 +2402,10 @@ export interface components {
         };
         /** @description Serializer for creating and updating videos. */
         VideoCreateUpdate: {
-            /** Titre */
             title: string;
             description: string;
             category?: string | null;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             /** @description List of tags as JSON array */
             tags?: unknown;
             provider?: components["schemas"]["ProviderEnum"];
@@ -2381,11 +2430,10 @@ export interface components {
              * Format: uuid
              */
             readonly id: string;
-            /** Titre */
             title: string;
             description: string;
             category?: string | null;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             /** @description List of tags as JSON array */
             tags?: unknown;
             provider?: components["schemas"]["ProviderEnum"];
@@ -2404,18 +2452,11 @@ export interface components {
             uploaded_by?: string | null;
             readonly uploaded_by_name: string;
             readonly embed_url: string;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
-            /** État */
-            status?: components["schemas"]["StatusE1dEnum"];
+            status?: components["schemas"]["StatusE3aEnum"];
             /**
              * Format: date-time
              * @description keep empty for an immediate activation
@@ -2434,11 +2475,10 @@ export interface components {
              * Format: uuid
              */
             readonly id: string;
-            /** Titre */
             title: string;
             description: string;
             category?: string | null;
-            age_group?: components["schemas"]["AgeGroupEnum"];
+            age_group?: components["schemas"]["AgeGroupE93Enum"];
             /** @description List of tags as JSON array */
             tags?: unknown;
             provider?: components["schemas"]["ProviderEnum"];
@@ -2457,16 +2497,16 @@ export interface components {
             uploaded_by?: string | null;
             readonly uploaded_by_name: string;
             readonly embed_url: string;
-            /**
-             * Créé
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly created: string;
-            /**
-             * Mise à jour
-             * Format: date-time
-             */
+            /** Format: date-time */
             readonly modified: string;
+        };
+        UserSerializer: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: email */
+            email?: string;
         };
     };
     responses: never;
@@ -2477,6 +2517,245 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    children_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of the parent's children. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Child"][];
+                };
+            };
+            /** @description Authentication credentials were not provided. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    children_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Child"];
+                "application/x-www-form-urlencoded": components["schemas"]["Child"];
+                "multipart/form-data": components["schemas"]["Child"];
+            };
+        };
+        responses: {
+            /** @description Child profile created successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Child"];
+                };
+            };
+            /** @description Validation error. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication credentials were not provided. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    children_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Child. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Child profile details. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Child"];
+                };
+            };
+            /** @description Authentication credentials were not provided. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Child not found or does not belong to the authenticated parent. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    children_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Child. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Child"];
+                "application/x-www-form-urlencoded": components["schemas"]["Child"];
+                "multipart/form-data": components["schemas"]["Child"];
+            };
+        };
+        responses: {
+            /** @description Child profile updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Child"];
+                };
+            };
+            /** @description Validation error. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication credentials were not provided. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Child not found or does not belong to the authenticated parent. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    children_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Child. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Child profile deleted successfully. No content returned. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication credentials were not provided. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Child not found or does not belong to the authenticated parent. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    children_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Child. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedChild"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChild"];
+                "multipart/form-data": components["schemas"]["PatchedChild"];
+            };
+        };
+        responses: {
+            /** @description Child profile partially updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Child"];
+                };
+            };
+            /** @description Validation error. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication credentials were not provided. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Child not found or does not belong to the authenticated parent. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     lives_list: {
         parameters: {
             query?: {
@@ -3795,7 +4074,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         message: string;
-                        user?: components["schemas"]["UserSerializer"];
+                        user: components["schemas"]["UserSerializer"];
                     };
                 };
             };

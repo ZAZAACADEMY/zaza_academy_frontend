@@ -36,6 +36,6 @@ coverage
 *.sln
 *.sw?
 
-avatars/
-images/
-vectors/
+# avatars/
+# images/
+# vectors/

@@ -68,7 +68,7 @@ export const Step1VerifyEmail = () => {
     setResendMessage(null);
     try {
       const response = await resendOtp({ email }).unwrap();
-      setResendMessage(response.message || t("otpResent"));
+      setResendMessage(response?.detail || (response as any)?.message || t("otpResent"));
     } catch (err: any) {
       setError(err.data?.detail || t("errorResendFailed"));
     }

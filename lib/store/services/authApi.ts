@@ -1,11 +1,12 @@
 import { baseApi } from "./api";
 import { tokenStore } from "@/lib/api/tokenStore";
-import {
-  AuthResponse,
-  LoginCredentials,
-  RegisterData,
-  UserProfile,
-} from "@/lib/api/types";
+import { components } from "@/lib/api/v1";
+
+export type UserProfile = components["schemas"]["UserSerializer"];
+export type AuthResponse = any // components["schemas"]["AuthResponse"];
+export type LoginCredentials = components["schemas"]["Login"];
+export type RegisterData = components["schemas"]["Register"];
+export type Country = any //  components["schemas"]["Country"];
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -17,7 +18,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User", "Me"],
     }),
-    register: builder.mutation<AuthResponse, RegisterData>({
+    register: builder.mutation<any, RegisterData>({
       query: (data) => ({
         url: "/api/v1/auth/register/",
         method: "POST",
@@ -25,7 +26,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-    verifyEmail: builder.mutation<{ message: string; user: UserProfile }, { email: string; otp: string }>({
+    verifyEmail: builder.mutation<{ message: string; user: UserProfile }, components["schemas"]["VerifyEmail"]>({
       query: (data) => ({
         url: "/api/v1/auth/verify-email/",
         method: "POST",
@@ -33,12 +34,36 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User", "Me"],
     }),
-    resendOtp: builder.mutation<{ message: string; email: string }, { email: string }>({
+    resendOtp: builder.mutation<{ detail: string }, components["schemas"]["ResendOtp"]>({
       query: (data) => ({
         url: "/api/v1/auth/resend-otp/",
         method: "POST",
         body: data,
       }),
+    }),
+    passwordResetRequest: builder.mutation<{ detail: string }, components["schemas"]["PasswordResetRequest"]>({
+      query: (data) => ({
+        url: "/api/v1/auth/password/reset/request/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    passwordResetVerifyOtp: builder.mutation<{ token: string; detail: string }, components["schemas"]["PasswordResetVerifyOTP"]>({
+      query: (data) => ({
+        url: "/api/v1/auth/password/reset/verify-otp/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    passwordResetConfirm: builder.mutation<{ detail: string }, components["schemas"]["PasswordResetConfirm"]>({
+      query: (data) => ({
+        url: "/api/v1/auth/password/reset/confirm/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getCountries: builder.query<Country[], void>({
+      query: () => "/api/v1/country/",
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
@@ -61,7 +86,7 @@ export const authApi = baseApi.injectEndpoints({
       query: () => "/api/v1/users/me/",
       providesTags: ["Me"],
     }),
-    verify2FA: builder.mutation<AuthResponse, { token: string; otp: string }>({
+    verify2FA: builder.mutation<AuthResponse, components["schemas"]["Verify2FA"]>({
       query: (data) => ({
         url: "/api/v1/auth/verify-2fa/",
         method: "POST",
@@ -69,7 +94,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User", "Me"],
     }),
-    resend2FACode: builder.mutation<{ message: string }, { token: string }>({
+    resend2FACode: builder.mutation<{ detail: string }, components["schemas"]["Resend2FACode"]>({
       query: (data) => ({
         url: "/api/v1/auth/resend-2fa-code/",
         method: "POST",
@@ -84,6 +109,10 @@ export const {
   useRegisterMutation,
   useVerifyEmailMutation,
   useResendOtpMutation,
+  usePasswordResetRequestMutation,
+  usePasswordResetVerifyOtpMutation,
+  usePasswordResetConfirmMutation,
+  useGetCountriesQuery,
   useVerify2FAMutation,
   useResend2FACodeMutation,
   useLogoutMutation,

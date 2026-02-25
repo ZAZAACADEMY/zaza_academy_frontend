@@ -6,6 +6,370 @@
     "description": "Documentation of API endpoints of Zaza Academy"
   },
   "paths": {
+    "/api/children": {
+      "get": {
+        "operationId": "children_list",
+        "description": "Returns the list of all children registered by the authenticated parent. Results are ordered alphabetically by name.",
+        "summary": "List all children",
+        "tags": [
+          "Children"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "jwtAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Child"
+                  }
+                },
+                "examples": {
+                  "ExampleList": {
+                    "value": [
+                      [
+                        {
+                          "id": "123e4567-e89b-12d3-a456-426614174000",
+                          "name": "Alice",
+                          "age": 7,
+                          "age_group": "CHILD",
+                          "avatar": "https://example.com/media/avatars/alice.jpg"
+                        },
+                        {
+                          "id": "223e4567-e89b-12d3-a456-426614174001",
+                          "name": "Bob",
+                          "age": 4,
+                          "age_group": "TODDLER",
+                          "avatar": null
+                        }
+                      ]
+                    ],
+                    "summary": "Example list"
+                  }
+                }
+              }
+            },
+            "description": "List of the parent's children."
+          },
+          "401": {
+            "description": "Authentication credentials were not provided."
+          }
+        }
+      },
+      "post": {
+        "operationId": "children_create",
+        "description": "Creates a new child profile for the authenticated parent. The ``parent`` field is automatically set — do **not** include it in the request body.",
+        "summary": "Create a child profile",
+        "tags": [
+          "Children"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Child"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Child"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Child"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "jwtAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Child"
+                },
+                "examples": {
+                  "Created": {
+                    "value": {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "name": "Alice",
+                      "age": 7,
+                      "age_group": "CHILD",
+                      "avatar": null
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Child profile created successfully."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "Authentication credentials were not provided."
+          }
+        }
+      }
+    },
+    "/api/children/{id}": {
+      "get": {
+        "operationId": "children_retrieve",
+        "description": "Returns the full profile of a single child identified by its UUID.",
+        "summary": "Retrieve a child",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Unique ID"
+            },
+            "description": "A UUID string identifying this Child.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Children"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "jwtAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Child"
+                },
+                "examples": {
+                  "ExampleChild": {
+                    "value": {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "name": "Alice",
+                      "age": 7,
+                      "age_group": "CHILD",
+                      "avatar": "https://example.com/media/avatars/alice.jpg"
+                    },
+                    "summary": "Example child"
+                  }
+                }
+              }
+            },
+            "description": "Child profile details."
+          },
+          "401": {
+            "description": "Authentication credentials were not provided."
+          },
+          "404": {
+            "description": "Child not found or does not belong to the authenticated parent."
+          }
+        }
+      },
+      "put": {
+        "operationId": "children_update",
+        "description": "Fully replaces all fields of the child profile. All required fields must be provided.",
+        "summary": "Update a child profile (full)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Unique ID"
+            },
+            "description": "A UUID string identifying this Child.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Children"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Child"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Child"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Child"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "jwtAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Child"
+                }
+              }
+            },
+            "description": "Child profile updated successfully."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "Authentication credentials were not provided."
+          },
+          "404": {
+            "description": "Child not found or does not belong to the authenticated parent."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "children_partial_update",
+        "description": "Updates only the provided fields of the child profile. Omitted fields are left unchanged.",
+        "summary": "Partially update a child profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Unique ID"
+            },
+            "description": "A UUID string identifying this Child.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Children"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedChild"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedChild"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedChild"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "jwtAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Child"
+                }
+              }
+            },
+            "description": "Child profile partially updated successfully."
+          },
+          "400": {
+            "description": "Validation error."
+          },
+          "401": {
+            "description": "Authentication credentials were not provided."
+          },
+          "404": {
+            "description": "Child not found or does not belong to the authenticated parent."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "children_destroy",
+        "description": "Permanently deletes the child profile. This action cannot be undone.",
+        "summary": "Delete a child profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Unique ID"
+            },
+            "description": "A UUID string identifying this Child.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Children"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "jwtAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Child profile deleted successfully. No content returned."
+          },
+          "401": {
+            "description": "Authentication credentials were not provided."
+          },
+          "404": {
+            "description": "Child not found or does not belong to the authenticated parent."
+          }
+        }
+      }
+    },
     "/api/lives": {
       "get": {
         "operationId": "lives_list",
@@ -543,7 +907,7 @@
         }
       }
     },
-    "/api/payments/": {
+    "/api/payments": {
       "get": {
         "operationId": "payments_list",
         "description": "Retrieve a paginated list of payments. Admin users see all payments, regular users see only their own. Supports filtering by status, method, duration, and subscription.",
@@ -641,7 +1005,7 @@
         }
       }
     },
-    "/api/payments/{id}/": {
+    "/api/payments/{id}": {
       "get": {
         "operationId": "payments_retrieve",
         "description": "Retrieve detailed information about a specific payment.",
@@ -687,7 +1051,7 @@
         }
       }
     },
-    "/api/payments/initiate/": {
+    "/api/payments/initiate": {
       "post": {
         "operationId": "payments_initiate_create",
         "description": "Creates a payment with PENDING status and returns the payment URL for the selected payment method (Stripe, PayPal, or Taramoney).",
@@ -740,7 +1104,7 @@
         }
       }
     },
-    "/api/payments/my_payments/": {
+    "/api/payments/my_payments": {
       "get": {
         "operationId": "payments_my_payments_retrieve",
         "description": "Retrieve all payments for the authenticated user's subscriptions.",
@@ -770,7 +1134,7 @@
         }
       }
     },
-    "/api/plans/": {
+    "/api/plans": {
       "get": {
         "operationId": "plans_list",
         "description": "Retrieve a paginated list of all subscription plans. Supports filtering by active status and name. Also supports search by name and description.",
@@ -905,7 +1269,7 @@
         }
       }
     },
-    "/api/plans/{id}/": {
+    "/api/plans/{id}": {
       "get": {
         "operationId": "plans_retrieve",
         "description": "Retrieve detailed information about a specific subscription plan.",
@@ -1131,7 +1495,7 @@
         }
       }
     },
-    "/api/plans/active_plans/": {
+    "/api/plans/active_plans": {
       "get": {
         "operationId": "plans_active_plans_retrieve",
         "description": "Retrieve a list of only active subscription plans available for subscription.",
@@ -1234,7 +1598,7 @@
         }
       }
     },
-    "/api/subscriptions/": {
+    "/api/subscriptions": {
       "get": {
         "operationId": "subscriptions_list",
         "description": "Retrieve a paginated list of subscriptions. Admin users see all subscriptions, regular users see only their own. Supports filtering by status, plan, and user.",
@@ -1399,7 +1763,7 @@
         }
       }
     },
-    "/api/subscriptions/{id}/": {
+    "/api/subscriptions/{id}": {
       "get": {
         "operationId": "subscriptions_retrieve",
         "description": "Retrieve detailed information about a specific subscription including payment history.",
@@ -1597,7 +1961,7 @@
         }
       }
     },
-    "/api/subscriptions/my_active_subscriptions/": {
+    "/api/subscriptions/my_active_subscriptions": {
       "get": {
         "operationId": "subscriptions_my_active_subscriptions_retrieve",
         "description": "Custom action to get only active subscriptions for the authenticated user.\n\nReturns:\n    Response: List of user's active subscriptions",
@@ -1626,7 +1990,7 @@
         }
       }
     },
-    "/api/subscriptions/my_subscriptions/": {
+    "/api/subscriptions/my_subscriptions": {
       "get": {
         "operationId": "subscriptions_my_subscriptions_retrieve",
         "description": "Retrieve all active subscriptions for the authenticated user.",
@@ -2563,6 +2927,7 @@
                       "type": "string"
                     },
                     "user": {
+                      "type": "object",
                       "$ref": "#/components/schemas/UserSerializer"
                     }
                   },
@@ -3275,7 +3640,7 @@
   },
   "components": {
     "schemas": {
-      "AgeGroupEnum": {
+      "AgeGroupE93Enum": {
         "enum": [
           "ALL",
           "5-8",
@@ -3289,6 +3654,59 @@
         "enum": [
           ""
         ]
+      },
+      "Child": {
+        "type": "object",
+        "description": "Serializer for the Child model.\n\nUsed for both listing and detail views of a child profile.\nThe ``parent`` field is automatically set from the authenticated user\nand is not exposed in the response.\n\nFields:\n    - id (UUID, read-only): Unique identifier of the child.\n    - name (str): Nickname / display name of the child.\n    - age (int): Age of the child in years (1–17).\n    - age_group (str): Age group (choices from AgeGroup enum).\n    - avatar (URL, optional): URL to child avatar stored in a bucket.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true,
+            "title": "Unique ID"
+          },
+          "name": {
+            "type": "string",
+            "title": "Nom",
+            "description": "Nickname / display name of the child.",
+            "maxLength": 255
+          },
+          "age": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": 0,
+            "description": "Age of the child in years (between 1 and 17)."
+          },
+          "age_group": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChildAgeGroupEnum"
+              }
+            ],
+            "description": "Age group of the child (e.g., TODDLER, CHILD, TEEN).\n\n* `5-8` - 5-8 years\n* `9-12` - 9-12 years\n* `13-16` - 13-16 years"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to child avatar image stored in a bucket."
+          }
+        },
+        "required": [
+          "age",
+          "age_group",
+          "id",
+          "name"
+        ]
+      },
+      "ChildAgeGroupEnum": {
+        "enum": [
+          "5-8",
+          "9-12",
+          "13-16"
+        ],
+        "type": "string",
+        "description": "* `5-8` - 5-8 years\n* `9-12` - 9-12 years\n* `13-16` - 13-16 years"
       },
       "CountryEnum": {
         "enum": [
@@ -3559,7 +3977,6 @@
         "properties": {
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -3586,7 +4003,7 @@
             "nullable": true
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "meeting_platform": {
             "$ref": "#/components/schemas/MeetingPlatformEnum"
@@ -3604,12 +4021,7 @@
             "maxLength": 100
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Status0fdEnum"
-              }
-            ],
-            "title": "État"
+            "$ref": "#/components/schemas/Status0fdEnum"
           },
           "max_participants": {
             "type": "integer",
@@ -3652,7 +4064,6 @@
           },
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -3687,7 +4098,7 @@
             "readOnly": true
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "meeting_platform": {
             "$ref": "#/components/schemas/MeetingPlatformEnum"
@@ -3705,12 +4116,7 @@
             "maxLength": 100
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Status0fdEnum"
-              }
-            ],
-            "title": "État"
+            "$ref": "#/components/schemas/Status0fdEnum"
           },
           "max_participants": {
             "type": "integer",
@@ -3743,14 +4149,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           },
           "activate_date": {
             "type": "string",
@@ -3792,7 +4196,6 @@
           },
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -3827,18 +4230,13 @@
             "readOnly": true
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "meeting_platform": {
             "$ref": "#/components/schemas/MeetingPlatformEnum"
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Status0fdEnum"
-              }
-            ],
-            "title": "État"
+            "$ref": "#/components/schemas/Status0fdEnum"
           },
           "max_participants": {
             "type": "integer",
@@ -3864,14 +4262,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -4154,13 +4550,50 @@
           "otp"
         ]
       },
+      "PatchedChild": {
+        "type": "object",
+        "description": "Serializer for the Child model.\n\nUsed for both listing and detail views of a child profile.\nThe ``parent`` field is automatically set from the authenticated user\nand is not exposed in the response.\n\nFields:\n    - id (UUID, read-only): Unique identifier of the child.\n    - name (str): Nickname / display name of the child.\n    - age (int): Age of the child in years (1–17).\n    - age_group (str): Age group (choices from AgeGroup enum).\n    - avatar (URL, optional): URL to child avatar stored in a bucket.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true,
+            "title": "Unique ID"
+          },
+          "name": {
+            "type": "string",
+            "title": "Nom",
+            "description": "Nickname / display name of the child.",
+            "maxLength": 255
+          },
+          "age": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": 0,
+            "description": "Age of the child in years (between 1 and 17)."
+          },
+          "age_group": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChildAgeGroupEnum"
+              }
+            ],
+            "description": "Age group of the child (e.g., TODDLER, CHILD, TEEN).\n\n* `5-8` - 5-8 years\n* `9-12` - 9-12 years\n* `13-16` - 13-16 years"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to child avatar image stored in a bucket."
+          }
+        }
+      },
       "PatchedLiveCreateUpdate": {
         "type": "object",
         "description": "Serializer for creating and updating live sessions.",
         "properties": {
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -4187,7 +4620,7 @@
             "nullable": true
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "meeting_platform": {
             "$ref": "#/components/schemas/MeetingPlatformEnum"
@@ -4205,12 +4638,7 @@
             "maxLength": 100
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Status0fdEnum"
-              }
-            ],
-            "title": "État"
+            "$ref": "#/components/schemas/Status0fdEnum"
           },
           "max_participants": {
             "type": "integer",
@@ -4265,10 +4693,9 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/StatusE1dEnum"
+                "$ref": "#/components/schemas/StatusE3aEnum"
               }
             ],
-            "title": "État",
             "minimum": -2147483648,
             "maximum": 2147483647
           }
@@ -4308,7 +4735,6 @@
                 "$ref": "#/components/schemas/Status5ecEnum"
               }
             ],
-            "title": "État",
             "description": "Current subscription status\n\n* `ACTIVE` - Active\n* `EXPIRED` - Expired"
           },
           "status_display": {
@@ -4345,14 +4771,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         }
       },
@@ -4362,7 +4786,6 @@
         "properties": {
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -4374,7 +4797,7 @@
             "maxLength": 255
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "tags": {
             "description": "List of tags as JSON array"
@@ -4447,7 +4870,7 @@
             "type": "string",
             "format": "decimal",
             "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
-            "description": "The amount paid"
+            "description": "Amount of payment"
           },
           "method": {
             "allOf": [
@@ -4468,7 +4891,6 @@
                 "$ref": "#/components/schemas/Status839Enum"
               }
             ],
-            "title": "État",
             "description": "Payment status (Pending, Successful, Failed, Cancelled)\n\n* `PENDING` - Pending\n* `PROCESSING` - Processing\n* `SUCCESSFUL` - Successful\n* `FAILED` - Failed\n* `CANCELLED` - Cancelled\n* `REFUNDED` - Refunded"
           },
           "status_display": {
@@ -4508,14 +4930,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -4637,7 +5057,6 @@
                 "$ref": "#/components/schemas/Status839Enum"
               }
             ],
-            "title": "État",
             "description": "Payment status (Pending, Successful, Failed, Cancelled)\n\n* `PENDING` - Pending\n* `PROCESSING` - Processing\n* `SUCCESSFUL` - Successful\n* `FAILED` - Failed\n* `CANCELLED` - Cancelled\n* `REFUNDED` - Refunded"
           },
           "status_display": {
@@ -4672,14 +5091,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -4729,10 +5146,9 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/StatusE1dEnum"
+                "$ref": "#/components/schemas/StatusE3aEnum"
               }
             ],
-            "title": "État",
             "minimum": -2147483648,
             "maximum": 2147483647
           }
@@ -4786,10 +5202,9 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/StatusE1dEnum"
+                "$ref": "#/components/schemas/StatusE3aEnum"
               }
             ],
-            "title": "État",
             "minimum": -2147483648,
             "maximum": 2147483647
           },
@@ -4801,14 +5216,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -4862,24 +5275,21 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/StatusE1dEnum"
+                "$ref": "#/components/schemas/StatusE3aEnum"
               }
             ],
-            "title": "État",
             "minimum": -2147483648,
             "maximum": 2147483647
           },
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -4993,75 +5403,6 @@
           "email"
         ]
       },
-      "UserSerializer": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "first_name": {
-            "type": "string",
-            "nullable": true
-          },
-          "last_name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string"
-          },
-          "phone_number": {
-            "type": "string",
-            "nullable": true
-          },
-          "date_of_birth": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "country": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              }
-            }
-          },
-          "roles": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "display_name": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "age_group": {
-            "type": "string",
-            "nullable": true
-          },
-          "email_verified_at": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "is_active": {
-            "type": "boolean"
-          }
-        }
-      },
       "Status0fdEnum": {
         "enum": [
           "SCHEDULED",
@@ -5092,13 +5433,13 @@
         "type": "string",
         "description": "* `PENDING` - Pending\n* `PROCESSING` - Processing\n* `SUCCESSFUL` - Successful\n* `FAILED` - Failed\n* `CANCELLED` - Cancelled\n* `REFUNDED` - Refunded"
       },
-      "StatusE1dEnum": {
+      "StatusE3aEnum": {
         "enum": [
           0,
           1
         ],
         "type": "integer",
-        "description": "* `0` - inactif\n* `1` - Actif"
+        "description": "* `0` - Inactive\n* `1` - Active"
       },
       "SubscriptionCreate": {
         "type": "object",
@@ -5149,7 +5490,6 @@
                 "$ref": "#/components/schemas/Status5ecEnum"
               }
             ],
-            "title": "État",
             "description": "Current subscription status\n\n* `ACTIVE` - Active\n* `EXPIRED` - Expired"
           },
           "status_display": {
@@ -5186,14 +5526,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -5249,7 +5587,6 @@
                 "$ref": "#/components/schemas/Status5ecEnum"
               }
             ],
-            "title": "État",
             "description": "Current subscription status\n\n* `ACTIVE` - Active\n* `EXPIRED` - Expired"
           },
           "status_display": {
@@ -5274,14 +5611,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [
@@ -5360,7 +5695,6 @@
         "properties": {
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -5372,7 +5706,7 @@
             "maxLength": 255
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "tags": {
             "description": "List of tags as JSON array"
@@ -5425,7 +5759,6 @@
           },
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -5437,7 +5770,7 @@
             "maxLength": 255
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "tags": {
             "description": "List of tags as JSON array"
@@ -5482,22 +5815,19 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           },
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/StatusE1dEnum"
+                "$ref": "#/components/schemas/StatusE3aEnum"
               }
             ],
-            "title": "État",
             "minimum": -2147483648,
             "maximum": 2147483647
           },
@@ -5537,7 +5867,6 @@
           },
           "title": {
             "type": "string",
-            "title": "Titre",
             "maxLength": 255
           },
           "description": {
@@ -5549,7 +5878,7 @@
             "maxLength": 255
           },
           "age_group": {
-            "$ref": "#/components/schemas/AgeGroupEnum"
+            "$ref": "#/components/schemas/AgeGroupE93Enum"
           },
           "tags": {
             "description": "List of tags as JSON array"
@@ -5594,14 +5923,12 @@
           "created": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Créé"
+            "readOnly": true
           },
           "modified": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true,
-            "title": "Mise à jour"
+            "readOnly": true
           }
         },
         "required": [

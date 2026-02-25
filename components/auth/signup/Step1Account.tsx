@@ -99,7 +99,7 @@ export const Step1Account = () => {
           first_name: firstName,
           last_name: lastName,
           email,
-          country,
+          country: country as any,
           password,
           password_confirm: confirmPassword,
         }).unwrap();

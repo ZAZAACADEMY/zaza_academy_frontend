@@ -170,7 +170,7 @@ export const Login = () => {
     setGeneralError("");
     try {
       const response = await resend2FA({ token: tempToken }).unwrap();
-      setResendMessage(response.message || "New code sent!");
+      setResendMessage(response.detail || "New code sent!");
     } catch (err: any) {
       setGeneralError(err.data?.detail || "Failed to resend code");
     }

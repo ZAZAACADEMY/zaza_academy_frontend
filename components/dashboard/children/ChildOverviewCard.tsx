@@ -1,41 +1,44 @@
-"use client";
-
 import React from "react";
 import Image from "next/image";
 import { Link } from "@/navigation";
 import { Video, Award, Clock, TrendingUp, ChevronRight } from "lucide-react";
+import { Child } from "@/lib/store/services/childrenApi";
 
-interface ChildStats {
-  videosWatched: number;
-  badgesEarned: number;
-  studyTime: number; // in hours
-  weeklyProgress: number; // percentage
-}
+// Helper to get avatar path - mapping index to local path or external URL
+const getAvatarPath = (avatarStr?: string | null) => {
+  if (!avatarStr) return "/avatars/A1.jpeg";
+  
+  // If it's a number/index string or API provides a direct URL
+  const index = parseInt(avatarStr);
+  if (!isNaN(index) && index >= 0 && index < 10) { // Assuming 0-9 for A1-A10
+    return `/avatars/A${index + 1}.jpeg`;
+  }
+  // Fallback if avatarStr is a URL
+  return avatarStr;
+};
 
-interface CurrentActivity {
-  title: string;
-  type: "video" | "quiz" | "game";
-}
+export const ChildOverviewCard = ({ child }: { child: Child }) => {
+  // These fields are currently mock as the API doesn't provide them yet
+  const overallProgress = 0;
+  const stats = {
+    videosWatched: 0,
+    badgesEarned: 0,
+    studyTime: 0,
+    weeklyProgress: 0,
+  };
+  const currentActivity = {
+    title: "No recent activity",
+    type: "video" as const,
+  };
 
-interface ChildProps {
-  id: string;
-  name: string;
-  age: number;
-  avatar: string;
-  overallProgress: number;
-  stats: ChildStats;
-  currentActivity: CurrentActivity;
-}
-
-export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
   return (
     <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 h-full flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
-          <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm">
+          <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm bg-gray-50">
             <Image
-              src={child.avatar}
+              src={getAvatarPath(child.avatar)}
               alt={child.name}
               fill
               className="object-cover"
@@ -59,13 +62,13 @@ export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
         <div className="flex justify-between text-sm mb-2 font-medium">
           <span className="text-gray-600">Overall Progress</span>
           <span className="text-purple-600 font-bold">
-            {child.overallProgress}%
+            {overallProgress}%
           </span>
         </div>
         <div className="h-2 bg-purple-100 rounded-full overflow-hidden">
           <div
             className="h-full bg-purple-600 rounded-full"
-            style={{ width: `${child.overallProgress}%` }}
+            style={{ width: `${overallProgress}%` }}
           />
         </div>
       </div>
@@ -79,7 +82,7 @@ export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
             <span className="text-sm font-medium text-gray-600">Videos</span>
           </div>
           <p className="text-2xl font-bold text-brand-dark">
-            {child.stats.videosWatched}
+            {stats.videosWatched}
           </p>
         </div>
 
@@ -90,7 +93,7 @@ export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
             <span className="text-sm font-medium text-gray-600">Badges</span>
           </div>
           <p className="text-2xl font-bold text-brand-dark">
-            {child.stats.badgesEarned}
+            {stats.badgesEarned}
           </p>
         </div>
 
@@ -103,7 +106,7 @@ export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
             </span>
           </div>
           <p className="text-2xl font-bold text-brand-dark">
-            {child.stats.studyTime}h
+            {stats.studyTime}h
           </p>
         </div>
 
@@ -114,12 +117,12 @@ export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
             <span className="text-sm font-medium text-gray-600">This Week</span>
           </div>
           <p className="text-2xl font-bold text-brand-dark">
-            +{child.stats.weeklyProgress}%
+            +{stats.weeklyProgress}%
           </p>
         </div>
       </div>
 
-      {/* Current Activity - Pushed to bottom if space allows, but in this layout it's part of flow */}
+      {/* Current Activity */}
       <div className="mt-auto border-t border-gray-100 pt-6">
         <p className="text-sm text-gray-500 mb-3 block">Current Activity</p>
         <div className="flex items-center gap-3">
@@ -127,7 +130,7 @@ export const ChildOverviewCard = ({ child }: { child: ChildProps }) => {
             <Video className="w-4 h-4 text-purple-600" />
           </div>
           <span className="font-semibold text-brand-dark">
-            {child.currentActivity.title}
+            {currentActivity.title}
           </span>
         </div>
       </div>

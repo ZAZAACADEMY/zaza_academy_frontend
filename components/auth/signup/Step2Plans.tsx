@@ -41,7 +41,7 @@ export const Step2Plans = () => {
 
     return (
       <div className="flex flex-col gap-4">
-        {plansData?.map((plan) => {
+        {(plansData as any)?.map((plan: any) => {
           const isSelected = selectedPlan === plan.id;
           const isPremium = plan.name === "PREMIUM";
           return (

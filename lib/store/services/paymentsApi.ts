@@ -2,11 +2,12 @@ import { baseApi } from "./api";
 import { components } from "@/lib/api/v1";
 
 type Payment = components["schemas"]["PaymentDetail"];
+type PaymentList = components["schemas"]["PaymentList"];
 type PaymentInitiate = components["schemas"]["PaymentInitiate"];
 type PaginatedPaymentList = components["schemas"]["PaginatedPaymentListList"];
 
 export interface InitiatePaymentResponse extends Payment {
-  payment_data: {
+  payment_data?: {
     checkout_url: string;
     session_id: string;
     payment_method: string;
@@ -15,6 +16,21 @@ export interface InitiatePaymentResponse extends Payment {
 
 export const paymentsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    // Endpoint to list all payments (admin only)
+    listPayments: builder.query<PaginatedPaymentList, { status?: string; method?: string; page?: number } | void>({
+      query: (params) => ({
+        url: "/api/payments",
+        params: params || {},
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.results.map(({ id }) => ({ type: "Payments" as const, id })),
+              { type: "Payments", id: "LIST" },
+            ]
+          : [{ type: "Payments", id: "LIST" }],
+    }),
+
     // Endpoint to initiate a new payment
     initiatePayment: builder.mutation<InitiatePaymentResponse, PaymentInitiate>({
       query: (body) => ({
@@ -32,9 +48,9 @@ export const paymentsApi = baseApi.injectEndpoints({
         result
           ? [
               ...result.results.map(({ id }) => ({ type: "Payments" as const, id })),
-              { type: "Payments", id: "LIST" },
+              { type: "Payments", id: "MY_LIST" },
             ]
-          : [{ type: "Payments", id: "LIST" }],
+          : [{ type: "Payments", id: "MY_LIST" }],
     }),
 
     // Endpoint to get a single payment by ID
@@ -46,6 +62,7 @@ export const paymentsApi = baseApi.injectEndpoints({
 });
 
 export const {
+    useListPaymentsQuery,
     useInitiatePaymentMutation,
     useGetMyPaymentsQuery,
     useGetPaymentByIdQuery,

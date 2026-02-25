@@ -192,7 +192,7 @@ export const Pricing = () => {
       );
     }
 
-    const plans = plansData.map((plan) => ({
+    const plans = (plansData as any).map((plan: any) => ({
       ...plan,
       icon: planIconMap[plan.name] ?? Sparkles,
       isPremium: plan.name === "PREMIUM",
@@ -200,7 +200,7 @@ export const Pricing = () => {
 
     return (
       <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] lg:gap-[32px] items-start w-full">
-        {plans.map((plan, index) => (
+        {plans.map((plan: any, index: number) => (
           <StaggerItem key={index}>
             <PricingCard
               plan={plan}

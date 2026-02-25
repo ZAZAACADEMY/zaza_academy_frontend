@@ -27,10 +27,10 @@ export const AccountInfoForm = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-        first_name: user.first_name || "",
-        last_name: user.last_name || "",
-        email: user.email || "",
-        country: user.country?.code || "US",
+        first_name: (user as any).first_name || "",
+        last_name: (user as any).last_name || "",
+        email: (user as any).email || "",
+        country: (user as any).country?.code || "US",
       });
     }
   }, [user]);
@@ -89,7 +89,7 @@ export const AccountInfoForm = () => {
       last_name: formData.last_name,
       // email is not updated here as it's often a separate verification process
       country: formData.country as any,
-    });
+    } as any);
   };
 
   if (isLoadingUser) {

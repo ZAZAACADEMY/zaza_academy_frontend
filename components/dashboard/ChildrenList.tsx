@@ -15,28 +15,25 @@ import {
 import {
   useListChildrenQuery,
   useDeleteChildMutation,
+  Child,
 } from "@/lib/store/services/childrenApi";
 import { AddChildModal } from "./children/AddChildModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 import { motion } from "framer-motion";
-import { MOCK_VIDEOS } from "@/lib/data/videos";
 import { useTranslations } from "next-intl";
-import { components } from "@/lib/api/v1";
-
-type Child =  any // components["schemas"]["ChildDetail"]; // Use ChildDetail for full data
 
 // Helper to get avatar path - mapping index to local path or external URL
-const getAvatarPath = (avatarStr?: string) => {
+const getAvatarPath = (avatarStr?: string | null) => {
+  if (!avatarStr) return "/avatars/A1.jpeg";
+  
   // If it's a number/index string or API provides a direct URL
-  const index = parseInt(avatarStr || "0");
+  const index = parseInt(avatarStr);
   if (!isNaN(index) && index >= 0 && index < 10) { // Assuming 0-9 for A1-A10
     return `/avatars/A${index + 1}.jpeg`;
   }
-  // Fallback if avatarStr is a URL or invalid index
-  return avatarStr || "/avatars/A1.jpeg";
+  // Fallback if avatarStr is a URL
+  return avatarStr;
 };
-
-// getAgeGroupLabel is now redundant as age_group comes directly from API
 
 export const ChildrenList = () => {
   const t = useTranslations("ChildrenList");
@@ -75,7 +72,7 @@ export const ChildrenList = () => {
 
     try {
       setIsDeleting(true);
-      await deleteChild(childToDelete).unwrap(); // Use .unwrap() to catch errors
+      await deleteChild(childToDelete).unwrap();
     } catch (err) {
       console.error("Delete failed", err);
     } finally {
@@ -104,7 +101,7 @@ export const ChildrenList = () => {
     );
   }
 
-  const children = childrenData || []; // Ensure children is an array even if data is null/undefined
+  const children = childrenData || [];
 
   return (
     <>
@@ -167,14 +164,14 @@ export const ChildrenList = () => {
                   <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-xl shadow-brand-purple/15 border-4 border-white group-hover:rotate-3 transition-transform duration-300 bg-gray-50">
                     <Image
                       src={getAvatarPath(child.avatar)}
-                      alt={child.first_name || "Child avatar"}
+                      alt={child.name || "Child avatar"}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="pt-2">
                     <h4 className="font-display font-bold text-2xl text-brand-dark mb-1 group-hover:text-brand-purple transition-colors">
-                      {child.first_name}
+                      {child.name}
                     </h4>
                     <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
                       <span className="w-2 h-2 rounded-full bg-green-400"></span>
@@ -192,8 +189,6 @@ export const ChildrenList = () => {
                         {t("videosWatched")}
                       </div>
                       <div className="text-xl font-bold text-brand-dark mt-1">
-                        {/* Mock watched count based on age for demo */}
-                        {/* This part needs actual video watched data from backend if available */}
                         <span className="text-brand-purple">
                           0
                         </span>
@@ -221,7 +216,7 @@ export const ChildrenList = () => {
                         />
                         <path
                           className="text-brand-purple transition-all duration-1000 ease-out"
-                          strokeDasharray="0, 100" // Always 0% until real data
+                          strokeDasharray="0, 100"
                           d="M18 2.0845
                                         a 15.9155 15.9155 0 0 1 0 31.831
                                         a 15.9155 15.9155 0 0 1 0 -31.831"

@@ -1,7 +1,7 @@
 import { baseApi } from "./api";
 import { components } from "@/lib/api/v1";
 
-type UserProfile = components["schemas"]["UserSerializer"];
+export type UserProfile = components["schemas"]["UserSerializer"];
 
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

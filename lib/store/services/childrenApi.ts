@@ -1,14 +1,14 @@
 import { baseApi } from "./api";
 import { components } from "@/lib/api/v1";
 
-type Child =  any // components["schemas"]["ChildSerializer"];
-type ChildCreate = any // components["schemas"]["ChildCreateSerializer"];
+export type Child = components["schemas"]["Child"];
+export type PatchedChild = components["schemas"]["PatchedChild"];
 
 export const childrenApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Endpoint to list all children for the current user
     listChildren: builder.query<Child[], void>({
-      query: () => "/api/v1/children/",
+      query: () => "/api/children",
       providesTags: (result) =>
         result
           ? [
@@ -18,30 +18,46 @@ export const childrenApi = baseApi.injectEndpoints({
           : [{ type: "Children", id: "LIST" }],
     }),
     
+    // Endpoint to get a single child profile
+    getChildById: builder.query<Child, string>({
+      query: (id) => `/api/children/${id}`,
+      providesTags: (result, error, id) => [{ type: "Children", id }],
+    }),
+
     // Endpoint to add a new child
-    addChild: builder.mutation<Child, ChildCreate>({
+    addChild: builder.mutation<Child, Child>({
       query: (body) => ({
-        url: "/api/v1/children/",
+        url: "/api/children",
         method: "POST",
         body,
       }),
       invalidatesTags: [{ type: "Children", id: "LIST" }],
     }),
 
-    // Endpoint to update a child
-    updateChild: builder.mutation<Child, { id: string; body: Partial<ChildCreate> }>({
+    // Endpoint to update a child (full update)
+    updateChild: builder.mutation<Child, { id: string; body: Child }>({
       query: ({ id, body }) => ({
-        url: `/api/v1/children/${id}/`,
+        url: `/api/children/${id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Children", id }, { type: "Children", id: "LIST" }],
+    }),
+
+    // Endpoint to partially update a child
+    partialUpdateChild: builder.mutation<Child, { id: string; body: PatchedChild }>({
+      query: ({ id, body }) => ({
+        url: `/api/children/${id}`,
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Children", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: "Children", id }, { type: "Children", id: "LIST" }],
     }),
 
     // Endpoint to delete a child
-    deleteChild: builder.mutation<{ success: boolean; id: string }, string>({
+    deleteChild: builder.mutation<void, string>({
         query: (id) => ({
-            url: `/api/v1/children/${id}/`,
+            url: `/api/children/${id}`,
             method: 'DELETE',
         }),
         invalidatesTags: (result, error, id) => [{ type: 'Children', id }, { type: "Children", id: "LIST" }],
@@ -51,7 +67,9 @@ export const childrenApi = baseApi.injectEndpoints({
 
 export const { 
     useListChildrenQuery,
+    useGetChildByIdQuery,
     useAddChildMutation,
     useUpdateChildMutation,
+    usePartialUpdateChildMutation,
     useDeleteChildMutation,
 } = childrenApi;
