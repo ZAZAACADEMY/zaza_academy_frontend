@@ -18,6 +18,7 @@ import {
 import { LogoutModal } from "./LogoutModal";
 import Image from "next/image";
 import { useLogoutMutation } from "@/lib/store/services/authApi";
+import { tokenStore } from "@/lib/api/tokenStore";
 
 const sidebarItems = [
   { icon: LayoutDashboard, key: "dashboard", href: "/dashboard" },
@@ -80,14 +81,18 @@ export const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
 
   const handleLogout = async () => {
     try {
-      // Call Logout API via Redux
-      await logout().unwrap();
+      // 1. Clear local session data immediately
+      tokenStore.removeTokens();
+      localStorage.removeItem("zaza_signup_state");
+      
+      // 2. Call Logout API (fire and forget)
+      logout();
     } catch (e) {
       console.error("Logout failed", e);
     }
 
-    // Redirect to login
-    router.push("/login");
+    // 3. Redirect to login
+    router.replace("/login", { locale });
     setIsLogoutModalOpen(false);
   };
 

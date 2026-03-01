@@ -1,17 +1,39 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2, CheckCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { COUNTRY_CODES } from "@/components/auth/signup/constants";
+import { useGetMeQuery, useUpdateMeMutation } from "@/lib/store/services/usersApi";
 
 export const AccountInfoForm = () => {
   const t = useTranslations("dashboard.settings.form");
   const locale = useLocale();
-  const [country, setCountry] = useState("US"); // Default value for demo
+
+  const { data: user, isLoading: isLoadingUser } = useGetMeQuery();
+  const [updateMe, { isLoading: isUpdating, isSuccess }] = useUpdateMeMutation();
+
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    country: "US",
+  });
+
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
   const countryWrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        first_name: (user as any).first_name || "",
+        last_name: (user as any).last_name || "",
+        email: (user as any).email || "",
+        country: (user as any).country?.code || "US",
+      });
+    }
+  }, [user]);
 
   const displayNames = useMemo(() => {
     try {
@@ -30,15 +52,13 @@ export const AccountInfoForm = () => {
     [displayNames],
   );
 
-  // Initialize search with current country name
   useEffect(() => {
-    const found = countryOptions.find((c) => c.code === country);
+    const found = countryOptions.find((c) => c.code === formData.country);
     if (found) {
       setCountrySearch(found.name);
     }
-  }, [country, countryOptions]);
+  }, [formData.country, countryOptions]);
 
-  // Close country dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -46,8 +66,7 @@ export const AccountInfoForm = () => {
         !countryWrapperRef.current.contains(event.target as Node)
       ) {
         setIsCountryOpen(false);
-        // Reset search to current selected country
-        const found = countryOptions.find((c) => c.code === country);
+        const found = countryOptions.find((c) => c.code === formData.country);
         if (found) {
           setCountrySearch(found.name);
         }
@@ -57,11 +76,39 @@ export const AccountInfoForm = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [country, countryOptions]);
+  }, [formData.country, countryOptions]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    await updateMe({
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      // email is not updated here as it's often a separate verification process
+      country: formData.country as any,
+    } as any);
+  };
+
+  if (isLoadingUser) {
+    return (
+      <div className="flex justify-center items-center h-40 bg-[#F8F7FF] rounded-[24px] p-8 mb-8">
+        <Loader2 className="animate-spin text-brand-purple" size={32} />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#F8F7FF] rounded-[24px] p-8 mb-8">
-      <form className="space-y-6">
+      <form
+        className="space-y-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave();
+        }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-brand-dark">
@@ -69,7 +116,9 @@ export const AccountInfoForm = () => {
             </label>
             <input
               type="text"
-              defaultValue="Zaza"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleInputChange}
               className="w-full px-6 py-3 rounded-full border border-purple-200 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple bg-white text-gray-700 placeholder-gray-400"
             />
           </div>
@@ -79,7 +128,9 @@ export const AccountInfoForm = () => {
             </label>
             <input
               type="text"
-              defaultValue="Academy"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleInputChange}
               className="w-full px-6 py-3 rounded-full border border-purple-200 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple bg-white text-gray-700 placeholder-gray-400"
             />
           </div>
@@ -92,8 +143,10 @@ export const AccountInfoForm = () => {
             </label>
             <input
               type="email"
-              defaultValue="zazaacademy@gmail.com"
-              className="w-full px-6 py-3 rounded-full border border-purple-200 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple bg-white text-gray-700 placeholder-gray-400"
+              name="email"
+              value={formData.email}
+              readOnly
+              className="w-full px-6 py-3 rounded-full border border-purple-200 bg-gray-100 text-gray-500 cursor-not-allowed"
             />
           </div>
           <div className="space-y-2">
@@ -134,10 +187,10 @@ export const AccountInfoForm = () => {
                         <div
                           key={c.code}
                           role="option"
-                          aria-selected={country === c.code}
-                          className={`px-4 py-2.5 rounded-[12px] cursor-pointer text-sm font-medium transition-colors ${country === c.code ? "bg-[#F3F0FF] text-[#A655F7]" : "text-gray-600 hover:bg-gray-50 hover:text-brand-black"}`}
+                          aria-selected={formData.country === c.code}
+                          className={`px-4 py-2.5 rounded-[12px] cursor-pointer text-sm font-medium transition-colors ${formData.country === c.code ? "bg-[#F3F0FF] text-[#A655F7]" : "text-gray-600 hover:bg-gray-50 hover:text-brand-black"}`}
                           onClick={() => {
-                            setCountry(c.code);
+                            setFormData(prev => ({...prev, country: c.code}));
                             setCountrySearch(c.name);
                             setIsCountryOpen(false);
                           }}
@@ -156,13 +209,21 @@ export const AccountInfoForm = () => {
           </div>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 flex items-center gap-4">
           <button
-            type="button"
-            className="bg-[#2D1B4E] text-white font-bold py-3 px-10 rounded-full hover:bg-opacity-90 transition-opacity"
+            type="submit"
+            disabled={isUpdating}
+            className="bg-[#2D1B4E] text-white font-bold py-3 px-10 rounded-full hover:bg-opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
-            Save
+            {isUpdating && <Loader2 className="animate-spin" size={18} />}
+            {t("save")}
           </button>
+          {isSuccess && (
+             <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle size={20} />
+                <span className="font-medium">{t('successMessage')}</span>
+             </div>
+          )}
         </div>
       </form>
     </div>

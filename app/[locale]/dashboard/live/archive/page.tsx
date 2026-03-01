@@ -35,7 +35,7 @@ export default function ArchivePage() {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {PAST_SESSIONS.map((session, index) => (
-          <RecordingCard key={index} recording={session} />
+          <RecordingCard key={index} recording={session as any} />
         ))}
       </div>
     </div>

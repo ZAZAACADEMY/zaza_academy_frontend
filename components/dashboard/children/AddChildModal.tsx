@@ -2,16 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { X, User, Calendar, Check, Loader2 } from "lucide-react";
+import { X, User, Calendar, Check, Loader2, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CreateChildData, UpdateChildData } from "@/lib/api/children";
-import { ChildProfile } from "@/lib/api/types";
+import { components } from "@/lib/api/v1";
+import { useAddChildMutation, useUpdateChildMutation, Child } from "@/lib/store/services/childrenApi";
 
 // Avatars imports (using placeholders effectively or imports if available)
-// I will reuse the imports from the signup component if possible, but for now I'll use static paths or placeholders
-// to correspond with what was in Step8ChildSetup.tsx.
-// Assuming public/avatars folder exists.
-
 const AVATARS = [
   "/avatars/A1.jpeg",
   "/avatars/A2.jpeg",
@@ -28,71 +24,77 @@ const AVATARS = [
 interface AddChildModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: CreateChildData | UpdateChildData) => Promise<void>;
-  initialData?: ChildProfile | null;
+  initialData?: Child | null;
 }
 
 export const AddChildModal = ({
   isOpen,
   onClose,
-  onSave,
   initialData,
 }: AddChildModalProps) => {
-  const [formData, setFormData] = useState<CreateChildData>({
+  const [formData, setFormData] = useState<Partial<Child>>({
     name: "",
     age: 0,
     avatar: "0",
+    age_group: "5-8",
   });
   const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const isEditMode = !!initialData;
+
+  const [addChild, { isLoading: isAdding }] = useAddChildMutation();
+  const [updateChild, { isLoading: isUpdating }] = useUpdateChildMutation();
+
+  const isLoading = isAdding || isUpdating;
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         name: initialData.name,
         age: initialData.age,
-        avatar: initialData.avatar,
+        avatar: initialData.avatar || "0",
+        age_group: initialData.age_group,
       });
       setSelectedAvatarIndex(parseInt(initialData.avatar || "0"));
     } else {
-      setFormData({ name: "", age: 0, avatar: "0" });
+      setFormData({ name: "", age: 0, avatar: "0", age_group: "5-8" });
       setSelectedAvatarIndex(0);
     }
   }, [initialData, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
+    setError("");
+
+    // Basic validation
+    if (!formData.name || !formData.name.trim()) {
       setError("Name is required");
       return;
     }
-    if (formData.age < 5 || formData.age > 18) {
-      setError("Age must be between 5 and 18");
+    if (!formData.age || formData.age < 1 || formData.age > 17) {
+      setError("Age must be between 1 and 17");
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-
     try {
-      await onSave({
-        ...formData,
+      const dataToSave: Child = {
+        name: formData.name,
+        age: formData.age,
         avatar: selectedAvatarIndex.toString(),
-      });
-      onClose();
-      // Only reset if we are creating, not typically needed as useEffect handles it on open/close but good practice
-      if (!isEditMode) {
-        setFormData({ name: "", age: 0, avatar: "0" });
-        setSelectedAvatarIndex(0);
+        age_group: formData.age <= 8 ? "5-8" : (formData.age <= 12 ? "9-12" : "13-16")
+      } as Child;
+
+
+      if (isEditMode && initialData?.id) {
+        await updateChild({ id: initialData.id, body: dataToSave }).unwrap();
+      } else {
+        await addChild(dataToSave).unwrap();
       }
-    } catch (err) {
+      onClose();
+    } catch (err: any) {
       console.error(err);
-      setError("Failed to save profile. Please try again.");
-    } finally {
-      setIsLoading(false);
+      setError(err.data?.message || err.data?.detail || "Failed to save profile. Please try again.");
     }
   };
 
@@ -118,7 +120,7 @@ export const AddChildModal = ({
               <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {isEditMode ? "Edit Profile" : "Add Child"}
+                    {isEditMode ? "Edit Child Profile" : "Add New Child"}
                   </h2>
                   <p className="text-gray-500 text-sm">
                     {isEditMode
@@ -127,6 +129,7 @@ export const AddChildModal = ({
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={onClose}
                   className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors"
                 >
@@ -142,7 +145,8 @@ export const AddChildModal = ({
                   className="space-y-8"
                 >
                   {error && (
-                    <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">
+                    <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100 flex items-center gap-2">
+                      <AlertTriangle size={18} />
                       {error}
                     </div>
                   )}
@@ -195,7 +199,7 @@ export const AddChildModal = ({
                         htmlFor="name"
                         className="block text-sm font-bold text-gray-700"
                       >
-                        First Name
+                        Name
                       </label>
                       <div className="relative group">
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-purple transition-colors">
@@ -230,8 +234,8 @@ export const AddChildModal = ({
                         <input
                           type="number"
                           id="age"
-                          min="5"
-                          max="16"
+                          min="1"
+                          max="17"
                           value={formData.age || ""}
                           onChange={(e) =>
                             setFormData({
@@ -240,7 +244,7 @@ export const AddChildModal = ({
                             })
                           }
                           className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-purple/10 focus:border-brand-purple transition-all font-bold text-gray-900 placeholder:text-gray-400 placeholder:font-normal"
-                          placeholder="Age (5-16)"
+                          placeholder="Age (1-17)"
                           required
                         />
                       </div>

@@ -50,9 +50,9 @@ export const Step8ChildSetup = () => {
   const t = useTranslations("Signup.step8");
   const [ageError, setAgeError] = useState("");
   const planChildLimit: Record<string, number> = {
-    Solo: 1,
-    Family: 3,
-    "Family Plus": 5,
+    STANDARD: 1,
+    PREMIUM: 3,
+    FAMILLE: 5,
   };
   const childLimit = planChildLimit[selectedPlan] ?? 1;
   const remainingSlots = Math.max(childLimit - childrenList.length, 0);
@@ -235,14 +235,14 @@ export const Step8ChildSetup = () => {
 };
 
 export const Step9ChildSummary = () => {
-  const { childrenList, setStep, setCurrentChild, selectedPlan } = useSignup();
+  const { childrenList, setStep, setCurrentChild, selectedPlan, clearSignupData } = useSignup();
   const router = useRouter();
   const t = useTranslations("Signup.step9");
 
   const planChildLimit: Record<string, number> = {
-    Solo: 1,
-    Family: 3,
-    "Family Plus": 5,
+    STANDARD: 1,
+    PREMIUM: 3,
+    FAMILLE: 5,
   };
   const childLimit = planChildLimit[selectedPlan] ?? 1;
   const canAddMore = childrenList.length < childLimit;
@@ -295,6 +295,7 @@ export const Step9ChildSummary = () => {
 
       <button
         onClick={() => {
+          clearSignupData();
           router.push("/dashboard");
         }}
         className="mt-4 w-full bg-[#16A34A] text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#15803D] transition-all flex items-center justify-center gap-2 shadow-lg"

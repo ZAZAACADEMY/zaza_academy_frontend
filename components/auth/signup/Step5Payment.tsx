@@ -1,10 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { CreditCard, Smartphone, ChevronRight, ArrowLeft } from "lucide-react";
+import { CreditCard, Smartphone, ChevronRight, ArrowLeft, Loader2, AlertTriangle } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useSignup } from "./SignupContext";
 import { PaymentGateway } from "./types";
 import { MOBILE_MONEY_CONFIG } from "./constants";
+import { useGetPlanByIdQuery } from "@/lib/store/services/plansApi";
+import { useCreateSubscriptionMutation, useGetMySubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
+import { useInitiatePaymentMutation } from "@/lib/store/services/paymentsApi";
 
 export const Step5Payment = () => {
   const t = useTranslations("Signup.step5");
@@ -27,11 +30,30 @@ export const Step5Payment = () => {
     setExpiryDate,
     cvv,
     setCvv,
+    selectedPlan,
+    paymentFrequency,
   } = useSignup();
 
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState(country);
   const countryWrapperRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const { data: plan, isLoading: isLoadingPlan, isError: isErrorPlan } = useGetPlanByIdQuery(selectedPlan, {
+    skip: !selectedPlan,
+  });
+
+  const { data: subscriptionsData, isLoading: isLoadingSubs } = useGetMySubscriptionsQuery();
+  const [createSubscription, { isLoading: isCreatingSubscription }] = useCreateSubscriptionMutation();
+  const [initiatePayment, { isLoading: isInitiatingPayment }] = useInitiatePaymentMutation();
+
+  // Button spinner only when performing an action
+  const isActionLoading = isCreatingSubscription || isInitiatingPayment;
+  // Disable button if data is missing or action is in progress
+  const isDataLoading = isLoadingPlan || isLoadingSubs;
+  const isButtonDisabled = isActionLoading || !plan;
+
+  console.log("Loading States -> Plan:", isLoadingPlan, "Subs:", isLoadingSubs, "Action:", isActionLoading);
 
   const displayNames = useMemo(() => {
     try {
@@ -62,24 +84,25 @@ export const Step5Payment = () => {
     return `${dialCode} ${stripped}`;
   };
 
-  // Sync search and phone with selected mobile country; fallback to first supported
   useEffect(() => {
     if (paymentGateway !== "Mobile Money") return;
     const current = mobileCountryOptions.find((c) => c.code === country);
-    const target = current ?? mobileCountryOptions[0];
-    if (!target) return;
-    if (!current) {
+    const target = current ?? mobileCountryOptions[0]; // Default to first available
+    if (!target) return; // No mobile money countries available
+
+    if (!current) { // If current country isn't in mobile options, set to default
       setCountry(target.code);
     }
     setCountrySearch(target.name);
-    if (phoneNumber.trim()) {
+    // Ensure phone number has the correct dial code if it's already being entered
+    if (phoneNumber.trim() && !phoneNumber.startsWith(target.dialCode)) {
       setPhoneNumber((prev) => applyDialCode(target.dialCode, prev));
     }
     const firstProvider = target.providers[0];
     if (firstProvider && !target.providers.includes(mobileProvider)) {
       setMobileProvider(firstProvider);
     }
-  }, [paymentGateway, mobileCountryOptions, country, mobileProvider]);
+  }, [paymentGateway, mobileCountryOptions, country, mobileProvider, phoneNumber, setCountry, setMobileProvider, setPhoneNumber]);
 
   // Keep provider aligned to selected country when switching countries within mobile money
   useEffect(() => {
@@ -114,10 +137,97 @@ export const Step5Payment = () => {
     };
   }, []);
 
-  const handleNext = (e: React.FormEvent) => {
+  const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep(6); // Go to processing
+    setError(null);
+
+    if (!plan) {
+      setError(t("errorPlanDetails"));
+      return;
+    }
+
+    try {
+      // 1. Check if user already has a subscription for this plan (to handle retries)
+      let subscriptionId = "";
+      const existingSub = subscriptionsData?.results?.find(
+        (sub) => sub.plan === plan.id && sub.status === "ACTIVE"
+      );
+
+      if (existingSub) {
+        subscriptionId = existingSub.id;
+      } else {
+        // 2. Create the subscription if it doesn't exist
+        const newSubscription = await createSubscription({ plan: plan.id }).unwrap();
+        subscriptionId = newSubscription.id;
+      }
+
+      // 3. Initiate the payment
+      const durationApi = paymentFrequency === "Monthly" ? "1_MONTH" : "3_MONTHS";
+      const amount = durationApi === "1_MONTH" ? plan.price_one_month : plan.price_three_months;
+      
+      let methodApi: "STRIPE" | "PAYPAL" | "TARAMONEY";
+      if (paymentGateway === "Card") {
+        methodApi = "STRIPE";
+      } else if (paymentGateway === "Mobile Money") {
+        methodApi = "TARAMONEY";
+      } else {
+        setError(t("errorInvalidGateway"));
+        return;
+      }
+
+      const paymentPayload = {
+        subscription: subscriptionId,
+        duration: durationApi,
+        amount: parseFloat(amount).toFixed(2),
+        method: methodApi,
+      };
+
+      const paymentResult = await initiatePayment(paymentPayload as any).unwrap();
+
+      // 4. Redirect to payment provider
+      const checkoutUrl = paymentResult.payment_data?.checkout_url;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        setError(t("errorPaymentUrl"));
+      }
+
+    } catch (err: any) {
+      console.error("Payment process failed:", err);
+      // Attempt to extract meaningful error message
+      const apiErrorMessage = err.data?.non_field_errors?.[0] || err.data?.detail || err.data?.message || err.error;
+      setError(apiErrorMessage || t("errorGenericPayment"));
+    }
   };
+
+  if (isLoadingPlan && !plan) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-brand-purple" size={40} />
+          <p className="text-gray-500 font-medium">Loading plan details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isErrorPlan || (!isLoadingPlan && !plan)) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 bg-red-50 text-red-700 rounded-2xl p-4">
+        <AlertTriangle className="w-10 h-10 mb-4" />
+        <h3 className="text-lg font-bold mb-2 text-center">{t("errorLoadingPlan")}</h3>
+        <p className="text-center text-sm">{t("errorTryAgain")}</p>
+        <button 
+          type="button"
+          onClick={() => setStep(3)} 
+          className="mt-4 text-brand-purple font-bold hover:underline"
+        >
+          Go back to plans
+        </button>
+      </div>
+    );
+  }
 
   const gateways: { id: PaymentGateway; label: string; icon: any }[] = [
     { id: "Card", label: t("cardGateway"), icon: CreditCard },
@@ -125,7 +235,14 @@ export const Step5Payment = () => {
   ];
 
   return (
-    <form className="flex flex-col gap-6" onSubmit={handleNext}>
+    <form className="flex flex-col gap-6" onSubmit={handlePay}>
+      {error && (
+        <div className="flex items-center gap-3 bg-red-50 text-red-700 p-4 rounded-xl">
+          <AlertTriangle size={20} />
+          <p className="text-sm font-medium">{error}</p>
+        </div>
+      )}
+
       {/* Gateway Selection */}
       <div className="grid grid-cols-2 gap-4">
         {gateways.map((gw) => {
@@ -352,16 +469,19 @@ export const Step5Payment = () => {
       <div className="flex gap-4 mt-2">
         <button
           type="button"
-          onClick={() => setStep(4)}
-          className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+          onClick={() => setStep(5)}
+          disabled={isActionLoading}
+          className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           <ArrowLeft size={24} className="text-gray-600" />
         </button>
         <button
           type="submit"
-          className="flex-1 bg-brand-dark text-white font-bold text-[16px] rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg"
+          disabled={isButtonDisabled}
+          className="flex-1 bg-brand-dark text-white font-bold text-[16px] rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
         >
-          {t("payNow")}
+          {isActionLoading ? <Loader2 className="animate-spin" /> : t("payNow")}
+          {!isActionLoading && <ArrowLeft className="rotate-180" size={20} />}
         </button>
       </div>
     </form>

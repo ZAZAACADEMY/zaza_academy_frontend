@@ -1,21 +1,20 @@
+"use client";
+
 import React from "react";
 import { useTranslations } from "next-intl";
-// import { TrendingUp, Video, Award, Clock } from "lucide-react";
-// import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ChildrenList } from "@/components/dashboard/ChildrenList";
-// import { RecentActivityList } from "@/components/dashboard/RecentActivityList";
-// import { RecentActivityCards } from "@/components/dashboard/RecentActivityCards";
-// import { RecentAchievements } from "@/components/dashboard/RecentAchievements";
+import { useGetCurrentUserQuery } from "@/lib/store/services/authApi";
 
 export default function DashboardPage() {
   const t = useTranslations("DashboardHome");
+  const { data: user } = useGetCurrentUserQuery();
 
   return (
     <div className="p-8 lg:p-12">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-display font-bold text-[#1F1235] mb-2">
-          {t("welcomeTitle", { name: "Sarah" })}
+          {t("welcomeTitle", { name: (user as any)?.first_name || (user as any)?.full_name || "" })}
         </h1>
         <p className="text-gray-500">{t("welcomeSubtitle")}</p>
       </div>

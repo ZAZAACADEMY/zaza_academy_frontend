@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { ChevronRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { ChevronRight, Eye, EyeOff, ArrowLeft, Loader2, AlertTriangle } from "lucide-react";
 import { Link } from "@/navigation";
 import { useSignup } from "./SignupContext";
 import { COUNTRY_CODES } from "./constants";
 import { z } from "zod";
 import { getStep1Schema } from "./validation";
 import { useTranslations, useLocale } from "next-intl";
+import { useRegisterMutation } from "@/lib/store/services/authApi";
+import { tokenStore } from "@/lib/api/tokenStore";
 
 export const Step1Account = () => {
   const t = useTranslations("Signup.step1");
@@ -30,6 +32,9 @@ export const Step1Account = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const locale = useLocale();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [generalError, setGeneralError] = useState<string | null>(null);
+
+  const [register, { isLoading }] = useRegisterMutation();
 
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState(country);
@@ -74,8 +79,9 @@ export const Step1Account = () => {
     setCountrySearch(found?.name ?? country);
   }, [country, countryOptions]);
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
+    setGeneralError(null);
     const schema = getStep1Schema(tErrors);
     const result = schema.safeParse({
       firstName,
@@ -88,7 +94,40 @@ export const Step1Account = () => {
 
     if (result.success) {
       setErrors({});
-      setStep(2);
+      try {
+        const response = await register({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          country: country as any,
+          password,
+          password_confirm: confirmPassword,
+        }).unwrap();
+
+        // Check if token is returned (depends on 2FA/verification flow)
+        if (response.access) {
+          tokenStore.setToken(response.access);
+        }
+        
+        // Even if no token (e.g. needs email verification), we proceed
+        // The backend should ideally allow proceeding to plan selection
+        setStep(2);
+      } catch (err: any) {
+        console.error("Detailed Registration Error:", err);
+        const backendError = err.data?.detail || err.data?.message;
+        setGeneralError(backendError || "An error occurred during registration.");
+        
+        if (err.data && typeof err.data === 'object' && !err.data.detail) {
+           const fieldErrors: { [key: string]: string } = {};
+           Object.keys(err.data).forEach(key => {
+             const messages = err.data[key];
+             if (Array.isArray(messages) && messages.length > 0) {
+               fieldErrors[key] = messages[0];
+             }
+           });
+           setErrors(fieldErrors);
+        }
+      }
     } else {
       // Use flatten() to organize errors by field
       const formattedErrors = result.error.flatten();
@@ -111,6 +150,13 @@ export const Step1Account = () => {
 
   return (
     <form className="flex flex-col gap-6" onSubmit={handleNext}>
+      {generalError && (
+        <div className="flex items-center gap-3 bg-red-50 text-red-700 p-4 rounded-xl">
+          <AlertTriangle size={20} />
+          <p className="text-sm font-medium">{generalError}</p>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex flex-col gap-2 w-full">
           <label
@@ -367,9 +413,14 @@ export const Step1Account = () => {
 
       <button
         type="submit"
-        className="mt-4 w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg"
+        disabled={isLoading}
+        className="mt-4 w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
       >
-        {t("next")} <ArrowLeft className="rotate-180" size={20} />
+        {isLoading ? <Loader2 className="animate-spin" /> : (
+          <>
+            {t("next")} <ArrowLeft className="rotate-180" size={20} />
+          </>
+        )}
       </button>
 
       <div className="text-center mt-4">

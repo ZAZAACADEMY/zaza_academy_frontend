@@ -2,42 +2,52 @@ import React from "react";
 import { Calendar, Play } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/navigation";
-import { MOCK_VIDEOS } from "@/lib/data/videos";
 import { useTranslations } from "next-intl";
+import { components } from "@/lib/api/v1";
 
-interface RecordingProps {
-  title: string;
-  description: string;
-  date: string;
-  videoId: string;
-}
+type Live = components["schemas"]["LiveDetail"];
 
-export const RecordingCard = ({ recording }: { recording: RecordingProps }) => {
+export const RecordingCard = ({ recording }: { recording: Live }) => {
   const t = useTranslations("dashboard.live");
-  const videoDetails = MOCK_VIDEOS.find((v) => v.id === recording.videoId);
+
+  // Parse start_datetime for display
+  const startDate = new Date(recording.start_datetime);
+  const formattedDate = startDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  // Parse duration (e.g., "01:30:00" -> "1h 30m")
+  const parseDuration = (durationStr: string | null | undefined) => {
+    if (!durationStr) return "N/A";
+    const [hours, minutes] = durationStr.split(":").map(Number);
+    let result = "";
+    if (hours > 0) result += `${hours}h `;
+    if (minutes > 0) result += `${minutes}m`;
+    return result.trim() || "N/A";
+  };
+  const durationDisplay = parseDuration(recording.estimated_duration);
+
+  // Placeholder for thumbnail, as LiveDetail doesn't directly provide it
+  const thumbnailUrl = "/images/video-placeholder.jpg"; // Use a generic placeholder
+  const videoLink = recording.recording_link || recording.meeting_link;
 
   return (
     <Link
-      href={`/dashboard/videos/${recording.videoId}`}
+      href={videoLink || "#"} // Link to recording or meeting link if available
       className="group block h-full"
+      target={videoLink ? "_blank" : "_self"} // Open in new tab if link exists
     >
       <div className="bg-white rounded-3xl overflow-hidden shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300 h-full border border-gray-100 flex flex-col">
         {/* Thumbnail Section */}
         <div className="relative aspect-video bg-gray-100 overflow-hidden">
-          {videoDetails?.thumbnail ? (
-            <Image
-              src={videoDetails.thumbnail}
-              alt={recording.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-brand-primary/5">
-              <span className="text-brand-tertiary font-bold text-xl opacity-20">
-                ZAZA
-              </span>
-            </div>
-          )}
+          <Image
+            src={thumbnailUrl}
+            alt={recording.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
 
           {/* Overlay & Play Button */}
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -47,9 +57,9 @@ export const RecordingCard = ({ recording }: { recording: RecordingProps }) => {
           </div>
 
           {/* Duration Badge */}
-          {videoDetails?.duration && (
+          {durationDisplay !== "N/A" && (
             <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-lg">
-              {videoDetails.duration}
+              {durationDisplay}
             </div>
           )}
 
@@ -71,9 +81,9 @@ export const RecordingCard = ({ recording }: { recording: RecordingProps }) => {
           <div className="flex items-center justify-between text-xs text-gray-400 mt-auto pt-4 border-t border-gray-50">
             <div className="flex items-center gap-2">
               <Calendar size={14} />
-              <span>{recording.date}</span>
+              <span>{formattedDate}</span>
             </div>
-            {videoDetails && (
+            {videoLink && (
               <div className="flex items-center gap-1 font-medium text-brand-primary">
                 {t("watchNow")}
               </div>

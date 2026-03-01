@@ -151,9 +151,11 @@
     "quarterly": "Abonnement trimestriel",
     "installmentNote": "inclut de légers frais d'échelonnement",
     "cta": "Choisir ce plan",
+    "errorTitle": "Impossible de charger les plans",
+    "errorMessage": "Un problème est survenu lors de la récupération des tarifs. Veuillez réessayer plus tard.",
     "plans": [
       {
-        "planId": "Solo",
+        "planId": "STANDARD",
         "title": "Standard",
         "description": "Parfait pour démarrer l'éducation financière en famille.",
         "price": "199 $",
@@ -167,7 +169,7 @@
         "icon": "sparkles"
       },
       {
-        "planId": "Family",
+        "planId": "PREMIUM",
         "title": "Plan Premium",
         "description": "Le meilleur rapport valeur/progression.",
         "price": "249,99 $",
@@ -182,7 +184,7 @@
         "mostPopular": true
       },
       {
-        "planId": "Family Plus",
+        "planId": "FAMILLE",
         "title": "Pack Famille",
         "description": "Idéal pour plusieurs enfants qui apprennent ensemble.",
         "price": "499,99 $",
@@ -204,6 +206,14 @@
     "statusActive": "Actif",
     "popular": "Populaire",
     "priceSuffix": "/mois",
+    "noDescription": "Aucune description disponible pour ce plan.",
+    "notAvailable": "Non disponible",
+    "paymentStatusPlaceholder": "2 paiements sur 3 effectués",
+    "topPercent": "Top 10 %",
+    "onTrack": "En bonne voie",
+    "noPayments": "Aucun historique de paiement trouvé.",
+    "errorLoadingData": "Oups ! Un problème est survenu",
+    "errorTryAgain": "Nous n'avons pas pu charger vos informations de facturation. Veuillez réessayer.",
     "nextBilling": "Prochaine facturation",
     "paymentMethod": "Moyen de paiement",
     "paymentMethodMasked": "•••• •••• •••• 4242",
@@ -405,9 +415,18 @@
     "noAccount": "Pas encore de compte ? ",
     "signupLink": "Inscription",
     "illustrationAlt": "Re-bonjour",
+    "twoFactorTitle": "Sécurité",
+    "twoFactorSubtitle": "Veuillez saisir le code à 6 chiffres envoyé à votre adresse e-mail pour confirmer votre identité.",
+    "backToLogin": "Retour à la connexion",
+    "otpLabel": "Code de vérification",
+    "verifyButton": "Vérifier et se connecter",
+    "resendCode": "Renvoyer le code",
+    "resending": "Envoi en cours...",
     "errors": {
       "email": "Veuillez saisir une adresse e-mail valide",
-      "password": "Le mot de passe est requis"
+      "password": "Le mot de passe est requis",
+      "otpLength": "Le code doit comporter 6 chiffres",
+      "invalidCredentials": "L'adresse e-mail ou le mot de passe est incorrect"
     }
   },
   "Signup": {
@@ -416,6 +435,7 @@
     "progress": "Étape {step} sur {total}",
     "stepTitles": {
       "1": "Créer un compte",
+      "1_5": "Vérifier l'e-mail",
       "2": "Choisir un plan",
       "3": "Cycle de facturation",
       "4": "Vérifier la commande",
@@ -427,6 +447,7 @@
     },
     "stepSubtitles": {
       "1": "On vous équipe pour démarrer",
+      "1_5": "Saisissez le code envoyé à votre adresse e-mail",
       "2": "Choisissez la meilleure formule pour votre famille",
       "3": "Choisissez votre mode de paiement",
       "4": "Merci de vérifier les détails de l'abonnement",
@@ -435,6 +456,19 @@
       "7": "Bienvenue dans la famille Zaza !",
       "8": "Créez le profil de votre enfant",
       "9": "Récapitulatif de votre famille"
+    },
+    "verifyEmail": {
+      "instruction": "Nous avons envoyé un code de vérification à 6 chiffres à {email}. Saisissez-le ci-dessous pour activer votre compte.",
+      "otpLabel": "Code de vérification",
+      "verifyButton": "Vérifier et continuer",
+      "resendLink": "Vous n'avez pas reçu le code ? Renvoyer",
+      "resending": "Envoi en cours...",
+      "otpResent": "Un nouveau code a été envoyé à votre adresse e-mail.",
+      "backToSignup": "Retour aux infos de compte",
+      "errorInvalidOtp": "Le code doit comporter 6 chiffres",
+      "errorLoginFailed": "Vérification réussie, mais la connexion automatique a échoué. Veuillez vous connecter manuellement.",
+      "errorGeneric": "Échec de la vérification. Veuillez vérifier le code et réessayer.",
+      "errorResendFailed": "Échec de l'envoi du code. Veuillez réessayer plus tard."
     },
     "step1": {
       "firstNameLabel": "Prénom",
@@ -476,22 +510,34 @@
       "note": "Tarif trimestriel",
       "tagPopular": "Populaire",
       "childLimit": "Jusqu'à {count, plural, one {# enfant} other {# enfants}}",
-      "next": "Étape suivante"
+      "next": "Étape suivante",
+      "errorTitle": "Oups ! Plans introuvables",
+      "errorMessage": "Nous n'avons pas pu charger les plans. Veuillez vérifier votre connexion ou réessayer plus tard."
     },
     "step3": {
       "monthly": "Mensuel",
+      "perMonth": "mois",
       "monthlyPrice": "$89/mois",
       "quarterly": "Trimestriel",
+      "perQuarter": "trimestre",
       "quarterlyPrice": "$249/trimestre",
+      "save": "Économisez {percent} %",
       "quarterlySave": "Économisez 10 %",
-      "next": "Étape suivante"
+      "next": "Étape suivante",
+      "errorTitle": "Données manquantes",
+      "errorMessage": "Veuillez revenir en arrière et resélectionner votre plan."
     },
     "step4": {
       "title": "Récapitulatif de commande",
       "plan": "Offre",
       "billing": "Cycle de facturation",
+      "billingMonthly": "Mensuel",
+      "billingQuarterly": "Trimestriel",
       "total": "Total",
-      "confirm": "Confirmer et payer"
+      "confirm": "Confirmer et payer",
+      "errorPlan": "Aucun plan sélectionné. Veuillez revenir en arrière.",
+      "errorUrl": "Impossible de générer le lien de paiement. Veuillez contacter le support.",
+      "errorGeneric": "Une erreur est survenue lors du traitement du paiement. Veuillez réessayer."
     },
     "step5": {
       "cardGateway": "Carte de débit / crédit",
@@ -510,7 +556,13 @@
       "expiryPlaceholder": "MM/AA",
       "cvv": "CVV / CVC",
       "cvvPlaceholder": "123",
-      "payNow": "Payer maintenant"
+      "payNow": "Payer maintenant",
+      "errorPlanDetails": "Impossible de récupérer les détails du plan. Veuillez recommencer l'inscription.",
+      "errorInvalidGateway": "Veuillez sélectionner un mode de paiement valide.",
+      "errorPaymentUrl": "La session de paiement n'a pas pu être lancée. Réessayez.",
+      "errorGenericPayment": "Le paiement a échoué. Veuillez vérifier vos informations.",
+      "errorLoadingPlan": "Erreur lors du chargement du plan",
+      "errorTryAgain": "Veuillez réessayer."
     },
     "step6": {
       "title": "Traitement du paiement",

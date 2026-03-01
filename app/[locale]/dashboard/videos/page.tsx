@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Search,
   BookOpen,
@@ -11,28 +11,30 @@ import {
   Briefcase,
   LayoutGrid,
   Heart,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
 import { VideoCard } from "@/components/dashboard/videos/VideoCard";
-import { MOCK_VIDEOS } from "@/lib/data/videos";
 import { useFavorites } from "@/components/dashboard/videos/FavoritesContext";
 import { useTranslations } from "next-intl";
+import { useGetVideosQuery } from "@/lib/store/services/contentApi";
 
-const AGE_FILTERS = [
-  { value: "All Ages", labelKey: "allAges" },
-  { value: "Ages 5-7", labelKey: "ages5_7" },
-  { value: "Ages 8-11", labelKey: "ages8_11" },
-  { value: "Ages 12-16", labelKey: "ages12_16" },
+const AGE_FILTERS_UI = [
+  { value: "All Ages", labelKey: "allAges", apiValue: "" },
+  { value: "Ages 5-7", labelKey: "ages5_7", apiValue: "5-8" },
+  { value: "Ages 8-11", labelKey: "ages8_11", apiValue: "9-12" },
+  { value: "Ages 12-16", labelKey: "ages12_16", apiValue: "13-16" },
 ];
 
 const TOPIC_FILTERS = [
-  { name: "All Topics", key: "allTopics", icon: LayoutGrid },
-  { name: "My Favorites", key: "myFavorites", icon: Heart },
-  { name: "Basics", key: "basics", icon: BookOpen },
-  { name: "Saving", key: "saving", icon: PiggyBank },
-  { name: "Spending", key: "spending", icon: CreditCard },
-  { name: "Banking", key: "banking", icon: Building2 },
-  { name: "Investing", key: "investing", icon: TrendingUp },
-  { name: "Business", key: "business", icon: Briefcase },
+  { name: "All Topics", key: "allTopics", icon: LayoutGrid, apiValue: "" },
+  { name: "My Favorites", key: "myFavorites", icon: Heart, apiValue: null }, // Client-side filter
+  { name: "Basics", key: "basics", icon: BookOpen, apiValue: "Basics" },
+  { name: "Saving", key: "saving", icon: PiggyBank, apiValue: "Saving" },
+  { name: "Spending", key: "spending", icon: CreditCard, apiValue: "Spending" },
+  { name: "Banking", key: "banking", icon: Building2, apiValue: "Banking" },
+  { name: "Investing", key: "investing", icon: TrendingUp, apiValue: "Investing" },
+  { name: "Business", key: "business", icon: Briefcase, apiValue: "Business" },
 ];
 
 export default function VideoLibraryPage() {
@@ -42,25 +44,66 @@ export default function VideoLibraryPage() {
   const [selectedAge, setSelectedAge] = useState("All Ages");
   const [selectedTopic, setSelectedTopic] = useState("All Topics");
 
-  const filteredVideos = MOCK_VIDEOS.filter((video) => {
-    const matchesSearch = video.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  // Map UI age filter to API age_group value
+  const apiAgeGroup = AGE_FILTERS_UI.find(f => f.value === selectedAge)?.apiValue || "";
+  // Map UI topic filter to API category value (if not "My Favorites")
+  const apiCategory = selectedTopic !== "My Favorites" ? (TOPIC_FILTERS.find(f => f.name === selectedTopic)?.apiValue || "") : "";
 
-    const matchesAge =
-      selectedAge === "All Ages" || video.ageGroup === selectedAge;
+  // Fetch videos from API with dynamic filters
+  const { 
+    data: videosData, 
+    isLoading, 
+    isError, 
+    error: fetchError 
+  } = useGetVideosQuery(
+    {
+      search: searchQuery || undefined,
+      age_group: apiAgeGroup || undefined,
+      category: apiCategory || undefined,
+    } as any // Cast to any because generated types are strict and might not include all optional query params
+  );
 
-    // Updated Logic for Favorites
-    let matchesTopic = true;
+  // Client-side filtering for "My Favorites"
+  const filteredVideos = useMemo(() => {
+    let videos = videosData?.results || [];
+
+    // Apply client-side search if API doesn't fully support it (or for refinement)
+    // Currently, API does support search on title, description, tags, so this might be redundant
+    // if API handles it comprehensively. But leaving it for robustness.
+    if (!apiCategory && searchQuery) { // Only filter client-side if API didn't handle the search for specific categories
+       videos = videos.filter(video => 
+         video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         (video.tags && (video.tags as any[]).some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
+       );
+    }
+    
     if (selectedTopic === "My Favorites") {
-      matchesTopic = isFavorite(video.id);
-    } else {
-      matchesTopic =
-        selectedTopic === "All Topics" || video.category === selectedTopic;
+      videos = videos.filter((video) => isFavorite(video.id));
     }
 
-    return matchesSearch && matchesAge && matchesTopic;
-  });
+    return videos;
+  }, [videosData, selectedTopic, isFavorite, searchQuery, apiCategory]);
+
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin text-brand-purple" size={48} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.error("Error fetching videos:", fetchError);
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-8 rounded-2xl">
+        <AlertTriangle className="w-12 h-12 mb-4" />
+        <h3 className="text-xl font-bold mb-2">{t("errorLoadingVideos")}</h3>
+        <p className="text-center text-sm">{t("errorTryAgain")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
@@ -94,7 +137,7 @@ export default function VideoLibraryPage() {
               <Search className="w-4 h-4" /> {t("filterBy")}
             </span>
             <div className="flex gap-2 overflow-x-auto pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
-              {AGE_FILTERS.map((age) => (
+              {AGE_FILTERS_UI.map((age) => (
                 <button
                   key={age.value}
                   onClick={() => setSelectedAge(age.value)}

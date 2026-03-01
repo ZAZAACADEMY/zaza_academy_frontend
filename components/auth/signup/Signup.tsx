@@ -7,6 +7,7 @@ import { Link, useRouter } from "@/navigation";
 import { SignupProvider, useSignup } from "./SignupContext";
 
 import { Step1Account } from "./Step1Account";
+import { Step1VerifyEmail } from "./Step1VerifyEmail";
 import { Step2Plans } from "./Step2Plans";
 import { Step3Billing } from "./Step3Billing";
 import { Step4Review } from "./Step4Review";
@@ -32,27 +33,44 @@ const SignupContent = () => {
   };
 
   const getStepTitle = () => {
-    if (step >= 1 && step <= 9) {
-      return t(`stepTitles.${step}`);
-    }
-    return "";
+    // Mapping internal logic to translation keys
+    const mapping: Record<number, string> = {
+      1: "1",
+      2: "1_5", // New verification step
+      3: "2",
+      4: "3",
+      5: "4",
+      6: "5",
+      7: "6",
+      8: "7",
+      9: "8",
+      10: "9"
+    };
+    return t(`stepTitles.${mapping[step] || step}`);
   };
 
   const getStepSubtitle = () => {
-    if (step >= 1 && step <= 9) {
-      return t(`stepSubtitles.${step}`);
-    }
-    return "";
+    const mapping: Record<number, string> = {
+      1: "1",
+      2: "1_5",
+      3: "2",
+      4: "3",
+      5: "4",
+      6: "5",
+      7: "6",
+      8: "7",
+      9: "8",
+      10: "9"
+    };
+    return t(`stepSubtitles.${mapping[step] || step}`);
   };
 
   return (
     <div className="min-h-screen w-full flex bg-white font-sans">
-      {/* Left Side - Image/Illustration (Moved from Right) */}
+      {/* Left Side - Image/Illustration */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-6">
-        {/* Gradient Background */}
+        {/* ... existing gradient background ... */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#7E2EE8] via-[#A63BDC] to-[#F668A3]" />
-
-        {/* Sparkle/Glow Overlay */}
         <div
           className="absolute inset-0 opacity-25 pointer-events-none"
           style={{
@@ -74,12 +92,12 @@ const SignupContent = () => {
         </div>
       </div>
 
-      {/* Right Side - Form (Moved from Left) */}
+      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 md:p-8 lg:p-12 overflow-y-auto bg-[#FAFAFA]">
         <div className="w-full max-w-[500px] flex flex-col gap-8">
           {/* Header */}
           <div className="flex items-center justify-between">
-            {step < 7 && (
+            {step < 8 && (
               <button
                 onClick={handleBack}
                 className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center text-brand-black hover:bg-gray-50 transition-colors shadow-sm"
@@ -98,17 +116,17 @@ const SignupContent = () => {
             <div className="w-10"></div>
           </div>
 
-          {/* Progress Indicator (Only for steps 1-5) */}
-          {step <= 5 && (
+          {/* Progress Indicator (Updated for 6 total main steps) */}
+          {step <= 6 && (
             <div className="flex flex-col gap-2">
               <div className="flex justify-between text-xs font-bold text-gray-400 uppercase tracking-wider">
-                <span>{t("progress", { step, total: 5 })}</span>
-                <span>{Math.round((step / 5) * 100)}%</span>
+                <span>{t("progress", { step, total: 6 })}</span>
+                <span>{Math.round((step / 6) * 100)}%</span>
               </div>
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#A655F7] to-[#F46AA3] transition-all duration-500 ease-out"
-                  style={{ width: `${(step / 5) * 100}%` }}
+                  style={{ width: `${(step / 6) * 100}%` }}
                 ></div>
               </div>
             </div>
@@ -125,14 +143,15 @@ const SignupContent = () => {
 
             {/* Step Content */}
             {step === 1 && <Step1Account />}
-            {step === 2 && <Step2Plans />}
-            {step === 3 && <Step3Billing />}
-            {step === 4 && <Step4Review />}
-            {step === 5 && <Step5Payment />}
-            {step === 6 && <Step6Processing />}
-            {step === 7 && <Step7Success />}
-            {step === 8 && <Step8ChildSetup />}
-            {step === 9 && <Step9ChildSummary />}
+            {step === 2 && <Step1VerifyEmail />}
+            {step === 3 && <Step2Plans />}
+            {step === 4 && <Step3Billing />}
+            {step === 5 && <Step4Review />}
+            {step === 6 && <Step5Payment />}
+            {step === 7 && <Step6Processing />}
+            {step === 8 && <Step7Success />}
+            {step === 9 && <Step8ChildSetup />}
+            {step === 10 && <Step9ChildSummary />}
           </div>
         </div>
       </div>

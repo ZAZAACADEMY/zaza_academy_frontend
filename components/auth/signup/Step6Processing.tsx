@@ -37,7 +37,7 @@ export const Step6Processing = () => {
           plan: selectedPlan,
           paymentFrequency,
           paymentGateway,
-        }).unwrap();
+        } as any).unwrap();
 
         // Success
         setStep(7);

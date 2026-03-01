@@ -1,23 +1,14 @@
 import React from "react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { Link } from "@/navigation";
-import { Clock, Play, CheckCircle2, Heart } from "lucide-react";
+import { Clock, Play, Heart } from "lucide-react";
 import { useFavorites } from "@/components/dashboard/videos/FavoritesContext";
+import { components } from "@/lib/api/v1";
 
-export interface VideoProps {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string | StaticImageData;
-  duration: string;
-  rating: number; // Deprecated, kept for data compatibility
-  category: string;
-  ageGroup: string;
-  progress?: number; // Optional mock progress 0-100
-}
+export type Video = components["schemas"]["VideoDetail"];
 
-const getCategoryColor = (category: string) => {
-  switch (category.toLowerCase()) {
+const getCategoryColor = (category: string | null | undefined) => {
+  switch (category?.toLowerCase()) {
     case "saving":
       return "bg-emerald-100 text-emerald-700 border-emerald-200";
     case "investing":
@@ -33,32 +24,27 @@ const getCategoryColor = (category: string) => {
   }
 };
 
-export const VideoCard = ({ video }: { video: VideoProps }) => {
+export const VideoCard = ({ video }: { video: Video }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(video.id);
-
-  // Use a stable value for progress to prevent hydration mismatches
-  // If video.progress is missing, generate a deterministic number based on ID instead of Math.random()
-  const derivedProgress = React.useMemo(() => {
-    if (video.progress !== undefined) return video.progress;
-
-    // Simple hash function to generate a stable "random" number from string ID
-    let hash = 0;
-    for (let i = 0; i < video.id.length; i++) {
-      hash = (hash << 5) - hash + video.id.charCodeAt(i);
-      hash |= 0; // Convert to 32bit integer
-    }
-    return Math.abs(hash % 100);
-  }, [video.id, video.progress]);
-
-  const progress = derivedProgress;
-  const isCompleted = progress === 100;
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     toggleFavorite(video.id);
   };
+
+  // Parse duration (e.g., "01:30:00" -> "1h 30m")
+  const parseDuration = (durationStr: string | null | undefined) => {
+    if (!durationStr) return "N/A";
+    const [hours, minutes] = durationStr.split(":").map(Number);
+    let result = "";
+    if (hours > 0) result += `${hours}h `;
+    if (minutes > 0) result += `${minutes}m`;
+    return result.trim() || "N/A";
+  };
+  const durationDisplay = parseDuration(video.duration);
+
 
   return (
     <Link
@@ -68,12 +54,14 @@ export const VideoCard = ({ video }: { video: VideoProps }) => {
       <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full border border-gray-100 transform group-hover:-translate-y-1">
         {/* Thumbnail Container */}
         <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
-          <Image
-            src={video.thumbnail}
-            alt={video.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          {video.thumbnail_url && (
+            <Image
+              src={video.thumbnail_url}
+              alt={video.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          )}
 
           {/* Overlay Gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60" />
@@ -100,32 +88,32 @@ export const VideoCard = ({ video }: { video: VideoProps }) => {
           </div>
 
           {/* Duration Badge (Moved to image) */}
-          <div className="absolute bottom-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-sm rounded-lg text-white text-xs font-medium flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {video.duration}
-          </div>
+          {video.duration && (
+            <div className="absolute bottom-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-sm rounded-lg text-white text-xs font-medium flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {durationDisplay}
+            </div>
+          )}
 
-          {/* Progress Bar (Bottom of image) */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/30">
-            <div
-              className={`h-full ${isCompleted ? "bg-green-400" : "bg-brand-accent"}`}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+          {/* Progress Bar (Removed as no API field) */}
         </div>
 
         {/* Content */}
         <div className="p-5 flex flex-col flex-1 relative">
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-3">
-            <span
-              className={`px-3 py-1 text-xs font-bold rounded-full border ${getCategoryColor(video.category)}`}
-            >
-              {video.category}
-            </span>
-            <span className="px-3 py-1 bg-gray-50 text-gray-500 text-xs font-bold rounded-full border border-gray-100">
-              {video.ageGroup}
-            </span>
+            {video.category && (
+              <span
+                className={`px-3 py-1 text-xs font-bold rounded-full border ${getCategoryColor(video.category)}`}
+              >
+                {video.category}
+              </span>
+            )}
+            {video.age_group && (
+              <span className="px-3 py-1 bg-gray-50 text-gray-500 text-xs font-bold rounded-full border border-gray-100">
+                {video.age_group}
+              </span>
+            )}
           </div>
 
           {/* Title */}
@@ -139,16 +127,8 @@ export const VideoCard = ({ video }: { video: VideoProps }) => {
 
           {/* Footer Metadata */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
-            {/* Rating removed here */}
-
-            {isCompleted ? (
-              <div className="flex items-center gap-1.5 text-green-600 text-xs font-bold ml-auto">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Watched</span>
-              </div>
-            ) : (
-              <div className="ml-auto"></div>
-            )}
+            {/* Rating and progress removed */}
+            <div className="ml-auto"></div>
           </div>
         </div>
       </div>

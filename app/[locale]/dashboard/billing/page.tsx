@@ -13,10 +13,15 @@ import {
   HelpCircle,
   Sparkles,
   Users,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ContactModal } from "@/components/ui/ContactModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGetMySubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
+import { useGetMyPaymentsQuery } from "@/lib/store/services/paymentsApi";
+import { useListChildrenQuery } from "@/lib/store/services/childrenApi";
 
 // Define strict props for Lucide icons to avoid TS errors
 type LucideIconProps = React.SVGProps<SVGSVGElement> & {
@@ -25,6 +30,7 @@ type LucideIconProps = React.SVGProps<SVGSVGElement> & {
 };
 
 type PlanMessage = {
+  planId: string;
   title: string;
   description: string;
   price: string;
@@ -165,27 +171,74 @@ export default function BillingPage() {
   const tPricing = useTranslations("Pricing");
   const locale = useLocale();
 
+  const { data: subscriptionsData, isLoading: isLoadingSubs, isError: isErrorSubs } = useGetMySubscriptionsQuery();
+  const { data: paymentsData, isLoading: isLoadingPayments } = useGetMyPaymentsQuery();
+  const { data: childrenData } = useListChildrenQuery();
+
   // Safety check for faqItems
   const rawFaqItems = t.raw("faqItems");
   const faqItems = Array.isArray(rawFaqItems)
     ? (rawFaqItems as { question: string; answer: string }[])
     : [];
 
-  const plans = (tPricing.raw("plans") as PlanMessage[]).map((plan) => {
-    const Icon = plan.icon ? planIconMap[plan.icon] || Sparkles : Sparkles;
-    return {
-      ...plan,
-      icon: Icon,
-      isPopular: Boolean(plan.mostPopular),
-    } satisfies PricingPlan;
-  });
+  const plans = useMemo(() => {
+    const rawPlans = tPricing.raw("plans") as PlanMessage[];
+    return rawPlans.map((plan) => {
+      const Icon = plan.icon ? planIconMap[plan.icon] || Sparkles : Sparkles;
+      return {
+        ...plan,
+        icon: Icon,
+        isPopular: Boolean(plan.mostPopular),
+      } satisfies PricingPlan;
+    });
+  }, [tPricing]);
+
+  const currentSubscription = subscriptionsData?.results?.find(sub => sub.status === "ACTIVE") || subscriptionsData?.results?.[0];
+  
+  const planStatus = currentSubscription?.status_display || t("statusActive");
+  const planName = currentSubscription?.plan_name || t("notAvailable");
+  
+  // Get latest successful payment for this subscription
+  const latestPayment = paymentsData?.results?.find(p => p.subscription === currentSubscription?.id && p.status === "SUCCESSFUL");
+  const planPrice = latestPayment?.amount ? `$${latestPayment.amount}` : "—";
+  const planPeriod = latestPayment?.duration_display || "";
+  const nextBillingDate = latestPayment?.coverage_end_date 
+    ? new Date(latestPayment.coverage_end_date).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })
+    : "—";
+  const paymentMethodMasked = latestPayment?.method_display || t("paymentMethodMasked");
+
+  const childrenCount = childrenData?.length || 0;
 
   // Filter to show only plans above the current plan price
-  const currentPriceNumber = 199; // default current plan price
-  const higherPlans = plans.filter((plan) => {
+  const currentPriceNumber = latestPayment ? Number(latestPayment.amount) : 0;
+  const plansToDisplay = plans.filter((plan) => {
     const numeric = Number((plan.price || "").replace(/[^0-9.]/g, ""));
-    return Number.isFinite(numeric) && numeric > currentPriceNumber;
+    return !currentSubscription || (Number.isFinite(numeric) && numeric > currentPriceNumber);
   });
+
+  if (isLoadingSubs || isLoadingPayments) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#F5F2FF]">
+        <Loader2 className="w-12 h-12 animate-spin text-[#7F26D9]" />
+      </div>
+    );
+  }
+
+  if (isErrorSubs) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F2FF] p-6 text-center">
+        <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("errorLoadingData")}</h1>
+        <p className="text-gray-600 mb-6">{t("errorTryAgain")}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-3 bg-[#7F26D9] text-white rounded-full font-bold shadow-lg hover:bg-[#6b21b8] transition-all"
+        >
+          {t("retry", { defaultValue: "Retry" })}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 md:p-10 lg:p-12 space-y-8 bg-[#F5F2FF] min-h-screen">
@@ -210,25 +263,29 @@ export default function BillingPage() {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 rounded-full bg-[#2F1B4B] text-white text-xs font-semibold shadow-sm">
-                  {t("statusActive")}
+                  {planStatus}
                 </span>
-                <span className="px-3 py-1 rounded-full bg-white text-[#7F26D9] text-xs font-semibold border border-[#E0D4FF] shadow-sm">
-                  {t("popular")}
-                </span>
+                {plans.find(p => p.planId === currentSubscription?.plan_name)?.isPopular && (
+                  <span className="px-3 py-1 rounded-full bg-white text-[#7F26D9] text-xs font-semibold border border-[#E0D4FF] shadow-sm">
+                    {t("popular")}
+                  </span>
+                )}
               </div>
               <div>
                 <h1 className="text-4xl md:text-[40px] font-display font-bold text-[#1F1235]">
-                  Standard
+                  {planName}
                 </h1>
-                <p className="text-sm text-gray-700">Most Popular</p>
+                <p className="text-sm text-gray-700">
+                  {(currentSubscription as any)?.plan_details?.split(" - ")[1] || t("noDescription")}
+                </p>
               </div>
             </div>
             <div className="text-right">
               <div className="text-4xl md:text-5xl font-display font-bold text-[#1F1235] leading-none">
-                $199
+                {planPrice}
               </div>
               <div className="text-sm text-gray-600">
-                {tPricing("perQuarter")}
+                {planPeriod}
               </div>
             </div>
           </div>
@@ -237,14 +294,14 @@ export default function BillingPage() {
             <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
               <p className="text-xs text-gray-500 mb-1">{t("nextBilling")}</p>
               <p className="text-sm font-semibold text-[#1F1235]">
-                February 17, 2026
+                {nextBillingDate}
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
               <p className="text-xs text-gray-500 mb-1">{t("paymentMethod")}</p>
               <div className="flex items-center gap-2 text-sm font-semibold text-[#1F1235]">
                 <CreditCard size={16} />
-                <span>{t("paymentMethodMasked")}</span>
+                <span>{paymentMethodMasked}</span>
               </div>
             </div>
             <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
@@ -252,10 +309,10 @@ export default function BillingPage() {
                 {t("installmentStatus")}
               </p>
               <p className="text-sm font-semibold text-[#7F26D9]">
-                2 of 3 payments completed
+                {t("onTrack")}
               </p>
               <p className="text-xs text-[#7F26D9] text-right">
-                {t("remaining", { amount: "$52" })}
+                {t("remaining", { amount: "$0.00" })}
               </p>
             </div>
           </div>
@@ -264,12 +321,12 @@ export default function BillingPage() {
             <p className="text-sm text-gray-700">{t("progressLabel")}</p>
             <div className="h-2 w-full rounded-full bg-[#E7DFFF] overflow-hidden">
               <div
-                className="h-full w-[72%] bg-gradient-to-r from-[#7F26D9] via-[#AC77F2] to-[#E6A1FF]"
+                className="h-full w-[100%] bg-gradient-to-r from-[#7F26D9] via-[#AC77F2] to-[#E6A1FF]"
                 aria-hidden
               />
             </div>
             <div className="flex items-center justify-between text-xs text-gray-600">
-              <span>{t("nextInstallment", { date: "March 10, 2026" })}</span>
+              <span>{t("nextInstallment", { date: nextBillingDate })}</span>
             </div>
           </div>
 
@@ -298,12 +355,17 @@ export default function BillingPage() {
               </p>
               <div className="flex items-end gap-2 mb-3">
                 <p className="text-3xl font-display font-bold text-[#1F1235]">
-                  2
+                  {childrenCount}
                 </p>
-                <p className="text-sm text-gray-500 mb-1.5 font-medium">/ 3</p>
+                <p className="text-sm text-gray-500 mb-1.5 font-medium">
+                  / {currentSubscription?.plan_name === "STANDARD" ? "1" : currentSubscription?.plan_name === "PREMIUM" ? "3" : "5"}
+                </p>
               </div>
               <div className="h-2 w-full bg-white/60 rounded-full overflow-hidden">
-                <div className="h-full bg-[#7F26D9] w-[66%] rounded-full" />
+                <div 
+                  className="h-full bg-[#7F26D9] rounded-full" 
+                  style={{ width: `${Math.min((childrenCount / (currentSubscription?.plan_name === "STANDARD" ? 1 : currentSubscription?.plan_name === "PREMIUM" ? 3 : 5)) * 100, 100)}%` }}
+                />
               </div>
             </div>
 
@@ -316,10 +378,10 @@ export default function BillingPage() {
                 {t("videosWatched")}
               </p>
               <p className="text-3xl font-display font-bold text-[#1F1235]">
-                24
+                0
               </p>
               <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/60 text-[10px] font-bold text-[#5B4AF0]">
-                <Sparkles size={10} /> Top 10%
+                <Sparkles size={10} /> {t("topPercent")}
               </div>
             </div>
 
@@ -332,10 +394,10 @@ export default function BillingPage() {
                 {t("liveSessions")}
               </p>
               <p className="text-3xl font-display font-bold text-[#1F1235]">
-                8
+                0
               </p>
               <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/60 text-[10px] font-bold text-[#2F6BEB]">
-                <Check size={10} strokeWidth={3} /> On track
+                <Check size={10} strokeWidth={3} /> {t("onTrack")}
               </div>
             </div>
           </div>
@@ -353,9 +415,9 @@ export default function BillingPage() {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {higherPlans.map((plan, index) => (
+          {plansToDisplay.map((plan, index) => (
             <PlanCard
-              key={`${plan.title}-${index}`}
+              key={`${plan.planId}-${index}`}
               plan={plan}
               mostPopularLabel={tPricing("mostPopular")}
               periodLabel={tPricing("perQuarter")}
@@ -376,10 +438,12 @@ export default function BillingPage() {
             </h3>
           </div>
           <div className="space-y-4">
-            {["January 17, 2026", "December 17, 2025", "November 17, 2025"].map(
-              (date, idx) => (
+            {!paymentsData || paymentsData.results.length === 0 ? (
+              <p className="text-center text-gray-500">{t("noPayments")}</p>
+            ) : (
+              paymentsData.results.map((payment) => (
                 <div
-                  key={date}
+                  key={payment.id}
                   className="flex items-center justify-between p-4 rounded-2xl bg-[#F9FAFB] hover:bg-[#F3F4F6] transition-colors group"
                 >
                   <div className="flex items-center gap-4">
@@ -388,16 +452,26 @@ export default function BillingPage() {
                     </div>
                     <div>
                       <p className="font-bold text-[#1F1235] text-[15px]">
-                        Family Plan - Monthly
+                        {payment.plan_name} - {payment.duration_display}
                       </p>
-                      <p className="text-sm text-gray-500">{date}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(payment.payment_date).toLocaleDateString(locale, {
+                          year: 'numeric', month: 'long', day: 'numeric'
+                        })}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right flex flex-col items-end gap-2">
                     <div>
-                      <p className="font-bold text-[#1F1235] mb-1">$39</p>
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] text-xs font-bold">
-                        {t("historyPaid")}
+                      <p className="font-bold text-[#1F1235] mb-1">
+                        {payment.amount}
+                      </p>
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                        payment.status === "SUCCESSFUL" ? "bg-[#DCFCE7] text-[#15803D]" :
+                        payment.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
+                        "bg-red-100 text-red-700"
+                      }`}>
+                        {payment.status_display}
                       </span>
                     </div>
                     <button className="text-xs text-gray-500 hover:text-[#7F26D9] flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-100 transition-all">
@@ -406,7 +480,7 @@ export default function BillingPage() {
                     </button>
                   </div>
                 </div>
-              ),
+              ))
             )}
           </div>
         </div>

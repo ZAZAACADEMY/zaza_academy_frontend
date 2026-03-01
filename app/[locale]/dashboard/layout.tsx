@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { FavoritesProvider } from "@/components/dashboard/videos/FavoritesContext";
 import { Menu } from "lucide-react";
+import { tokenStore } from "@/lib/api/tokenStore";
 
 export default function DashboardLayout({
   children,
@@ -11,6 +14,24 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const router = useRouter();
+  const locale = useLocale();
+
+  useEffect(() => {
+    const token = tokenStore.getToken();
+    if (!token) {
+      router.replace(`/${locale}/login`);
+    }
+  }, [router, locale]);
+
+  // Optionally, show a loading spinner while checking auth
+  if (!tokenStore.getToken()) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Redirecting...
+      </div>
+    );
+  }
 
   return (
     <FavoritesProvider>

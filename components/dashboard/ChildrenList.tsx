@@ -1,93 +1,57 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
-  ChevronRight,
   Plus,
   Users,
   Loader2,
   Trash2,
   Edit2,
   Sparkles,
-  Trophy,
-  TrendingUp,
-  PlayCircle,
   Video,
+  AlertTriangle,
 } from "lucide-react";
-import { ChildProfile } from "@/lib/api/types";
 import {
-  childrenService,
-  CreateChildData,
-  UpdateChildData,
-} from "@/lib/api/children";
+  useListChildrenQuery,
+  useDeleteChildMutation,
+  Child,
+} from "@/lib/store/services/childrenApi";
 import { AddChildModal } from "./children/AddChildModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 import { motion } from "framer-motion";
-import { MOCK_VIDEOS } from "@/lib/data/videos";
 import { useTranslations } from "next-intl";
 
 // Helper to get avatar path - mapping index to local path or external URL
-const getAvatarPath = (avatarStr?: string) => {
-  // If it's a number/index string
-  const index = parseInt(avatarStr || "0");
-  if (!isNaN(index)) {
-    return `/avatars/A${index + 1}.jpeg`; // Assuming avatars are A1 to A10
+const getAvatarPath = (avatarStr?: string | null) => {
+  if (!avatarStr) return "/avatars/A1.jpeg";
+  
+  // If it's a number/index string or API provides a direct URL
+  const index = parseInt(avatarStr);
+  if (!isNaN(index) && index >= 0 && index < 10) { // Assuming 0-9 for A1-A10
+    return `/avatars/A${index + 1}.jpeg`;
   }
-  return avatarStr || "/avatars/A1.jpeg";
-};
-
-const getAgeGroupLabel = (age: number) => {
-  if (age <= 7) return "Ages 5-7";
-  if (age <= 11) return "Ages 8-11";
-  return "Ages 12-16";
+  // Fallback if avatarStr is a URL
+  return avatarStr;
 };
 
 export const ChildrenList = () => {
   const t = useTranslations("ChildrenList");
-  const [children, setChildren] = useState<ChildProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: childrenData,
+    isLoading,
+    isError,
+    error: fetchError,
+  } = useListChildrenQuery();
+  const [deleteChild] = useDeleteChildMutation();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingChild, setEditingChild] = useState<ChildProfile | null>(null);
+  const [editingChild, setEditingChild] = useState<Child | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [childToDelete, setChildToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetchChildren = async () => {
-    try {
-      setLoading(true);
-      const data = await childrenService.getAll();
-      setChildren(data);
-    } catch (err) {
-      console.error("Failed to load children profiles", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchChildren();
-  }, []);
-
-  const handleSaveChild = async (data: CreateChildData | UpdateChildData) => {
-    try {
-      if (editingChild) {
-        const updated = await childrenService.update(editingChild.id, data);
-        setChildren((prev) =>
-          prev.map((c) => (c.id === editingChild.id ? updated : c)),
-        );
-      } else {
-        const created = await childrenService.create(data as CreateChildData);
-        setChildren((prev) => [...prev, created]);
-      }
-      setIsModalOpen(false);
-      setEditingChild(null);
-    } catch (err) {
-      console.error("Save failed", err);
-    }
-  };
-
-  const handleEditClick = (child: ChildProfile) => {
+  const handleEditClick = (child: Child) => {
     setEditingChild(child);
     setIsModalOpen(true);
   };
@@ -108,8 +72,7 @@ export const ChildrenList = () => {
 
     try {
       setIsDeleting(true);
-      await childrenService.delete(childToDelete);
-      setChildren((prev) => prev.filter((c) => c.id !== childToDelete));
+      await deleteChild(childToDelete).unwrap();
     } catch (err) {
       console.error("Delete failed", err);
     } finally {
@@ -118,6 +81,27 @@ export const ChildrenList = () => {
       setChildToDelete(null);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white p-6 md:p-8 rounded-[32px] shadow-xl shadow-indigo-100/50 flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 text-brand-purple animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.error("Error fetching children:", fetchError);
+    return (
+      <div className="bg-white p-6 md:p-8 rounded-[32px] shadow-xl shadow-indigo-100/50 flex flex-col justify-center items-center h-64 text-red-700">
+        <AlertTriangle className="w-10 h-10 mb-4" />
+        <h3 className="text-lg font-bold mb-2">{t("errorLoadingChildren")}</h3>
+        <p className="text-sm">{t("errorTryAgain")}</p>
+      </div>
+    );
+  }
+
+  const children = childrenData || [];
 
   return (
     <>
@@ -130,9 +114,6 @@ export const ChildrenList = () => {
               </span>
               {t("myChildren")}
             </h3>
-            {/* <p className="text-gray-500 text-sm ml-13 mt-1">
-              Manage profiles and view progress
-            </p> */}
           </div>
           <button
             onClick={handleAddClick}
@@ -146,11 +127,7 @@ export const ChildrenList = () => {
           </button>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 text-brand-purple animate-spin" />
-          </div>
-        ) : children.length === 0 ? (
+        {children.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-3xl border border-gray-100 border-dashed">
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-gray-300">
               <Users size={32} />
@@ -179,11 +156,7 @@ export const ChildrenList = () => {
                 <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-brand-purple/5 to-pink-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500 ease-out" />
                 <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-purple border border-brand-purple/10 shadow-sm flex items-center gap-1">
                   <Sparkles size={12} className="text-yellow-400" />
-                  {child.age <= 7
-                    ? "5-7 Years"
-                    : child.age <= 12
-                      ? "8-12 Years"
-                      : "13-16 Years"}
+                  {child.age_group}
                 </div>
 
                 {/* Avatar & Header */}
@@ -191,7 +164,7 @@ export const ChildrenList = () => {
                   <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-xl shadow-brand-purple/15 border-4 border-white group-hover:rotate-3 transition-transform duration-300 bg-gray-50">
                     <Image
                       src={getAvatarPath(child.avatar)}
-                      alt={child.name}
+                      alt={child.name || "Child avatar"}
                       fill
                       className="object-cover"
                     />
@@ -216,21 +189,12 @@ export const ChildrenList = () => {
                         {t("videosWatched")}
                       </div>
                       <div className="text-xl font-bold text-brand-dark mt-1">
-                        {/* Mock watched count based on age for demo */}
                         <span className="text-brand-purple">
-                          {Math.floor(
-                            (child.age * 3) %
-                              (MOCK_VIDEOS.filter(
-                                (v) =>
-                                  v.ageGroup === getAgeGroupLabel(child.age),
-                              ).length || 1),
-                          )}
+                          0
                         </span>
                         <span className="text-gray-400 text-lg mx-1">/</span>
                         <span className="text-gray-600">
-                          {MOCK_VIDEOS.filter(
-                            (v) => v.ageGroup === getAgeGroupLabel(child.age),
-                          ).length || 5}
+                          0
                         </span>
                       </div>
                     </div>
@@ -252,7 +216,7 @@ export const ChildrenList = () => {
                         />
                         <path
                           className="text-brand-purple transition-all duration-1000 ease-out"
-                          strokeDasharray={`${Math.floor((((child.age * 3) % (MOCK_VIDEOS.filter((v) => v.ageGroup === getAgeGroupLabel(child.age)).length || 1)) / (MOCK_VIDEOS.filter((v) => v.ageGroup === getAgeGroupLabel(child.age)).length || 5)) * 100)}, 100`}
+                          strokeDasharray="0, 100"
                           d="M18 2.0845
                                         a 15.9155 15.9155 0 0 1 0 31.831
                                         a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -263,17 +227,7 @@ export const ChildrenList = () => {
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-brand-purple">
-                        {Math.floor(
-                          (((child.age * 3) %
-                            (MOCK_VIDEOS.filter(
-                              (v) => v.ageGroup === getAgeGroupLabel(child.age),
-                            ).length || 1)) /
-                            (MOCK_VIDEOS.filter(
-                              (v) => v.ageGroup === getAgeGroupLabel(child.age),
-                            ).length || 5)) *
-                            100,
-                        )}
-                        %
+                        0%
                       </div>
                     </div>
                   </div>
@@ -288,7 +242,7 @@ export const ChildrenList = () => {
 
                   <button
                     title="Delete Profile"
-                    onClick={(e) => handleDeleteClick(e, child.id)}
+                    onClick={(e) => handleDeleteClick(e, child.id!)}
                     className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-300 hover:bg-red-50 hover:text-red-500 hover:scale-110 active:scale-95 transition-all z-20"
                   >
                     <Trash2 size={18} />
@@ -331,7 +285,6 @@ export const ChildrenList = () => {
           setIsModalOpen(false);
           setEditingChild(null);
         }}
-        onSave={handleSaveChild}
         initialData={editingChild}
       />
     </>

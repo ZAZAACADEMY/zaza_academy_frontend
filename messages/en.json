@@ -151,9 +151,11 @@
     "quarterly": "Quarterly Subscription",
     "installmentNote": "includes small installment fee",
     "cta": "Start Quarterly Plan",
+    "errorTitle": "Could not load plans",
+    "errorMessage": "There was a problem fetching the pricing plans. Please try again later.",
     "plans": [
       {
-        "planId": "Solo",
+        "planId": "STANDARD",
         "title": "Standard",
         "description": "Perfect for families getting started with financial education.",
         "price": "$199",
@@ -167,7 +169,7 @@
         "icon": "sparkles"
       },
       {
-        "planId": "Family",
+        "planId": "PREMIUM",
         "title": "Premium Plan",
         "description": "Best value for deeper learning and progress tracking.",
         "price": "$249.99",
@@ -182,7 +184,7 @@
         "mostPopular": true
       },
       {
-        "planId": "Family Plus",
+        "planId": "FAMILLE",
         "title": "Family Bundle",
         "description": "Ideal for families with multiple children learning together.",
         "price": "$499.99",
@@ -204,6 +206,14 @@
     "statusActive": "Active",
     "popular": "Popular",
     "priceSuffix": "/month",
+    "noDescription": "No description available for this plan.",
+    "notAvailable": "Not Available",
+    "paymentStatusPlaceholder": "2 of 3 payments completed",
+    "topPercent": "Top 10%",
+    "onTrack": "On track",
+    "noPayments": "No payment history found.",
+    "errorLoadingData": "Oops! Something went wrong",
+    "errorTryAgain": "We couldn't load your billing information. Please try again.",
     "nextBilling": "Next billing date",
     "paymentMethod": "Payment method",
     "paymentMethodMasked": "•••• •••• •••• 4242",
@@ -405,9 +415,18 @@
     "noAccount": "Don't have an account? ",
     "signupLink": "Sign up",
     "illustrationAlt": "Welcome Back",
+    "twoFactorTitle": "Security Check",
+    "twoFactorSubtitle": "Please enter the 6-digit code sent to your email to verify your identity.",
+    "backToLogin": "Back to login",
+    "otpLabel": "Verification Code",
+    "verifyButton": "Verify & Login",
+    "resendCode": "Resend Code",
+    "resending": "Resending...",
     "errors": {
       "email": "Please enter a valid email address",
-      "password": "Password is required"
+      "password": "Password is required",
+      "otpLength": "Code must be 6 digits",
+      "invalidCredentials": "The email or password you entered is incorrect"
     }
   },
   "Signup": {
@@ -416,6 +435,7 @@
     "progress": "Step {step} of {total}",
     "stepTitles": {
       "1": "Create Account",
+      "1_5": "Verify Email",
       "2": "Choose Plan",
       "3": "Billing Cycle",
       "4": "Review Order",
@@ -427,6 +447,7 @@
     },
     "stepSubtitles": {
       "1": "Let's get you started with Zaza",
+      "1_5": "Enter the code sent to your email",
       "2": "Select the best plan for your family",
       "3": "Choose how you want to pay",
       "4": "Please review your subscription details",
@@ -435,6 +456,19 @@
       "7": "Welcome to the Zaza Family!",
       "8": "Create a profile for your child",
       "9": "Your family summary"
+    },
+    "verifyEmail": {
+      "instruction": "We've sent a 6-digit verification code to {email}. Please enter it below to activate your account.",
+      "otpLabel": "Verification Code",
+      "verifyButton": "Verify & Continue",
+      "resendLink": "Didn't receive the code? Resend",
+      "resending": "Sending...",
+      "otpResent": "A new code has been sent to your email.",
+      "backToSignup": "Back to account info",
+      "errorInvalidOtp": "Code must be 6 digits",
+      "errorLoginFailed": "Verification successful, but auto-login failed. Please try to log in manually.",
+      "errorGeneric": "Verification failed. Please check the code and try again.",
+      "errorResendFailed": "Failed to resend code. Please try again later."
     },
     "step1": {
       "firstNameLabel": "First Name",
@@ -476,22 +510,34 @@
       "note": "Quarterly price",
       "tagPopular": "Popular",
       "childLimit": "Up to {count, plural, one {# child} other {# children}}",
-      "next": "Next Step"
+      "next": "Next Step",
+      "errorTitle": "Oops! Plans not found",
+      "errorMessage": "We couldn't load the plans. Please check your connection or try again later."
     },
     "step3": {
       "monthly": "Monthly",
+      "perMonth": "month",
       "monthlyPrice": "$89/mo",
       "quarterly": "Quarterly",
+      "perQuarter": "quarter",
       "quarterlyPrice": "$249/qtr",
+      "save": "Save {percent}%",
       "quarterlySave": "Save 10%",
-      "next": "Next Step"
+      "next": "Next Step",
+      "errorTitle": "Data missing",
+      "errorMessage": "Please go back and re-select your plan."
     },
     "step4": {
       "title": "Order Summary",
       "plan": "Plan",
       "billing": "Billing Cycle",
+      "billingMonthly": "Monthly",
+      "billingQuarterly": "Quarterly",
       "total": "Total",
-      "confirm": "Confirm & Pay"
+      "confirm": "Confirm & Pay",
+      "errorPlan": "No plan selected. Please go back.",
+      "errorUrl": "Could not generate payment link. Please contact support.",
+      "errorGeneric": "An error occurred during payment processing. Please try again."
     },
     "step5": {
       "cardGateway": "Debit / Credit Card",
@@ -510,7 +556,13 @@
       "expiryPlaceholder": "MM/YY",
       "cvv": "CVV / CVC",
       "cvvPlaceholder": "123",
-      "payNow": "Pay Now"
+      "payNow": "Pay Now",
+      "errorPlanDetails": "Could not retrieve plan details. Please restart signup.",
+      "errorInvalidGateway": "Please select a valid payment method.",
+      "errorPaymentUrl": "Payment session could not be started. Try again.",
+      "errorGenericPayment": "Payment failed. Please check your details.",
+      "errorLoadingPlan": "Error loading plan",
+      "errorTryAgain": "Please try again."
     },
     "step6": {
       "title": "Processing Payment",

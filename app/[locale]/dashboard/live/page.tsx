@@ -3,12 +3,40 @@
 import React from "react";
 import { SessionCard } from "@/components/dashboard/live/SessionCard";
 import { RecordingCard } from "@/components/dashboard/live/RecordingCard";
-import { UPCOMING_SESSIONS, PAST_SESSIONS } from "@/lib/data/liveSessions";
 import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
+import { useGetUpcomingLivesQuery, useGetPastLivesQuery } from "@/lib/store/services/contentApi";
+import { Loader2, AlertTriangle } from "lucide-react";
 
 export default function LiveSessionsPage() {
   const t = useTranslations("dashboard.live");
+
+  const { data: upcomingLivesData, isLoading: isLoadingUpcoming, isError: isErrorUpcoming } = useGetUpcomingLivesQuery();
+  const { data: pastLivesData, isLoading: isLoadingPast, isError: isErrorPast } = useGetPastLivesQuery();
+
+  const isLoading = isLoadingUpcoming || isLoadingPast;
+  const isError = isErrorUpcoming || isErrorPast;
+
+  const upcomingSessions = upcomingLivesData?.results || [];
+  const pastSessions = pastLivesData?.results || [];
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin text-brand-purple" size={48} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-red-50 text-red-700 p-8 rounded-2xl">
+        <AlertTriangle className="w-12 h-12 mb-4" />
+        <h3 className="text-xl font-bold mb-2">{t("errorLoadingSessions")}</h3>
+        <p className="text-center text-sm">{t("errorTryAgain")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-12 mb-20">
@@ -65,11 +93,15 @@ export default function LiveSessionsPage() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {UPCOMING_SESSIONS.map((session, index) => (
-            <SessionCard key={index} session={session} />
-          ))}
-        </div>
+        {upcomingSessions.length === 0 ? (
+          <p className="text-gray-500">{t("noUpcomingSessions")}</p>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {upcomingSessions.map((session) => (
+              <SessionCard key={session.id} session={session as any} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Past Sessions */}
@@ -82,18 +114,22 @@ export default function LiveSessionsPage() {
             </h2>
           </div>
           <Link
-            href="/dashboard/live/archive"
+            href="/dashboard/live/archive" // This might need a separate page for full archive
             className="text-brand-purple font-bold text-sm hover:underline"
           >
             {t("viewArchive")}
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PAST_SESSIONS.slice(0, 3).map((session, index) => (
-            <RecordingCard key={index} recording={session} />
-          ))}
-        </div>
+        {pastSessions.length === 0 ? (
+          <p className="text-gray-500">{t("noPastSessions")}</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {pastSessions.slice(0, 3).map((session) => (
+              <RecordingCard key={session.id} recording={session as any} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

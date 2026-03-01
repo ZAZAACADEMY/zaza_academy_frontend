@@ -1,15 +1,25 @@
 export interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  // Ajoutez d'autres champs selon le modèle User Django
+  first_name: string | null;
+  last_name: string | null;
+  phone_number: string | null;
+  date_of_birth: string | null;
+  roles: any[];
+  age_group: string | null;
+  country: string | null;
+  email_verified_at: string | null;
+  is_active: boolean;
+  is_2fa_enabled: boolean;
 }
 
 export interface AuthResponse {
-  access_token: string;
-  refresh_token: string;
-  user: User;
+  requires_2fa: boolean;
+  access?: string;
+  refresh?: string;
+  user?: User;
+  token?: string; // Temporary token for 2FA
+  message?: string;
 }
 
 export interface LoginCredentials {
@@ -20,24 +30,20 @@ export interface LoginCredentials {
 export interface RegisterData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   country?: string;
-  plan?: string;
-  paymentFrequency?: string;
-  // For payment & other details
+  password_confirm?: string;
   [key: string]: any;
 }
 
 export interface UserProfile extends User {
-  role: "parent" | "child" | "admin";
-  subscriptionStatus: "active" | "inactive" | "trial";
-  children?: ChildProfile[];
+  // Keeping compatibility with existing code that might use UserProfile
 }
 
 export interface ChildProfile {
   id: string;
-  name: string;
+  first_name: string;
   age: number;
   avatar?: string;
 }

@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useSearchParams } from "next/navigation";
 import { Child, PaymentFrequency, PaymentGateway } from "./types";
 
+const STORAGE_KEY = "zaza_signup_state";
+
 interface SignupContextType {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -54,6 +56,8 @@ interface SignupContextType {
   setChildrenList: React.Dispatch<React.SetStateAction<Child[]>>;
   currentChild: Child;
   setCurrentChild: React.Dispatch<React.SetStateAction<Child>>;
+
+  clearSignupData: () => void;
 }
 
 const SignupContext = createContext<SignupContextType | undefined>(undefined);
@@ -62,34 +66,37 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const planFromUrl = searchParams.get("plan");
 
-  // Valid plan IDs that match Step2Plans
-  const validPlans = ["Solo", "Family", "Family Plus"];
-  const hasValidPlan = planFromUrl ? validPlans.includes(planFromUrl) : false;
+  // Initial state helper
+  const getInitialState = () => {
+    if (typeof window === "undefined") return null;
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  };
 
-  const [step, setStep] = useState(1);
+  const savedState = getInitialState();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [country, setCountry] = useState("");
+  const [step, setStep] = useState(savedState?.step || 1);
+  const [firstName, setFirstName] = useState(savedState?.firstName || "");
+  const [lastName, setLastName] = useState(savedState?.lastName || "");
+  const [email, setEmail] = useState(savedState?.email || "");
+  const [password, setPassword] = useState(savedState?.password || "");
+  const [confirmPassword, setConfirmPassword] = useState(savedState?.confirmPassword || "");
+  const [country, setCountry] = useState(savedState?.country || "");
 
-  const [selectedPlan, setSelectedPlan] = useState(hasValidPlan ? planFromUrl! : "Family");
-  const [paymentFrequency, setPaymentFrequency] =
-    useState<PaymentFrequency>("Quarterly");
-  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>("Card");
+  const [selectedPlan, setSelectedPlan] = useState(planFromUrl || savedState?.selectedPlan || "Family");
+  const [paymentFrequency, setPaymentFrequency] = useState<PaymentFrequency>(savedState?.paymentFrequency || "Quarterly");
+  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(savedState?.paymentGateway || "Card");
 
-  const [mobileProvider, setMobileProvider] = useState("Vodacom");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [mobileProvider, setMobileProvider] = useState(savedState?.mobileProvider || "Vodacom");
+  const [phoneNumber, setPhoneNumber] = useState(savedState?.phoneNumber || "");
 
-  const [cardHolder, setCardHolder] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
+  const [cardHolder, setCardHolder] = useState(savedState?.cardHolder || "");
+  const [cardNumber, setCardNumber] = useState(savedState?.cardNumber || "");
+  const [expiryDate, setExpiryDate] = useState(savedState?.expiryDate || "");
+  const [cvv, setCvv] = useState(savedState?.cvv || "");
 
-  const [childrenList, setChildrenList] = useState<Child[]>([]);
-  const [currentChild, setCurrentChild] = useState<Child>({
+  const [childrenList, setChildrenList] = useState<Child[]>(savedState?.childrenList || []);
+  const [currentChild, setCurrentChild] = useState<Child>(savedState?.currentChild || {
     name: "",
     age: "",
     gender: "",
@@ -97,45 +104,36 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
     program: "",
   });
 
+  // Save to localStorage on change
+  useEffect(() => {
+    const stateToSave = {
+      step, firstName, lastName, email, password, confirmPassword, country,
+      selectedPlan, paymentFrequency, paymentGateway, mobileProvider, phoneNumber,
+      cardHolder, cardNumber, expiryDate, cvv, childrenList, currentChild
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+  }, [
+    step, firstName, lastName, email, password, confirmPassword, country,
+    selectedPlan, paymentFrequency, paymentGateway, mobileProvider, phoneNumber,
+    cardHolder, cardNumber, expiryDate, cvv, childrenList, currentChild
+  ]);
+
+  const clearSignupData = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setStep(1);
+    // Reset other fields as needed or just rely on the step reset
+  };
+
   return (
     <SignupContext.Provider
       value={{
-        step,
-        setStep,
-        firstName,
-        setFirstName,
-        lastName,
-        setLastName,
-        email,
-        setEmail,
-        password,
-        setPassword,
-        confirmPassword,
-        setConfirmPassword,
-        country,
-        setCountry,
-        selectedPlan,
-        setSelectedPlan,
-        paymentFrequency,
-        setPaymentFrequency,
-        paymentGateway,
-        setPaymentGateway,
-        mobileProvider,
-        setMobileProvider,
-        phoneNumber,
-        setPhoneNumber,
-        cardHolder,
-        setCardHolder,
-        cardNumber,
-        setCardNumber,
-        expiryDate,
-        setExpiryDate,
-        cvv,
-        setCvv,
-        childrenList,
-        setChildrenList,
-        currentChild,
-        setCurrentChild,
+        step, setStep, firstName, setFirstName, lastName, setLastName, email, setEmail,
+        password, setPassword, confirmPassword, setConfirmPassword, country, setCountry,
+        selectedPlan, setSelectedPlan, paymentFrequency, setPaymentFrequency,
+        paymentGateway, setPaymentGateway, mobileProvider, setMobileProvider,
+        phoneNumber, setPhoneNumber, cardHolder, setCardHolder, cardNumber, setCardNumber,
+        expiryDate, setExpiryDate, cvv, setCvv, childrenList, setChildrenList,
+        currentChild, setCurrentChild, clearSignupData
       }}
     >
       {children}
