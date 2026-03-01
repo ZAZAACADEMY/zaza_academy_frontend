@@ -88,7 +88,15 @@ export const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
       // 2. Call Logout API (fire and forget)
       logout();
     } catch (e) {
-      console.error("Logout failed", e);
+      // In demo mode, logout may fail because backend is offline — that's OK
+      console.warn("Logout API call failed (expected in demo mode)", e);
+    }
+
+    // Clear demo cookie by calling the logout route (which clears cookies)
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
     }
 
     // 3. Redirect to login
@@ -116,7 +124,7 @@ export const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
           <Link href="/">
             {/* Using Next Image for the SVG logo */}
             <Image
-              src="/images/logo.png"
+              src="/images/logodashboard.png"
               alt="Zaza Logo"
               width={100}
               height={100}

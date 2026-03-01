@@ -3,6 +3,21 @@ import { cookies } from "next/headers";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
+// Demo responses for specific endpoints when backend is unavailable
+const DEMO_ENDPOINTS: Record<string, any> = {
+  "auth/register": {
+    access_token: "demo_token",
+    refresh_token: "demo_refresh_token",
+    user: {
+      id: "demo-user-1",
+      email: "demo@zaza.academy",
+      firstName: "Sarah",
+      lastName: "Demo",
+    },
+  },
+};
 
 async function proxy(
   request: Request,
@@ -67,8 +82,53 @@ async function proxy(
     });
   } catch (error) {
     console.error(`[Proxy] Critical Error:`, error);
+
+    // Detect when the backend is unreachable (ECONNREFUSED, fetch failed, etc.)
+    const errorMessage = String(error);
+    const isBackendDown =
+      errorMessage.includes("fetch failed") ||
+      errorMessage.includes("ECONNREFUSED") ||
+      errorMessage.includes("ENOTFOUND") ||
+      errorMessage.includes("UND_ERR_CONNECT_TIMEOUT");
+
+    if (isBackendDown && isDemoMode) {
+      // In demo mode, check if we have a mock response for this endpoint
+      const { path: pathSegments } = await params;
+      const pathStr = pathSegments.join("/");
+      const cleanPath = pathStr.replace(/\/$/, ""); // Remove trailing slash
+
+      const demoData = DEMO_ENDPOINTS[cleanPath];
+      if (demoData) {
+        console.warn(`[Demo Mode] Returning mock data for: ${cleanPath}`);
+
+        // If it's an auth endpoint, also set the cookie
+        if (cleanPath.startsWith("auth/") && demoData.access_token) {
+          const cookieStore = await cookies();
+          cookieStore.set("auth_token", demoData.access_token, {
+            httpOnly: true,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 24 * 60 * 60,
+          });
+        }
+
+        return NextResponse.json(demoData);
+      }
+    }
+
+    if (isBackendDown) {
+      return NextResponse.json(
+        {
+          message: "Backend Unavailable",
+          details:
+            "The backend server is not reachable. Make sure it is running.",
+        },
+        { status: 502 },
+      );
+    }
+
     return NextResponse.json(
-      { message: "Internal Proxy Error", details: String(error) },
+      { message: "Internal Proxy Error", details: errorMessage },
       { status: 500 },
     );
   }

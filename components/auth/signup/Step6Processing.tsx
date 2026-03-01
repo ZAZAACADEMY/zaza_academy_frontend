@@ -49,11 +49,14 @@ export const Step6Processing = () => {
             JSON.stringify(err.data, null, 2),
           );
 
-          // FALLBACK FOR DEVELOPMENT (If Backend is Offline/502)
+          // FALLBACK FOR DEVELOPMENT (If Backend is Offline/5xx)
           // This allows the UI flow to be tested even without the Django backend running.
-          if (err.status === 502 && process.env.NODE_ENV === "development") {
+          if (
+            (err.status === 500 || err.status === 502) &&
+            process.env.NODE_ENV === "development"
+          ) {
             console.warn(
-              "⚠️ Backend unavailable (502). Proceeding in DEMO mode.",
+              `⚠️ Backend unavailable (${err.status}). Proceeding in DEMO mode.`,
             );
             setTimeout(() => setStep(7), 2000);
             return;
