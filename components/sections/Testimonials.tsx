@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { Star } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, animate } from "framer-motion";
 import { FadeIn } from "../ui/motion/FadeIn";
 import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
 import { SparkleDoodle } from "../ui/Doodles";
@@ -58,6 +58,93 @@ const TestimonialCard = ({
   </TiltEffect>
 );
 
+/** Swipeable carousel used on mobile */
+const TestimonialCarousel = ({
+  testimonials,
+}: {
+  testimonials: { quote: string; name: string; role: string; imageSrc: string | StaticImageData }[];
+}) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const x = useMotionValue(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const count = testimonials.length;
+
+  const goTo = (index: number) => {
+    const clamped = Math.max(0, Math.min(index, count - 1));
+    setActiveIndex(clamped);
+    const containerWidth = containerRef.current?.offsetWidth ?? 0;
+    animate(x, -clamped * containerWidth, {
+      type: "spring",
+      stiffness: 300,
+      damping: 35,
+      mass: 0.8,
+    });
+  };
+
+  const handleDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const containerWidth = containerRef.current?.offsetWidth ?? 1;
+    const threshold = containerWidth * 0.2;
+    const { offset, velocity } = info;
+
+    if (offset.x < -threshold || velocity.x < -500) {
+      goTo(activeIndex + 1);
+    } else if (offset.x > threshold || velocity.x > 500) {
+      goTo(activeIndex - 1);
+    } else {
+      // snap back
+      animate(x, -activeIndex * containerWidth, {
+        type: "spring",
+        stiffness: 300,
+        damping: 35,
+      });
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Track */}
+      <div ref={containerRef} className="overflow-hidden w-full">
+        <motion.div
+          className="flex"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.12}
+          onDragEnd={handleDragEnd}
+          initial={false}
+        >
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className="min-w-full px-1 select-none"
+              style={{ userSelect: "none" }}
+            >
+              <TestimonialCard {...testimonial} />
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-2">
+        {testimonials.map((_, index) => (
+          <button
+            key={index}
+            aria-label={`Testimonial ${index + 1}`}
+            onClick={() => goTo(index)}
+            className="transition-all duration-300 rounded-full bg-brand-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+            style={{
+              width: index === activeIndex ? 24 : 8,
+              height: 8,
+              opacity: index === activeIndex ? 1 : 0.25,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const Testimonials = () => {
   const t = useTranslations("Testimonials");
 
@@ -82,7 +169,7 @@ export const Testimonials = () => {
 
   return (
     <section id="testimonials" className="w-full bg-white py-20 scroll-mt-24">
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16">
         <div className="text-center mb-[60px]">
           <FadeIn direction="up">
             <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-[16px] tracking-tight relative inline-block">
@@ -112,7 +199,15 @@ export const Testimonials = () => {
           </FadeIn>
         </div>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px]">
+        {/* Mobile: swipe carousel */}
+        <div className="md:hidden">
+          <FadeIn direction="up" delay={0.3}>
+            <TestimonialCarousel testimonials={testimonials} />
+          </FadeIn>
+        </div>
+
+        {/* Desktop: 3-col grid */}
+        <StaggerContainer className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-[24px]">
           {testimonials.map((testimonial, index) => (
             <StaggerItem key={index}>
               <TestimonialCard {...testimonial} />

@@ -183,7 +183,7 @@ export const GetStarted = () => {
 
   return (
     <section className="w-full bg-brand-cream py-20" id="how-it-works">
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16">
         <div className="text-center mb-[60px]">
           <FadeIn direction="up">
             <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-[16px] tracking-tight">

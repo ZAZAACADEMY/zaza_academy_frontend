@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import { Child, PaymentFrequency, PaymentGateway } from "./types";
 
@@ -23,6 +29,8 @@ interface SignupContextType {
   setConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
   country: string;
   setCountry: React.Dispatch<React.SetStateAction<string>>;
+  motivations: string[];
+  setMotivations: React.Dispatch<React.SetStateAction<string[]>>;
 
   // Step 2: Plans
   selectedPlan: string;
@@ -80,14 +88,27 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
   const [lastName, setLastName] = useState(savedState?.lastName || "");
   const [email, setEmail] = useState(savedState?.email || "");
   const [password, setPassword] = useState(savedState?.password || "");
-  const [confirmPassword, setConfirmPassword] = useState(savedState?.confirmPassword || "");
+  const [confirmPassword, setConfirmPassword] = useState(
+    savedState?.confirmPassword || "",
+  );
   const [country, setCountry] = useState(savedState?.country || "");
+  const [motivations, setMotivations] = useState<string[]>(
+    savedState?.motivations || [],
+  );
 
-  const [selectedPlan, setSelectedPlan] = useState(planFromUrl || savedState?.selectedPlan || "Family");
-  const [paymentFrequency, setPaymentFrequency] = useState<PaymentFrequency>(savedState?.paymentFrequency || "Quarterly");
-  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(savedState?.paymentGateway || "Card");
+  const [selectedPlan, setSelectedPlan] = useState(
+    planFromUrl || savedState?.selectedPlan || "Family",
+  );
+  const [paymentFrequency, setPaymentFrequency] = useState<PaymentFrequency>(
+    savedState?.paymentFrequency || "Quarterly",
+  );
+  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(
+    savedState?.paymentGateway || "Card",
+  );
 
-  const [mobileProvider, setMobileProvider] = useState(savedState?.mobileProvider || "Vodacom");
+  const [mobileProvider, setMobileProvider] = useState(
+    savedState?.mobileProvider || "Vodacom",
+  );
   const [phoneNumber, setPhoneNumber] = useState(savedState?.phoneNumber || "");
 
   const [cardHolder, setCardHolder] = useState(savedState?.cardHolder || "");
@@ -95,27 +116,63 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
   const [expiryDate, setExpiryDate] = useState(savedState?.expiryDate || "");
   const [cvv, setCvv] = useState(savedState?.cvv || "");
 
-  const [childrenList, setChildrenList] = useState<Child[]>(savedState?.childrenList || []);
-  const [currentChild, setCurrentChild] = useState<Child>(savedState?.currentChild || {
-    name: "",
-    age: "",
-    gender: "",
-    avatar: 0,
-    program: "",
-  });
+  const [childrenList, setChildrenList] = useState<Child[]>(
+    savedState?.childrenList || [],
+  );
+  const [currentChild, setCurrentChild] = useState<Child>(
+    savedState?.currentChild || {
+      name: "",
+      age: "",
+      gender: "",
+      avatar: 0,
+      program: "",
+    },
+  );
 
   // Save to localStorage on change
   useEffect(() => {
     const stateToSave = {
-      step, firstName, lastName, email, password, confirmPassword, country,
-      selectedPlan, paymentFrequency, paymentGateway, mobileProvider, phoneNumber,
-      cardHolder, cardNumber, expiryDate, cvv, childrenList, currentChild
+      step,
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      country,
+      motivations,
+      selectedPlan,
+      paymentFrequency,
+      paymentGateway,
+      mobileProvider,
+      phoneNumber,
+      cardHolder,
+      cardNumber,
+      expiryDate,
+      cvv,
+      childrenList,
+      currentChild,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
   }, [
-    step, firstName, lastName, email, password, confirmPassword, country,
-    selectedPlan, paymentFrequency, paymentGateway, mobileProvider, phoneNumber,
-    cardHolder, cardNumber, expiryDate, cvv, childrenList, currentChild
+    step,
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmPassword,
+    country,
+    motivations,
+    selectedPlan,
+    paymentFrequency,
+    paymentGateway,
+    mobileProvider,
+    phoneNumber,
+    cardHolder,
+    cardNumber,
+    expiryDate,
+    cvv,
+    childrenList,
+    currentChild,
   ]);
 
   const clearSignupData = () => {
@@ -127,13 +184,45 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
   return (
     <SignupContext.Provider
       value={{
-        step, setStep, firstName, setFirstName, lastName, setLastName, email, setEmail,
-        password, setPassword, confirmPassword, setConfirmPassword, country, setCountry,
-        selectedPlan, setSelectedPlan, paymentFrequency, setPaymentFrequency,
-        paymentGateway, setPaymentGateway, mobileProvider, setMobileProvider,
-        phoneNumber, setPhoneNumber, cardHolder, setCardHolder, cardNumber, setCardNumber,
-        expiryDate, setExpiryDate, cvv, setCvv, childrenList, setChildrenList,
-        currentChild, setCurrentChild, clearSignupData
+        step,
+        setStep,
+        firstName,
+        setFirstName,
+        lastName,
+        setLastName,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        confirmPassword,
+        setConfirmPassword,
+        country,
+        setCountry,
+        motivations,
+        setMotivations,
+        selectedPlan,
+        setSelectedPlan,
+        paymentFrequency,
+        setPaymentFrequency,
+        paymentGateway,
+        setPaymentGateway,
+        mobileProvider,
+        setMobileProvider,
+        phoneNumber,
+        setPhoneNumber,
+        cardHolder,
+        setCardHolder,
+        cardNumber,
+        setCardNumber,
+        expiryDate,
+        setExpiryDate,
+        cvv,
+        setCvv,
+        childrenList,
+        setChildrenList,
+        currentChild,
+        setCurrentChild,
+        clearSignupData,
       }}
     >
       {children}

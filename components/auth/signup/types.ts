@@ -14,6 +14,7 @@ export interface SignupState {
   // Step 1
   email: string; // Assuming we add this, it's weird if it's missing
   country: string;
+  motivations: string[];
   // Step 2
   selectedPlan: string;
   // Step 3

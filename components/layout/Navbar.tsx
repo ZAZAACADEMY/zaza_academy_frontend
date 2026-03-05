@@ -3,6 +3,7 @@ import React from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/navigation";
 import { JellyButton } from "../ui/motion/JellyButton";
+import { usePageTransition } from "../ui/PageTransition";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import Logo from "../../public/vectors/logo.svg";
@@ -68,9 +69,31 @@ export const Navbar = () => {
   const tAria = useTranslations("Navbar.aria");
   const locale = useLocale();
   const router = useRouter();
+  const { navigateTo } = usePageTransition();
   const pathname = usePathname();
   const [isVisible, setIsVisible] = React.useState(true);
   const [isLangMenuOpen, setIsLangMenuOpen] = React.useState(false);
+  const [activeSection, setActiveSection] = React.useState<string>("");
+
+  React.useEffect(() => {
+    const sectionIds = ["about", "programs", "pricing", "testimonials", "faq"];
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { rootMargin: "-30% 0px -60% 0px", threshold: 0 },
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
 
   const handleLanguageChange = async (newLocale: string) => {
     if (!pathname) return;
@@ -124,7 +147,7 @@ export const Navbar = () => {
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="w-full max-w-[1440px] px-2 md:px-16 pointer-events-auto">
+      <div className="w-full max-w-[1440px] px-5 md:px-16 pointer-events-auto">
         <nav className="w-full min-h-[64px] md:h-[74px] bg-[#FDFDFD] rounded-[24px] md:rounded-[65px] shadow-nav flex items-center justify-between px-4 lg:px-[20px] relative transition-all duration-300">
           {/* Logo */}
           <div className="flex items-center">
@@ -144,15 +167,23 @@ export const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-[20px] xl:gap-[28px]">
-            {navLinks.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-[#404040] hover:text-brand-dark font-normal text-[15px] xl:text-[17px] transition-colors leading-[140%] whitespace-nowrap"
-              >
-                {item.name}
-              </a>
-            ))}
+            {navLinks.map((item) => {
+              const sectionId = item.href.replace("#", "");
+              const isActive = activeSection === sectionId;
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className={`font-normal text-[15px] xl:text-[17px] transition-all leading-[140%] whitespace-nowrap relative ${
+                    isActive
+                      ? "text-brand-dark font-bold after:absolute after:-bottom-1 after:left-0 after:right-0 after:h-0.5 after:bg-[#A655F7] after:rounded-full"
+                      : "text-[#404040] hover:text-brand-dark"
+                  }`}
+                >
+                  {item.name}
+                </a>
+              );
+            })}
           </div>
 
           {/* Right Actions */}
@@ -165,14 +196,14 @@ export const Navbar = () => {
 
             <div className="flex items-center gap-[16px] bg-white rounded-[32px] pl-[8px] xl:pl-[16px]">
               <button
-                onClick={() => router.push("/login")}
+                onClick={() => navigateTo("/login")}
                 className="text-brand-black font-medium text-[16px] xl:text-[18px] hover:text-brand-accent active:scale-95 transition-all"
               >
                 {t("login")}
               </button>
 
               <JellyButton
-                onClick={() => router.push("/signup")}
+                onClick={() => navigateTo("/signup")}
                 className="bg-brand-dark text-[#FDFDFD] px-6 py-3 xl:w-[156px] xl:h-[54px] rounded-[50px] font-medium text-[16px] xl:text-[18px] shadow-sm whitespace-nowrap"
               >
                 {t("getStarted")}
@@ -249,20 +280,26 @@ export const Navbar = () => {
               id="mobile-menu"
               className="absolute top-[70px] md:top-[80px] left-0 right-0 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-4 lg:hidden animate-fade-in z-50 border border-gray-100 mx-4"
             >
-              {navLinks.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-700 font-medium py-3 border-b border-gray-50 last:border-0 text-center text-lg active:bg-gray-50"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
+              {navLinks.map((item) => {
+                const sectionId = item.href.replace("#", "");
+                const isActive = activeSection === sectionId;
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={`py-3 border-b border-gray-50 last:border-0 text-center text-lg active:bg-gray-50 font-medium transition-colors ${
+                      isActive ? "text-[#A655F7] font-bold" : "text-gray-700"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </a>
+                );
+              })}
               <div className="flex flex-col gap-3 mt-2">
                 <button
                   onClick={() => {
-                    router.push("/login");
+                    navigateTo("/login");
                     setIsOpen(false);
                   }}
                   className="w-full py-3 text-center text-gray-700 font-bold border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-transform"
@@ -271,7 +308,7 @@ export const Navbar = () => {
                 </button>
                 <JellyButton
                   onClick={() => {
-                    router.push("/signup");
+                    navigateTo("/signup");
                     setIsOpen(false);
                   }}
                   className="w-full py-3 text-center bg-brand-dark text-white font-bold rounded-full shadow-lg"

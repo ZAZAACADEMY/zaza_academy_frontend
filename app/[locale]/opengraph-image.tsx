@@ -1,4 +1,7 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import path from "path";
+
 export const size = {
   width: 1200,
   height: 630,
@@ -32,18 +35,16 @@ export default async function OgImage({
   ) as keyof typeof DICTIONARY;
   const t = DICTIONARY[lang];
 
-  // Try to fetch text font if needed, but for now we rely on system/fallback or imported google fonts if configured nicely.
-  // We will load the custom background image.
-  // Ideally this image is placed at public/images/og-whatsapp.png
-  const imageData = await fetch(
-    new URL("../../public/images/og-whatsapp.png", import.meta.url),
-  )
-    .then((res) => {
-      // If file doesn't exist, we fall back to a gradient
-      if (res.status === 404) return null;
-      return res.arrayBuffer();
-    })
-    .catch(() => null);
+  // Load background image and convert to base64 data URL
+  let imageSrc: string | null = null;
+  try {
+    const imgBuffer = await readFile(
+      path.join(process.cwd(), "public", "images", "og-whatsapp.png"),
+    );
+    imageSrc = `data:image/png;base64,${imgBuffer.toString("base64")}`;
+  } catch {
+    // Fallback to gradient if image not found
+  }
 
   return new ImageResponse(
     <div
@@ -53,9 +54,8 @@ export default async function OgImage({
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        // If image exists, use it as background
-        background: imageData
-          ? undefined // Background image is handled by <img /> or absolute positioning div if we want overlay
+        background: imageSrc
+          ? undefined
           : "linear-gradient(135deg, #311F54 0%, #F46AA3 100%)",
         color: "#FDFCF8",
         fontFamily: "'Gotham Rounded', 'Montserrat', sans-serif",
@@ -63,10 +63,11 @@ export default async function OgImage({
       }}
     >
       {/* Background Image Layer */}
-      {imageData && (
+      {imageSrc && (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
-          // @ts-ignore
-          src={imageData}
+          src={imageSrc}
+          alt=""
           style={{
             position: "absolute",
             top: 0,

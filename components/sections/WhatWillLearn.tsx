@@ -112,7 +112,7 @@ export const WhatWillLearn = () => {
         background: "linear-gradient(180deg, #FFDAEB 0%, #FFF5C6 100%)",
       }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16">
         <svg width="0" height="0" className="absolute pointer-events-none">
           <defs>
             <linearGradient

@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Crown, Users, Check, Loader2, AlertTriangle } from "lucide-react";
+import {
+  Sparkles,
+  Crown,
+  Users,
+  Check,
+  Loader2,
+  AlertTriangle,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn } from "../ui/motion/FadeIn";
 import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
@@ -10,6 +17,7 @@ import { FloatingElements } from "../ui/FloatingElements";
 import { TiltEffect } from "../ui/motion/TiltEffect";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/navigation";
+import { usePageTransition } from "../ui/PageTransition";
 import { useGetActivePlansQuery } from "@/lib/store/services/plansApi";
 import { components } from "@/lib/api/v1";
 
@@ -161,6 +169,7 @@ export const Pricing = () => {
   const t = useTranslations("Pricing");
   const router = useRouter();
   const locale = useLocale();
+  const { navigateTo } = usePageTransition();
 
   const { data: plansData, isLoading, isError } = useGetActivePlansQuery();
 
@@ -212,10 +221,9 @@ export const Pricing = () => {
               installmentNote={t("installmentNote")}
               ctaLabel={t("cta")}
               onSelect={() =>
-                router.push(
-                  `/signup?plan=${encodeURIComponent(plan.id)}`,
-                  { locale },
-                )
+                navigateTo(`/signup?plan=${encodeURIComponent(plan.id)}`, {
+                  locale,
+                })
               }
             />
           </StaggerItem>
@@ -226,11 +234,11 @@ export const Pricing = () => {
 
   return (
     <section
-      className="w-full bg-brand-cream py-20 relative overflow-hidden"
+      className="w-full bg-brand-cream py-20 relative overflow-hidden scroll-mt-24"
       id="pricing"
     >
       <FloatingElements />
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16 relative z-10">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16 relative z-10">
         <div className="text-center mb-[60px]">
           <FadeIn direction="up">
             <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-[16px] tracking-tight">

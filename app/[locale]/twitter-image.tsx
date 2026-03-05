@@ -1,5 +1,6 @@
-// Same logic as OgImage
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import path from "path";
 
 export const size = {
   width: 1200,
@@ -34,14 +35,16 @@ export default async function TwitterImage({
   ) as keyof typeof DICTIONARY;
   const t = DICTIONARY[lang];
 
-  const imageData = await fetch(
-    new URL("../../public/images/og-whatsapp.png", import.meta.url),
-  )
-    .then((res) => {
-      if (res.status === 404) return null;
-      return res.arrayBuffer();
-    })
-    .catch(() => null);
+  // Load background image and convert to base64 data URL
+  let imageSrc: string | null = null;
+  try {
+    const imgBuffer = await readFile(
+      path.join(process.cwd(), "public", "images", "og-whatsapp.png"),
+    );
+    imageSrc = `data:image/png;base64,${imgBuffer.toString("base64")}`;
+  } catch {
+    // Fallback to gradient if image not found
+  }
 
   return new ImageResponse(
     <div
@@ -51,7 +54,7 @@ export default async function TwitterImage({
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        background: imageData
+        background: imageSrc
           ? undefined
           : "linear-gradient(135deg, #311F54 0%, #F46AA3 100%)",
         color: "#FDFCF8",
@@ -59,10 +62,11 @@ export default async function TwitterImage({
         position: "relative",
       }}
     >
-      {imageData && (
+      {imageSrc && (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
-          // @ts-ignore
-          src={imageData}
+          src={imageSrc}
+          alt=""
           style={{
             position: "absolute",
             top: 0,

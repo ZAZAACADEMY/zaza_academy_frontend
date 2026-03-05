@@ -59,8 +59,11 @@ export const FAQ = () => {
   };
 
   return (
-    <section className="w-full bg-[#FFF5F9] py-20 md:py-32 my-10" id="faq">
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16 flex flex-col lg:flex-row gap-10 lg:gap-20 items-start">
+    <section
+      className="w-full bg-[#FFF5F9] py-20 md:py-32 my-10 scroll-mt-24"
+      id="faq"
+    >
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16 flex flex-col lg:flex-row gap-10 lg:gap-20 items-start">
         {/* Left Column: Title */}
         <div className="w-full lg:w-1/3 sticky top-24">
           <FadeIn direction="right">

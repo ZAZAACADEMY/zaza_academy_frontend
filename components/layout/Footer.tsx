@@ -52,7 +52,7 @@ export const Footer = () => {
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
       />
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16">
         {/* Main Footer Content */}
         <StaggerContainer
           viewport={{ once: true }}

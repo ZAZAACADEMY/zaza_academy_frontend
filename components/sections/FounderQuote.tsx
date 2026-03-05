@@ -10,7 +10,7 @@ export const FounderQuote = () => {
   const body = t.raw("body") as string[];
   return (
     <section className="w-full bg-white py-10 md:py-20">
-      <div className="w-full max-w-[1440px] mx-auto px-2 md:px-16">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16">
         <FadeIn>
           <div
             className="w-full rounded-[32px] p-8 md:p-12 flex flex-col lg:flex-row gap-10 lg:gap-16 items-start text-white relative overflow-hidden shadow-xl"

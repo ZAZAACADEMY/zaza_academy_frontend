@@ -9,11 +9,13 @@ import { SparkleDoodle } from "../ui/Doodles";
 import CtaImage from "../../public/images/GetStarted4.png";
 import CtaImage2 from "../../public/images/AgeGroup2.png";
 import { useTranslations } from "next-intl";
+import { usePageTransition } from "../ui/PageTransition";
 
 export const CallToAction = () => {
   const t = useTranslations("CallToAction");
+  const { navigateTo } = usePageTransition();
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-2 md:px-16 py-10 md:py-20">
+    <section className="w-full max-w-[1440px] mx-auto px-5 md:px-16 py-10 md:py-20">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -93,6 +95,7 @@ export const CallToAction = () => {
           <ScaleIn delay={0.4}>
             <motion.button
               whileTap={{ scale: 0.95 }}
+              onClick={() => navigateTo("/signup")}
               className="bg-brand-dark text-white font-bold text-[16px] md:text-[18px] px-8 py-4 rounded-full shadow-[0px_10px_20px_rgba(0,0,0,0.2)] lg:hover:bg-[#1F1235] lg:hover:scale-105 transition-all duration-300 flex items-center gap-2"
             >
               {t("cta")} <ChevronRight size={20} />

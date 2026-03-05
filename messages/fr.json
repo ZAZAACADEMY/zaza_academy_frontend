@@ -486,6 +486,19 @@
       "confirmPasswordPlaceholder": "********",
       "showPassword": "Afficher le mot de passe",
       "hidePassword": "Masquer le mot de passe",
+      "motivationsLabel": "Pourquoi inscrivez-vous votre ou vos enfants ?",
+      "motivationsPlaceholder": "Ajoutez votre propre raison et appuyez sur Entrée...",
+      "motivationSuggestions": [
+        "Enseigner la gestion de l'argent",
+        "Développer l'habitude d'épargner",
+        "Préparer l'indépendance financière",
+        "Rendre l'apprentissage ludique",
+        "Compléter l'éducation scolaire",
+        "Développer l'esprit entrepreneurial",
+        "Comprendre les investissements",
+        "Apprendre à budgétiser"
+      ],
+      "motivationsHint": "Sélectionnez une ou plusieurs options, ou saisissez la vôtre",
       "next": "Étape suivante",
       "haveAccount": "Déjà un compte ? ",
       "loginLink": "Se connecter"
@@ -498,7 +511,8 @@
       "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
       "passwordUpper": "Le mot de passe doit contenir au moins une majuscule",
       "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
-      "passwordMatch": "Les mots de passe ne correspondent pas"
+      "passwordMatch": "Les mots de passe ne correspondent pas",
+      "motivationsRequired": "Veuillez sélectionner au moins une raison"
     },
     "step2": {
       "soloTitle": "Solo",
@@ -683,5 +697,28 @@
     "sendButton": "Envoyer le message",
     "successTitle": "Message envoyé !",
     "successMessage": "Nous vous répondrons dès que possible."
+  },
+  "Cookies": {
+    "bannerTitle": "Salut, c'est nous… les cookies ! 🍪",
+    "bannerDescription": "On ne va pas grignoter vos économies, promis. 😇 Mais on aimerait traîner un peu avec vous pour améliorer votre aventure Zaza. Vous choisissez ?",
+    "bannerSubtitle": "(un peu comme un bon biscuit, on s'impose doucement)",
+    "privacyLink": "Politique de confidentialité",
+    "settingsTitle": "Paramètres des cookies",
+    "settingsDescription": "Gérez vos préférences pour chaque catégorie. Les cookies nécessaires ne peuvent pas être désactivés.",
+    "acceptAll": "Tout accepter",
+    "rejectAll": "Tout refuser",
+    "customize": "Personnaliser",
+    "savePreferences": "Enregistrer mes choix",
+    "openSettings": "Paramètres des cookies",
+    "close": "Fermer",
+    "back": "Retour",
+    "saved": "Enregistré !",
+    "requiredLabel": "Requis",
+    "necessaryLabel": "Cookies nécessaires",
+    "necessaryDesc": "Indispensables au fonctionnement du site : authentification, sécurité, maintien de la session. Ces cookies ne peuvent pas être désactivés.",
+    "analyticsLabel": "Cookies analytiques",
+    "analyticsDesc": "Nous aident à comprendre comment les visiteurs utilisent le site : pages visitées, temps passé, clic. Ces données sont anonymisées.",
+    "marketingLabel": "Cookies de marketing",
+    "marketingDesc": "Permettent de vous proposer des contenus et publicités personnalisés sur d'autres sites en fonction de votre navigation sur Zaza."
   }
 }

@@ -486,6 +486,19 @@
       "confirmPasswordPlaceholder": "********",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
+      "motivationsLabel": "Why are you enrolling your child(ren)?",
+      "motivationsPlaceholder": "Add your own reason and press Enter...",
+      "motivationSuggestions": [
+        "Teach money management skills",
+        "Build saving habits",
+        "Prepare for financial independence",
+        "Make learning fun",
+        "Complement school education",
+        "Develop entrepreneurial mindset",
+        "Understand investments",
+        "Learn about budgeting"
+      ],
+      "motivationsHint": "Select one or more, or type your own",
       "next": "Next Step",
       "haveAccount": "Already have an account? ",
       "loginLink": "Log in"
@@ -498,7 +511,8 @@
       "passwordMin": "Password must be at least 8 characters",
       "passwordUpper": "Password must contain at least one uppercase letter",
       "passwordNumber": "Password must contain at least one number",
-      "passwordMatch": "Passwords do not match"
+      "passwordMatch": "Passwords do not match",
+      "motivationsRequired": "Please select at least one reason"
     },
     "step2": {
       "soloTitle": "Solo",
@@ -683,5 +697,28 @@
     "sendButton": "Send Message",
     "successTitle": "Message Sent!",
     "successMessage": "We'll get back to you as soon as possible."
+  },
+  "Cookies": {
+    "bannerTitle": "Hey, it's us — the Cookies! 🍪",
+    "bannerDescription": "We promise we won't nibble your savings. 😇 But we'd love to hang around a bit to make your Zaza adventure even better. Your call?",
+    "bannerSubtitle": "(like a good biscuit, we show up gently)",
+    "privacyLink": "Privacy Policy",
+    "settingsTitle": "Cookie Settings",
+    "settingsDescription": "Manage your preferences for each category. Necessary cookies cannot be disabled.",
+    "acceptAll": "Accept All",
+    "rejectAll": "Reject All",
+    "customize": "Customize",
+    "savePreferences": "Save My Choices",
+    "openSettings": "Cookie settings",
+    "close": "Close",
+    "back": "Back",
+    "saved": "Saved!",
+    "requiredLabel": "Required",
+    "necessaryLabel": "Necessary Cookies",
+    "necessaryDesc": "Essential for the website to function: authentication, security, session management. These cookies cannot be disabled.",
+    "analyticsLabel": "Analytics Cookies",
+    "analyticsDesc": "Help us understand how visitors use the site: pages visited, time spent, clicks. This data is anonymized.",
+    "marketingLabel": "Marketing Cookies",
+    "marketingDesc": "Allow us to show you personalized content and ads on other sites based on your browsing activity on Zaza."
   }
 }

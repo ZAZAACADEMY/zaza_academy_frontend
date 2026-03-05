@@ -3,9 +3,14 @@ import { Montserrat, Fredoka } from "next/font/google";
 import "gotham-fonts/css/gotham-rounded.css";
 import "../globals.css";
 import { MouseTrail } from "@/components/ui/MouseTrail";
+import { SmoothScroll } from "@/components/ui/SmoothScroll";
 import { NextIntlClientProvider } from "next-intl";
+import "lenis/dist/lenis.css";
 import { getMessages, getTranslations } from "next-intl/server";
 import StoreProvider from "@/app/StoreProvider";
+import { CookieBanner } from "@/components/ui/CookieBanner";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
+import { PageTransitionProvider } from "@/components/ui/PageTransition";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -67,7 +72,7 @@ export async function generateMetadata({
       siteName: "Zaza Academy",
       images: [
         {
-          url: `/${locale}/opengraph-image.png`,
+          url: `${siteUrl}/${locale}/opengraph-image.png`,
           width: 1200,
           height: 630,
           alt: t("title"),
@@ -79,7 +84,7 @@ export async function generateMetadata({
       title: t("title"),
       description: t("description"),
       creator: "@zazafinance",
-      images: [`/${locale}/twitter-image.png`],
+      images: [`${siteUrl}/${locale}/twitter-image.png`],
     },
   };
 }
@@ -96,14 +101,20 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className="scroll-smooth">
+    <html lang={locale}>
       <body
         className={`${montserrat.variable} ${fredoka.variable} font-sans bg-brand-cream antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <StoreProvider>
-            <MouseTrail />
-            {children}
+            <PageTransitionProvider>
+              <SmoothScroll>
+                <MouseTrail />
+                {children}
+                <CookieBanner />
+                <ScrollToTop />
+              </SmoothScroll>
+            </PageTransitionProvider>
           </StoreProvider>
         </NextIntlClientProvider>
       </body>

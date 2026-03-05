@@ -3,13 +3,17 @@
 import React from "react";
 import Image from "next/image";
 import { ArrowRight, Star, PiggyBank, TrendingUp, Sprout } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { FadeIn, ScaleIn } from "../ui/motion/FadeIn";
+import { WordReveal, LineReveal } from "../ui/motion/TextReveal";
 import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
 import { JellyButton } from "../ui/motion/JellyButton";
+import { lenisScrollTo } from "../ui/SmoothScroll";
+import { usePageTransition } from "../ui/PageTransition";
 import { UnderlineDoodle, SparkleDoodle } from "../ui/Doodles";
 import { FloatingElements } from "../ui/FloatingElements";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/navigation";
 import HeroChild1 from "../../public/images/HeroChild1.png";
 import HeroChild2 from "../../public/images/HeroChild2.png";
 import HeroChild3 from "../../public/images/HeroChild3.png";
@@ -25,7 +29,8 @@ const FloatingImage = ({
   className,
   rotation,
   priority = false,
-  delay = 0, // Ajout du délai
+  delay = 0,
+  parallaxY,
 }: {
   src: string;
   alt: string;
@@ -33,13 +38,15 @@ const FloatingImage = ({
   rotation?: string;
   priority?: boolean;
   delay?: number;
+  /** Scroll-driven vertical offset for parallax depth */
+  parallaxY?: MotionValue<number>;
 }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
+    initial={{ opacity: 0, scale: 0.85 }}
+    animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.8, delay, ease: "easeOut" }}
     className={`absolute rounded-2xl overflow-hidden shadow-lg border-[3px] border-white z-20 ${className}`}
-    style={{ rotate: rotation ?? undefined }}
+    style={{ rotate: rotation ?? undefined, y: parallaxY }}
     whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
   >
     <Image
@@ -80,7 +87,11 @@ const FeatureCard = ({
     className={`relative bg-white rounded-[20px] p-[20px] pt-[18px] flex flex-col gap-[14px] w-full max-w-[280px] md:w-[234px] lg:w-[320px] min-h-[245px] ${shadowClass} ${rotateClass}`}
     style={{ ...style, zIndex }}
     whileHover={{ scale: 1.05, zIndex: 50, transition: { duration: 0.3 } }}
-    whileTap={{ scale: 0.95, rotate: [0, -1, 1, 0], transition: { duration: 0.2 } }}
+    whileTap={{
+      scale: 0.95,
+      rotate: [0, -1, 1, 0],
+      transition: { duration: 0.2 },
+    }}
   >
     <div className="flex items-center gap-[14px]">
       <div className="w-[56px] h-[56px] shrink-0 flex items-center justify-center rounded-2xl bg-gray-50 text-brand-dark">
@@ -103,6 +114,20 @@ const FeatureCard = ({
 
 export const Hero = () => {
   const t = useTranslations("Hero");
+  const router = useRouter();
+  const { navigateTo } = usePageTransition();
+
+  // --- Parallax scroll layers ---
+  // scrollY tracks the page scroll position (works with Lenis via RAF sync)
+  const { scrollY } = useScroll();
+  // Each image/element gets a different speed — faster = "closer", slower = "further"
+  // Negative values = moves up as page scrolls down (natural parallax direction)
+  const yTop = useTransform(scrollY, [0, 900], [0, -90]); // top images — mid-depth
+  const yBotL = useTransform(scrollY, [0, 900], [0, -140]); // bottom-left  — closest
+  const yBotR = useTransform(scrollY, [0, 900], [0, -110]); // bottom-right — medium-close
+  const ySwirl = useTransform(scrollY, [0, 900], [0, -50]); // swirl vector — furthest back
+  const yLoop = useTransform(scrollY, [0, 900], [0, -170]); // loop accent  — very close
+  const yStar = useTransform(scrollY, [0, 900], [0, -60]); // bg star      — background
 
   type FeatureCardMessage = {
     title: string;
@@ -206,12 +231,14 @@ export const Hero = () => {
         rotation="-15deg"
         priority={true}
         delay={0.2}
+        parallaxY={yTop}
       />
       {/* Small Star near top left */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+        style={{ y: yStar }}
         className="absolute top-[214px] left-[999px] hidden lg:block animate-pulse w-[40px] h-[40px]"
       >
         <Image
@@ -230,6 +257,7 @@ export const Hero = () => {
         className="w-[70px] h-[70px] top-[450px] right-0 lg:w-[100px] lg:h-[100px] lg:top-[140px] lg:right-[40px] xl:top-[158px] xl:right-[140px]"
         rotation="15deg"
         delay={0.4}
+        parallaxY={yTop}
       />
 
       {/* Bottom Left Image & Vector */}
@@ -239,12 +267,14 @@ export const Hero = () => {
         className="hidden lg:block w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[500px] left-[40px] xl:top-[548px] xl:left-[95px]"
         rotation="-8deg"
         delay={0.6}
+        parallaxY={yBotL}
       />
       {/* Decorative loop vector */}
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
+        style={{ y: yLoop }}
         className="absolute top-[553px] left-[219px] w-[88px] h-[87px] hidden lg:block"
       >
         <Image
@@ -260,6 +290,7 @@ export const Hero = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
+        style={{ y: yLoop }}
         className="absolute top-[640px] left-[307px] hidden lg:block w-[30px] h-[30px] animate-bounce"
       >
         <Image
@@ -278,12 +309,14 @@ export const Hero = () => {
         className="hidden lg:block w-[100px] h-[100px] xl:w-[100px] xl:h-[100px] top-[480px] right-[60px] xl:top-[526px] xl:right-[195px]"
         rotation="-15deg"
         delay={0.8}
+        parallaxY={yBotR}
       />
       {/* Gradient Swirl Vector */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.9, duration: 0.6, ease: "easeOut" }}
+        style={{ y: ySwirl }}
         className="absolute top-[420px] right-[120px] w-[120px] h-[180px] hidden lg:block"
       >
         <Image
@@ -296,7 +329,7 @@ export const Hero = () => {
       </motion.div>
 
       {/* --- MAIN CONTENT CENTER --- */}
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-2 md:px-16 flex flex-col items-center pt-[80px] sm:pt-[120px] md:pt-[190px] text-center">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-5 md:px-16 flex flex-col items-center pt-[80px] sm:pt-[120px] md:pt-[190px] text-center">
         {/* Badge */}
         <FadeIn direction="down" delay={0.1}>
           <div className="inline-flex items-center px-[16px] md:px-[20px] py-[8px] md:py-[10px] rounded-[59px] border border-brand-dark bg-brand-light mb-[24px] md:mb-[40px]">
@@ -306,58 +339,93 @@ export const Hero = () => {
           </div>
         </FadeIn>
 
-        {/* Hero Title */}
-        <FadeIn delay={0.2} duration={0.8}>
-          <h1 className="max-w-full md:max-w-[1086px] mx-auto font-display font-bold text-[36px] sm:text-[42px] md:text-[56px] lg:text-[64px] leading-[110%] md:leading-[120%] tracking-tight mb-[24px] md:mb-[40px] relative">
-            <span className="hidden lg:block absolute -top-8 -left-12 opacity-80 animate-pulse">
-              <SparkleDoodle className="w-12 h-12 text-[#FFD700]" />
-            </span>
-            {t.rich("title", {
-              strong1: (chunks) => (
-                <span className="bg-text-gradient bg-clip-text text-transparent">
-                  {chunks}
-                </span>
-              ),
-              strong2: (chunks) => (
-                <span className="text-brand-dark">{chunks}</span>
-              ),
-              highlight: (chunks) => (
-                <span className="relative inline-block">
-                  <span className="bg-text-gradient bg-clip-text text-transparent block md:inline relative z-10">
-                    {chunks}
-                  </span>
-                  <UnderlineDoodle className="absolute -bottom-2 left-0 w-full h-[15px] text-brand-accent/60 z-0" />
-                </span>
-              ),
-            })}
-          </h1>
-        </FadeIn>
+        {/* Hero Title — word-by-word mask reveal */}
+        <h1 className="max-w-full md:max-w-[1086px] mx-auto font-display font-bold text-[36px] sm:text-[42px] md:text-[56px] lg:text-[64px] leading-[110%] md:leading-[120%] tracking-tight mb-[24px] md:mb-[40px] relative">
+          {/* Sparkle pops in after words complete */}
+          <motion.span
+            initial={{ opacity: 0, scale: 0.4, rotate: -30 }}
+            animate={{ opacity: 0.85, scale: 1, rotate: 0 }}
+            transition={{ delay: 1.5, duration: 0.5, ease: "backOut" }}
+            className="hidden lg:block absolute -top-8 -left-12"
+          >
+            <SparkleDoodle className="w-12 h-12 text-[#FFD700]" />
+          </motion.span>
 
-        {/* Subtitle */}
-        <FadeIn delay={0.4} duration={0.8}>
-          <p className="max-w-full md:max-w-[630px] mx-auto font-montserrat font-medium text-[15px] md:text-[18px] text-brand-black leading-[150%] md:leading-[140%] mb-[32px] md:mb-[40px] px-2">
+          {t.rich("title", {
+            /* "Empowering" — gradient, 1 word */
+            strong1: (chunks) => (
+              <WordReveal
+                delay={0.2}
+                className="bg-text-gradient bg-clip-text text-transparent"
+              >
+                {chunks}
+              </WordReveal>
+            ),
+            /* "Young Minds with Smart" — solid dark, 4 words */
+            strong2: (chunks) => (
+              <WordReveal delay={0.48} className="text-brand-dark">
+                {chunks}
+              </WordReveal>
+            ),
+            /* "Financial Skills" — gradient + underline draw-in */
+            highlight: (chunks) => (
+              <span className="relative inline-block">
+                <WordReveal
+                  delay={0.85}
+                  stagger={0.08}
+                  className="bg-text-gradient bg-clip-text text-transparent relative z-10"
+                >
+                  {chunks}
+                </WordReveal>
+                {/* Underline draws left-to-right after the words land */}
+                <motion.span
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
+                  transition={{
+                    delay: 1.25,
+                    duration: 0.55,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="absolute inset-x-0 -bottom-2 pointer-events-none"
+                  style={{ transformOrigin: "left center" }}
+                >
+                  <UnderlineDoodle className="w-full h-[15px] text-brand-accent/60" />
+                </motion.span>
+              </span>
+            ),
+          })}
+        </h1>
+
+        {/* Subtitle — single-mask line reveal, starts while title is finishing */}
+        <LineReveal
+          delay={1.0}
+          className="max-w-full md:max-w-[630px] mx-auto mb-[32px] md:mb-[40px]"
+        >
+          <p className="font-montserrat font-medium text-[15px] md:text-[18px] text-brand-black leading-[150%] md:leading-[140%]">
             {t("subtitle")}
           </p>
-        </FadeIn>
+        </LineReveal>
 
         {/* Social Proof */}
-        <FadeIn delay={0.5}>
+        <FadeIn delay={1.2}>
           <div className="flex flex-col sm:flex-row items-center gap-[12px] mb-[40px]">
             <div className="flex -space-x-4">
-              {["image1.jpg", "image2.png", "profil2.jpg"].map((fileName, i) => (
-                <div
-                  key={i}
-                  className="w-10 md:w-11 h-10 md:h-11 rounded-full border border-white bg-[#D9D9D9] overflow-hidden relative"
-                >
-                  <Image
-                    src={`/images/${fileName}`}
-                    alt="Avatar"
-                    fill
-                    className="object-cover"
-                    priority={i === 0}
-                  />
-                </div>
-              ))}
+              {["image1.jpg", "image2.png", "profil2.jpg"].map(
+                (fileName, i) => (
+                  <div
+                    key={i}
+                    className="w-10 md:w-11 h-10 md:h-11 rounded-full border border-white bg-[#D9D9D9] overflow-hidden relative"
+                  >
+                    <Image
+                      src={`/images/${fileName}`}
+                      alt="Avatar"
+                      fill
+                      className="object-cover"
+                      priority={i === 0}
+                    />
+                  </div>
+                ),
+              )}
             </div>
             <div className="flex flex-col items-center sm:items-start gap-1">
               <div className="flex gap-[2px]">
@@ -380,9 +448,12 @@ export const Hero = () => {
         </FadeIn>
 
         {/* Buttons */}
-        <FadeIn delay={0.6}>
+        <FadeIn delay={1.4}>
           <div className="flex flex-col sm:flex-row items-center gap-[16px] md:gap-[28px] mb-[60px] md:mb-0 w-full sm:w-auto px-4 sm:px-0">
-            <JellyButton className="group flex items-center justify-center gap-[10px] w-auto min-w-[200px] px-8 sm:px-0 sm:w-[242px] h-[54px] bg-brand-dark rounded-[50px] shadow-btn-enroll transition-all duration-300">
+            <JellyButton
+              onClick={() => navigateTo("/signup")}
+              className="group flex items-center justify-center gap-[10px] w-auto min-w-[200px] px-8 sm:px-0 sm:w-[242px] h-[54px] bg-brand-dark rounded-[50px] shadow-btn-enroll transition-all duration-300"
+            >
               <span className="font-montserrat font-medium text-[16px] md:text-[18px] text-[#FDFDFD]">
                 {t("enroll")}
               </span>
@@ -394,6 +465,7 @@ export const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => lenisScrollTo("#how-it-works")}
               className="flex items-center justify-center gap-[10px] w-auto min-w-[200px] px-8 sm:px-0 sm:w-[233px] h-[54px] bg-brand-light border-2 border-[#AFA6FB] rounded-[50px] hover:bg-white transition-all duration-300"
             >
               <div className="w-[24px] h-[24px] flex items-center justify-center bg-transparent">
@@ -489,8 +561,7 @@ export const Hero = () => {
       </div>
 
       {/* Mobile/Tablet View for Cards (Stacked with staggered offsets) */}
-      <div className="lg:hidden relative flex flex-col items-center w-full px-4 mt-10 pb-12">
-
+      <div className="lg:hidden relative flex flex-col items-center w-full px-5 mt-10 pb-12">
         <div className="relative w-full flex flex-col items-center gap-0">
           {featureCards.map((card, index) => {
             const layout =

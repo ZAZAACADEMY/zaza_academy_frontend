@@ -171,13 +171,16 @@ export const AgeGroupProgram = () => {
   }, [activeProgram]);
 
   return (
-    <section className="w-full bg-white py-20 relative" id="programs">
+    <section
+      className="w-full bg-white py-20 relative scroll-mt-24"
+      id="programs"
+    >
       <motion.div
         key={locale}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-[1440px] mx-auto px-2 md:px-16"
+        className="w-full max-w-[1440px] mx-auto px-5 md:px-16"
       >
         <svg width="0" height="0" className="absolute pointer-events-none">
           <defs>

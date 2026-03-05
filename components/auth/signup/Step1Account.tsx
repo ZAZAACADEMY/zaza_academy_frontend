@@ -1,6 +1,14 @@
 "use client";
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { ChevronRight, Eye, EyeOff, ArrowLeft, Loader2, AlertTriangle } from "lucide-react";
+import {
+  ChevronRight,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Loader2,
+  AlertTriangle,
+  X,
+} from "lucide-react";
 import { Link } from "@/navigation";
 import { useSignup } from "./SignupContext";
 import { COUNTRY_CODES } from "./constants";
@@ -27,9 +35,12 @@ export const Step1Account = () => {
     setPassword,
     confirmPassword,
     setConfirmPassword,
+    motivations,
+    setMotivations,
   } = useSignup();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [motivationInput, setMotivationInput] = useState("");
   const locale = useLocale();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -93,6 +104,10 @@ export const Step1Account = () => {
     });
 
     if (result.success) {
+      if (motivations.length === 0) {
+        setErrors({ motivations: tErrors("motivationsRequired") });
+        return;
+      }
       setErrors({});
       try {
         const response = await register({
@@ -108,24 +123,26 @@ export const Step1Account = () => {
         if (response.access) {
           tokenStore.setToken(response.access);
         }
-        
+
         // Even if no token (e.g. needs email verification), we proceed
         // The backend should ideally allow proceeding to plan selection
         setStep(2);
       } catch (err: any) {
         console.error("Detailed Registration Error:", err);
         const backendError = err.data?.detail || err.data?.message;
-        setGeneralError(backendError || "An error occurred during registration.");
-        
-        if (err.data && typeof err.data === 'object' && !err.data.detail) {
-           const fieldErrors: { [key: string]: string } = {};
-           Object.keys(err.data).forEach(key => {
-             const messages = err.data[key];
-             if (Array.isArray(messages) && messages.length > 0) {
-               fieldErrors[key] = messages[0];
-             }
-           });
-           setErrors(fieldErrors);
+        setGeneralError(
+          backendError || "An error occurred during registration.",
+        );
+
+        if (err.data && typeof err.data === "object" && !err.data.detail) {
+          const fieldErrors: { [key: string]: string } = {};
+          Object.keys(err.data).forEach((key) => {
+            const messages = err.data[key];
+            if (Array.isArray(messages) && messages.length > 0) {
+              fieldErrors[key] = messages[0];
+            }
+          });
+          setErrors(fieldErrors);
         }
       }
     } else {
@@ -411,12 +428,97 @@ export const Step1Account = () => {
         )}
       </div>
 
+      {/* Motivations */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <label
+            htmlFor="motivations-input"
+            className="font-bold text-brand-black text-[14px]"
+          >
+            {t("motivationsLabel")}
+          </label>
+          <p className="text-xs text-gray-500">{t("motivationsHint")}</p>
+        </div>
+
+        {/* Selected tags */}
+        {motivations.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {motivations.map((m) => (
+              <span
+                key={m}
+                className="flex items-center gap-1.5 bg-[#F3F0FF] text-[#A655F7] text-sm font-medium px-3 py-1.5 rounded-full"
+              >
+                {m}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMotivations(motivations.filter((x) => x !== m))
+                  }
+                  className="hover:text-[#7C3AED] transition-colors"
+                  aria-label={`Remove ${m}`}
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Predefined suggestions */}
+        <div className="flex flex-wrap gap-2">
+          {(t.raw("motivationSuggestions") as string[])
+            .filter((s) => !motivations.includes(s))
+            .map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => setMotivations([...motivations, suggestion])}
+                className="text-sm px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-[#A655F7] hover:text-[#A655F7] hover:bg-[#F3F0FF] transition-all"
+              >
+                + {suggestion}
+              </button>
+            ))}
+        </div>
+
+        {/* Custom input */}
+        <input
+          id="motivations-input"
+          type="text"
+          value={motivationInput}
+          onChange={(e) => setMotivationInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (
+              (e.key === "Enter" || e.key === ",") &&
+              motivationInput.trim()
+            ) {
+              e.preventDefault();
+              const val = motivationInput.trim().replace(/,$/, "");
+              if (val && !motivations.includes(val)) {
+                setMotivations([...motivations, val]);
+              }
+              setMotivationInput("");
+            }
+          }}
+          placeholder={t("motivationsPlaceholder")}
+          className={`w-full px-6 py-4 rounded-[50px] border ${
+            errors.motivations ? "border-red-500" : "border-gray-200"
+          } focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all`}
+        />
+        {errors.motivations && (
+          <p role="alert" className="text-red-500 text-xs ml-4">
+            {errors.motivations}
+          </p>
+        )}
+      </div>
+
       <button
         type="submit"
         disabled={isLoading}
         className="mt-4 w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
       >
-        {isLoading ? <Loader2 className="animate-spin" /> : (
+        {isLoading ? (
+          <Loader2 className="animate-spin" />
+        ) : (
           <>
             {t("next")} <ArrowLeft className="rotate-180" size={20} />
           </>
