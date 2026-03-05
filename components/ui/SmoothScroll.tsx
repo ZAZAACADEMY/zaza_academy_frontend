@@ -37,7 +37,6 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       duration: 1.2,
       // Exponential ease — the signature Awwwards curve
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothTouch: false,
       syncTouch: false,
     });
 
