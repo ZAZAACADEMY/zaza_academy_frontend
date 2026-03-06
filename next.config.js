@@ -1,5 +1,8 @@
 ﻿const withNextIntl = require("next-intl/plugin")("./i18n/request.ts");
 
+// Allow fetch/XHR to the Django backend from the browser
+const backendOrigin = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+
 const securityHeaders = [
   {
     key: "X-DNS-Prefetch-Control",
@@ -27,8 +30,7 @@ const securityHeaders = [
   },
   {
     key: "Content-Security-Policy",
-    value:
-      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:;",
+    value: `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' ${backendOrigin};`,
   },
 ];
 
