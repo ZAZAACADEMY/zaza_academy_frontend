@@ -234,7 +234,7 @@ export default function BillingPage() {
   }, [mappedPlans, currentSubscription]);
 
   const planStatus = currentSubscription?.status_display || t("statusActive");
-  const planName = currentPlanInfo?.title || currentSubscription?.plan_details?.split(" - ")[0] || t("notAvailable");
+  const planName = currentPlanInfo?.title || (currentSubscription as any)?.plan_details?.split(" - ")[0] || t("notAvailable");
   const planDescription = currentPlanInfo?.description || (currentSubscription as any)?.plan_details?.split(" - ")[1] || t("noDescription");
   
   // Get latest successful payment for this subscription
