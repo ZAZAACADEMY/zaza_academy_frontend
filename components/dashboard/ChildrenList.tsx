@@ -17,23 +17,11 @@ import {
   useDeleteChildMutation,
   Child,
 } from "@/lib/store/services/childrenApi";
+import { getAvatarPath } from "@/lib/api/avatarUtils";
 import { AddChildModal } from "./children/AddChildModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-
-// Helper to get avatar path - mapping index to local path or external URL
-const getAvatarPath = (avatarStr?: string | null) => {
-  if (!avatarStr) return "/avatars/A1.jpeg";
-  
-  // If it's a number/index string or API provides a direct URL
-  const index = parseInt(avatarStr);
-  if (!isNaN(index) && index >= 0 && index < 10) { // Assuming 0-9 for A1-A10
-    return `/avatars/A${index + 1}.jpeg`;
-  }
-  // Fallback if avatarStr is a URL
-  return avatarStr;
-};
 
 export const ChildrenList = () => {
   const t = useTranslations("ChildrenList");
@@ -164,14 +152,14 @@ export const ChildrenList = () => {
                   <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-xl shadow-brand-purple/15 border-4 border-white group-hover:rotate-3 transition-transform duration-300 bg-gray-50">
                     <Image
                       src={getAvatarPath(child.avatar)}
-                      alt={child.name || "Child avatar"}
+                      alt={(child as any).pseudo || child.name || "Child avatar"}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="pt-2">
                     <h4 className="font-display font-bold text-2xl text-brand-dark mb-1 group-hover:text-brand-purple transition-colors">
-                      {child.name}
+                      {(child as any).pseudo || child.name}
                     </h4>
                     <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
                       <span className="w-2 h-2 rounded-full bg-green-400"></span>

@@ -7,18 +7,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { components } from "@/lib/api/v1";
 import { useAddChildMutation, useUpdateChildMutation, Child } from "@/lib/store/services/childrenApi";
 
-// Avatars imports (using placeholders effectively or imports if available)
+// Avatars list with both path and URL
 const AVATARS = [
-  "/avatars/A1.jpeg",
-  "/avatars/A2.jpeg",
-  "/avatars/A3.jpeg",
-  "/avatars/A4.jpeg",
-  "/avatars/A5.jpeg",
-  "/avatars/A6.jpeg",
-  "/avatars/A7.jpeg",
-  "/avatars/A8.jpeg",
-  "/avatars/A9.jpeg",
-  "/avatars/A10.jpeg",
+  { src: "/avatars/A1.jpeg" },
+  { src: "/avatars/A2.jpeg" },
+  { src: "/avatars/A3.jpeg" },
+  { src: "/avatars/A4.jpeg" },
+  { src: "/avatars/A5.jpeg" },
+  { src: "/avatars/A6.jpeg" },
+  { src: "/avatars/A7.jpeg" },
+  { src: "/avatars/A8.jpeg" },
+  { src: "/avatars/A9.jpeg" },
+  { src: "/avatars/A10.jpeg" },
 ];
 
 interface AddChildModalProps {
@@ -35,10 +35,10 @@ export const AddChildModal = ({
   const [formData, setFormData] = useState<Partial<Child>>({
     name: "",
     age: 0,
-    avatar: "0",
+    avatar: AVATARS[0].src,
     age_group: "5-8",
   });
-  const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0);
+  const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].src);
   const [error, setError] = useState("");
 
   const isEditMode = !!initialData;
@@ -51,15 +51,15 @@ export const AddChildModal = ({
   useEffect(() => {
     if (initialData) {
       setFormData({
-        name: initialData.name,
+        name: (initialData as any).pseudo || initialData.name,
         age: initialData.age,
-        avatar: initialData.avatar || "0",
+        avatar: initialData.avatar || AVATARS[0].src,
         age_group: initialData.age_group,
       });
-      setSelectedAvatarIndex(parseInt(initialData.avatar || "0"));
+      setSelectedAvatar(initialData.avatar || AVATARS[0].src);
     } else {
-      setFormData({ name: "", age: 0, avatar: "0", age_group: "5-8" });
-      setSelectedAvatarIndex(0);
+      setFormData({ name: "", age: 0, avatar: AVATARS[0].src, age_group: "5-8" });
+      setSelectedAvatar(AVATARS[0].src);
     }
   }, [initialData, isOpen]);
 
@@ -67,24 +67,24 @@ export const AddChildModal = ({
     e.preventDefault();
     setError("");
 
-    // Basic validation
     if (!formData.name || !formData.name.trim()) {
       setError("Name is required");
       return;
     }
-    if (!formData.age || formData.age < 1 || formData.age > 17) {
-      setError("Age must be between 1 and 17");
+    if (!formData.age || formData.age < 5 || formData.age > 16) {
+      setError("Age must be between 5 and 16");
       return;
     }
 
     try {
-      const dataToSave: Child = {
-        name: formData.name,
+      const absoluteAvatarUrl = `${window.location.origin}${selectedAvatar}`;
+      
+      const dataToSave = {
+        pseudo: formData.name,
         age: formData.age,
-        avatar: selectedAvatarIndex.toString(),
+        avatar: absoluteAvatarUrl,
         age_group: formData.age <= 8 ? "5-8" : (formData.age <= 12 ? "9-12" : "13-16")
-      } as Child;
-
+      } as any;
 
       if (isEditMode && initialData?.id) {
         await updateChild({ id: initialData.id, body: dataToSave }).unwrap();
@@ -94,7 +94,7 @@ export const AddChildModal = ({
       onClose();
     } catch (err: any) {
       console.error(err);
-      setError(err.data?.message || err.data?.detail || "Failed to save profile. Please try again.");
+      setError(err.data?.message || err.data?.detail || "Failed to save profile.");
     }
   };
 
@@ -161,28 +161,28 @@ export const AddChildModal = ({
                         <button
                           key={index}
                           type="button"
-                          onClick={() => setSelectedAvatarIndex(index)}
+                          onClick={() => setSelectedAvatar(avatar.src)}
                           className={`relative w-20 h-20 rounded-full transition-all duration-300 ${
-                            selectedAvatarIndex === index
+                            selectedAvatar === avatar.src
                               ? "scale-110"
                               : "hover:scale-105 opacity-70 hover:opacity-100 grayscale hover:grayscale-0"
                           }`}
                         >
                           <div
                             className={`relative w-full h-full rounded-full overflow-hidden border-4 ${
-                              selectedAvatarIndex === index
+                              selectedAvatar === avatar.src
                                 ? "border-brand-purple shadow-lg shadow-brand-purple/30"
                                 : "border-gray-100"
                             }`}
                           >
                             <Image
-                              src={avatar}
+                              src={avatar.src}
                               alt={`Avatar ${index + 1}`}
                               fill
                               className="object-cover"
                             />
                           </div>
-                          {selectedAvatarIndex === index && (
+                          {selectedAvatar === avatar.src && (
                             <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-brand-purple rounded-full flex items-center justify-center text-white border-4 border-white shadow-md z-10">
                               <Check size={16} strokeWidth={3} />
                             </div>

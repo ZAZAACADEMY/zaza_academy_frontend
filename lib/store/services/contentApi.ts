@@ -18,7 +18,7 @@ export const contentApi = baseApi.injectEndpoints({
     // Video Endpoints
     getVideos: builder.query<PaginatedVideoList, { age_group?: string; category?: string; search?: string; page?: number } | void>({
       query: (params) => ({
-        url: "/api/videos",
+        url: "/api/v1/videos",
         params: params || {},
       }),
       providesTags: (result) =>
@@ -30,16 +30,16 @@ export const contentApi = baseApi.injectEndpoints({
           : [{ type: "Videos", id: "LIST" }],
     }),
     getPublishedVideos: builder.query<PaginatedVideoList, void>({
-      query: () => "/api/videos/published",
+      query: () => "/api/v1/videos/published",
       providesTags: [{ type: "Videos", id: "PUBLISHED_LIST" }],
     }),
     getVideoById: builder.query<Video, string>({
-      query: (id) => `/api/videos/${id}`,
+      query: (id) => `/api/v1/videos/${id}`,
       providesTags: (result, error, id) => [{ type: "Videos", id }],
     }),
     createVideo: builder.mutation<Video, VideoCreateUpdate>({
       query: (body) => ({
-        url: "/api/videos",
+        url: "/api/v1/videos",
         method: "POST",
         body,
       }),
@@ -47,7 +47,7 @@ export const contentApi = baseApi.injectEndpoints({
     }),
     updateVideo: builder.mutation<Video, { id: string; body: VideoCreateUpdate }>({
       query: ({ id, body }) => ({
-        url: `/api/videos/${id}`,
+        url: `/api/v1/videos/${id}`,
         method: "PUT",
         body,
       }),
@@ -55,7 +55,7 @@ export const contentApi = baseApi.injectEndpoints({
     }),
     partialUpdateVideo: builder.mutation<Video, { id: string; body: PatchedVideoCreateUpdate }>({
       query: ({ id, body }) => ({
-        url: `/api/videos/${id}`,
+        url: `/api/v1/videos/${id}`,
         method: "PATCH",
         body,
       }),
@@ -63,7 +63,7 @@ export const contentApi = baseApi.injectEndpoints({
     }),
     deleteVideo: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/videos/${id}`,
+        url: `/api/v1/videos/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "Videos", id }, { type: "Videos", id: "LIST" }],
@@ -72,7 +72,7 @@ export const contentApi = baseApi.injectEndpoints({
     // Live Session Endpoints
     getLives: builder.query<PaginatedLiveList, { age_group?: string; status?: string; search?: string; page?: number } | void>({
         query: (params) => ({
-          url: "/api/lives",
+          url: "/api/v1/lives",
           params: params || {},
         }),
         providesTags: (result) =>
@@ -84,24 +84,24 @@ export const contentApi = baseApi.injectEndpoints({
             : [{ type: "Lives", id: "LIST" }],
       }),
     getCurrentLives: builder.query<PaginatedLiveList, void>({
-      query: () => "/api/lives/current",
+      query: () => "/api/v1/lives/current",
       providesTags: [{ type: "Lives", id: "CURRENT_LIST" }],
     }),
     getUpcomingLives: builder.query<PaginatedLiveList, void>({
-      query: () => "/api/lives/upcoming",
+      query: () => "/api/v1/lives/upcoming",
       providesTags: [{ type: "Lives", id: "UPCOMING_LIST" }],
     }),
     getPastLives: builder.query<PaginatedLiveList, void>({
-      query: () => "/api/lives/past",
+      query: () => "/api/v1/lives/past",
       providesTags: [{ type: "Lives", id: "PAST_LIST" }],
     }),
     getLiveById: builder.query<Live, string>({
-      query: (id) => `/api/lives/${id}`,
+      query: (id) => `/api/v1/lives/${id}`,
       providesTags: (result, error, id) => [{ type: "Lives", id }],
     }),
     createLive: builder.mutation<Live, LiveCreateUpdate>({
       query: (body) => ({
-        url: "/api/lives",
+        url: "/api/v1/lives",
         method: "POST",
         body,
       }),
@@ -109,7 +109,7 @@ export const contentApi = baseApi.injectEndpoints({
     }),
     updateLive: builder.mutation<Live, { id: string; body: LiveCreateUpdate }>({
       query: ({ id, body }) => ({
-        url: `/api/lives/${id}`,
+        url: `/api/v1/lives/${id}`,
         method: "PUT",
         body,
       }),
@@ -117,7 +117,7 @@ export const contentApi = baseApi.injectEndpoints({
     }),
     partialUpdateLive: builder.mutation<Live, { id: string; body: PatchedLiveCreateUpdate }>({
       query: ({ id, body }) => ({
-        url: `/api/lives/${id}`,
+        url: `/api/v1/lives/${id}`,
         method: "PATCH",
         body,
       }),
@@ -125,7 +125,7 @@ export const contentApi = baseApi.injectEndpoints({
     }),
     deleteLive: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/lives/${id}`,
+        url: `/api/v1/lives/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "Lives", id }, { type: "Lives", id: "LIST" }],

@@ -299,6 +299,7 @@
     },
     "settings": {
       "title": "Settings",
+      "loading": "Loading settings...",
       "tabs": {
         "profile": "Profile",
         "notifications": "Notifications",
@@ -318,7 +319,14 @@
         "currentPassword": "Current Password",
         "newPassword": "New Password",
         "confirmNewPassword": "Confirm New Password",
-        "updateButton": "Update Password"
+        "updateButton": "Update Password",
+        "errorMatch": "Passwords do not match",
+        "errorLength": "New password must be at least 8 characters",
+        "errorGeneric": "An error occurred. Please try again.",
+        "successTitle": "Check your email",
+        "successBody": "We've sent a 6-digit code to your email to verify your identity and update your password.",
+        "successCta": "I'm ready to enter the code",
+        "infoNote": "To change your password, we will send a verification code to your email."
       }
     }
   },
@@ -435,7 +443,6 @@
     "progress": "Step {step} of {total}",
     "stepTitles": {
       "1": "Create Account",
-      "1_5": "Verify Email",
       "2": "Choose Plan",
       "3": "Billing Cycle",
       "4": "Review Order",
@@ -447,7 +454,6 @@
     },
     "stepSubtitles": {
       "1": "Let's get you started with Zaza",
-      "1_5": "Enter the code sent to your email",
       "2": "Select the best plan for your family",
       "3": "Choose how you want to pay",
       "4": "Please review your subscription details",

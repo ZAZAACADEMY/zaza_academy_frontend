@@ -104,13 +104,13 @@ export const Step3Billing = () => {
 
       <div className="flex gap-4 mt-6">
         <button
-          onClick={() => setStep(3)}
+          onClick={() => setStep(2)}
           className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
         >
           <ArrowLeft size={24} className="text-gray-600" />
         </button>
         <button
-          onClick={() => setStep(5)}
+          onClick={() => setStep(4)}
           disabled={isLoading || isError}
           className="flex-1 bg-brand-dark text-white font-bold text-[16px] rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
         >

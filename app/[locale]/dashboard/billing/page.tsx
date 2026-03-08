@@ -19,9 +19,10 @@ import {
 import React, { useState, useMemo } from "react";
 import { ContactModal } from "@/components/ui/ContactModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGetMySubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
+import { useGetMySubscriptionsQuery, useGetMyActiveSubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
 import { useGetMyPaymentsQuery } from "@/lib/store/services/paymentsApi";
 import { useListChildrenQuery } from "@/lib/store/services/childrenApi";
+import { useGetActivePlansQuery } from "@/lib/store/services/plansApi";
 
 // Define strict props for Lucide icons to avoid TS errors
 type LucideIconProps = React.SVGProps<SVGSVGElement> & {
@@ -105,7 +106,7 @@ const PlanCard = ({
 
       {/* Features */}
       <ul className="space-y-4">
-        {plan.features.map((feature, i) => (
+        {plan.features?.map((feature, i) => (
           <li key={i} className="flex items-start gap-3">
             <div className="rounded-full bg-[#8B5CF6] text-white p-1 shrink-0 mt-0.5">
               <Check size={14} strokeWidth={3} />
@@ -172,8 +173,22 @@ export default function BillingPage() {
   const locale = useLocale();
 
   const { data: subscriptionsData, isLoading: isLoadingSubs, isError: isErrorSubs } = useGetMySubscriptionsQuery();
+  const { data: activeSubsData } = useGetMyActiveSubscriptionsQuery();
   const { data: paymentsData, isLoading: isLoadingPayments } = useGetMyPaymentsQuery();
   const { data: childrenData } = useListChildrenQuery();
+  const { data: activePlans, isLoading: isLoadingPlans } = useGetActivePlansQuery();
+
+  // Helper to safely render amounts that might be strings or objects {amount, currency}
+  const formatAmount = (amount: any) => {
+    if (!amount) return "—";
+    if (typeof amount === "object") {
+      if (amount.amount && amount.currency) {
+        return `${amount.currency} ${amount.amount}`;
+      }
+      return JSON.stringify(amount);
+    }
+    return amount;
+  };
 
   // Safety check for faqItems
   const rawFaqItems = t.raw("faqItems");
@@ -181,26 +196,51 @@ export default function BillingPage() {
     ? (rawFaqItems as { question: string; answer: string }[])
     : [];
 
-  const plans = useMemo(() => {
-    const rawPlans = tPricing.raw("plans") as PlanMessage[];
-    return rawPlans.map((plan) => {
-      const Icon = plan.icon ? planIconMap[plan.icon] || Sparkles : Sparkles;
-      return {
-        ...plan,
-        icon: Icon,
-        isPopular: Boolean(plan.mostPopular),
-      } satisfies PricingPlan;
-    });
-  }, [tPricing]);
-
-  const currentSubscription = subscriptionsData?.results?.find(sub => sub.status === "ACTIVE") || subscriptionsData?.results?.[0];
+  const currentSubscription = activeSubsData?.[0] || subscriptionsData?.results?.find(sub => sub.status === "ACTIVE") || subscriptionsData?.results?.[0];
   
+  // Map API plans to display format, merging with translations for features/icons
+  const mappedPlans = useMemo(() => {
+    if (!activePlans) return [];
+    
+    // Get translations for plans to extract icons and features
+    const translatedPlans = tPricing.raw("plans") as PlanMessage[];
+    
+    return activePlans.map((apiPlan) => {
+      // Find matching translation by name (STANDARD, PREMIUM, FAMILLE)
+      const translation = translatedPlans.find(p => p.planId === apiPlan.name);
+      
+      const Icon = translation?.icon ? planIconMap[translation.icon] || Sparkles : Sparkles;
+      
+      return {
+        planId: apiPlan.id,
+        name: apiPlan.name, // Slug like STANDARD
+        title: apiPlan.name_display,
+        description: apiPlan.description || translation?.description || "",
+        price: formatAmount(apiPlan.price_three_months).startsWith("$") || formatAmount(apiPlan.price_three_months).includes(" ") 
+               ? formatAmount(apiPlan.price_three_months) 
+               : `$${formatAmount(apiPlan.price_three_months)}`,
+        installment: translation?.installment || "",
+        features: translation?.features || [],
+        icon: Icon,
+        isPopular: Boolean(translation?.mostPopular),
+      } satisfies PricingPlan & { name: string };
+    });
+  }, [activePlans, tPricing]);
+
+  // Find current plan details from the mapped plans
+  const currentPlanInfo = useMemo(() => {
+    if (!currentSubscription) return null;
+    return mappedPlans.find(p => p.planId === currentSubscription.plan);
+  }, [mappedPlans, currentSubscription]);
+
   const planStatus = currentSubscription?.status_display || t("statusActive");
-  const planName = currentSubscription?.plan_name || t("notAvailable");
+  const planName = currentPlanInfo?.title || currentSubscription?.plan_details?.split(" - ")[0] || t("notAvailable");
+  const planDescription = currentPlanInfo?.description || (currentSubscription as any)?.plan_details?.split(" - ")[1] || t("noDescription");
   
   // Get latest successful payment for this subscription
-  const latestPayment = paymentsData?.results?.find(p => p.subscription === currentSubscription?.id && p.status === "SUCCESSFUL");
-  const planPrice = latestPayment?.amount ? `$${latestPayment.amount}` : "—";
+  const latestPayment = paymentsData?.find(p => p.subscription === currentSubscription?.id && p.status === "SUCCESSFUL");
+  const rawAmount = latestPayment?.amount;
+  const planPrice = rawAmount ? (typeof rawAmount === 'object' ? formatAmount(rawAmount) : `$${rawAmount}`) : "—";
   const planPeriod = latestPayment?.duration_display || "";
   const nextBillingDate = latestPayment?.coverage_end_date 
     ? new Date(latestPayment.coverage_end_date).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })
@@ -211,12 +251,12 @@ export default function BillingPage() {
 
   // Filter to show only plans above the current plan price
   const currentPriceNumber = latestPayment ? Number(latestPayment.amount) : 0;
-  const plansToDisplay = plans.filter((plan) => {
+  const plansToDisplay = mappedPlans.filter((plan) => {
     const numeric = Number((plan.price || "").replace(/[^0-9.]/g, ""));
     return !currentSubscription || (Number.isFinite(numeric) && numeric > currentPriceNumber);
   });
 
-  if (isLoadingSubs || isLoadingPayments) {
+  if (isLoadingSubs || isLoadingPayments || isLoadingPlans) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#F5F2FF]">
         <Loader2 className="w-12 h-12 animate-spin text-[#7F26D9]" />
@@ -265,7 +305,7 @@ export default function BillingPage() {
                 <span className="px-3 py-1 rounded-full bg-[#2F1B4B] text-white text-xs font-semibold shadow-sm">
                   {planStatus}
                 </span>
-                {plans.find(p => p.planId === currentSubscription?.plan_name)?.isPopular && (
+                {currentPlanInfo?.isPopular && (
                   <span className="px-3 py-1 rounded-full bg-white text-[#7F26D9] text-xs font-semibold border border-[#E0D4FF] shadow-sm">
                     {t("popular")}
                   </span>
@@ -276,7 +316,7 @@ export default function BillingPage() {
                   {planName}
                 </h1>
                 <p className="text-sm text-gray-700">
-                  {(currentSubscription as any)?.plan_details?.split(" - ")[1] || t("noDescription")}
+                  {planDescription}
                 </p>
               </div>
             </div>
@@ -358,13 +398,13 @@ export default function BillingPage() {
                   {childrenCount}
                 </p>
                 <p className="text-sm text-gray-500 mb-1.5 font-medium">
-                  / {currentSubscription?.plan_name === "STANDARD" ? "1" : currentSubscription?.plan_name === "PREMIUM" ? "3" : "5"}
+                  / {currentPlanInfo?.name === "STANDARD" ? "1" : currentPlanInfo?.name === "PREMIUM" ? "3" : "5"}
                 </p>
               </div>
               <div className="h-2 w-full bg-white/60 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-[#7F26D9] rounded-full" 
-                  style={{ width: `${Math.min((childrenCount / (currentSubscription?.plan_name === "STANDARD" ? 1 : currentSubscription?.plan_name === "PREMIUM" ? 3 : 5)) * 100, 100)}%` }}
+                  style={{ width: `${Math.min((childrenCount / (currentPlanInfo?.name === "STANDARD" ? 1 : currentPlanInfo?.name === "PREMIUM" ? 3 : 5)) * 100, 100)}%` }}
                 />
               </div>
             </div>
@@ -415,7 +455,7 @@ export default function BillingPage() {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {plansToDisplay.map((plan, index) => (
+          {plansToDisplay?.map((plan, index) => (
             <PlanCard
               key={`${plan.planId}-${index}`}
               plan={plan}
@@ -438,10 +478,10 @@ export default function BillingPage() {
             </h3>
           </div>
           <div className="space-y-4">
-            {!paymentsData || paymentsData.results.length === 0 ? (
+            {!paymentsData || paymentsData.length === 0 ? (
               <p className="text-center text-gray-500">{t("noPayments")}</p>
             ) : (
-              paymentsData.results.map((payment) => (
+              paymentsData.map((payment) => (
                 <div
                   key={payment.id}
                   className="flex items-center justify-between p-4 rounded-2xl bg-[#F9FAFB] hover:bg-[#F3F4F6] transition-colors group"
@@ -464,7 +504,7 @@ export default function BillingPage() {
                   <div className="text-right flex flex-col items-end gap-2">
                     <div>
                       <p className="font-bold text-[#1F1235] mb-1">
-                        {payment.amount}
+                        {formatAmount(payment.amount)}
                       </p>
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
                         payment.status === "SUCCESSFUL" ? "bg-[#DCFCE7] text-[#15803D]" :
@@ -519,7 +559,7 @@ export default function BillingPage() {
             </h3>
           </div>
           <div className="space-y-4">
-            {faqItems.map((item, index) => (
+            {faqItems?.map((item, index) => (
               <FAQItem
                 key={index}
                 question={item.question}

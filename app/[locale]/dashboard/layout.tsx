@@ -1,12 +1,12 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { FavoritesProvider } from "@/components/dashboard/videos/FavoritesContext";
-import { Menu } from "lucide-react";
+import { Menu, Loader2 } from "lucide-react";
 import { tokenStore } from "@/lib/api/tokenStore";
+import { useGetMyActiveSubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
 
 export default function DashboardLayout({
   children,
@@ -16,25 +16,41 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
   const locale = useLocale();
+  const token = tokenStore.getToken();
+
+  const {
+    data: activeSubscriptions,
+    isLoading: isLoadingSubscription,
+    isError,
+  } = useGetMyActiveSubscriptionsQuery(undefined, {
+    skip: !token,
+  });
 
   useEffect(() => {
-    const token = tokenStore.getToken();
     if (!token) {
       router.replace(`/${locale}/login`);
+      return;
     }
-  }, [router, locale]);
 
-  // Optionally, show a loading spinner while checking auth
-  if (!tokenStore.getToken()) {
+    // if (!isLoadingSubscription && !activeSubscriptions?.length) {
+    //   // Redirect to plan selection if no active subscription
+    //   router.replace(`/${locale}/signup?step=2`);
+    // }
+  }, [token, activeSubscriptions, isLoadingSubscription, router, locale]);
+
+  // Show loading spinner while checking auth or subscription
+  if (!token || isLoadingSubscription) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        Redirecting...
+      <div className="flex flex-col items-center justify-center h-screen gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-brand-purple" />
+        <p className="text-gray-500 font-medium">Loading your dashboard...</p>
       </div>
     );
   }
 
   return (
     <FavoritesProvider>
+...
       <div className="min-h-screen bg-[#F8F9FC]">
         {/* Mobile Header */}
         <div className="lg:hidden p-4 bg-white shadow-sm flex items-center justify-between sticky top-0 z-30">

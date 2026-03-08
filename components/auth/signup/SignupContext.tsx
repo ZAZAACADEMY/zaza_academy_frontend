@@ -73,64 +73,83 @@ const SignupContext = createContext<SignupContextType | undefined>(undefined);
 export const SignupProvider = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const planFromUrl = searchParams.get("plan");
+  const stepFromUrl = searchParams.get("step");
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Initial state helper
-  const getInitialState = () => {
-    if (typeof window === "undefined") return null;
+  // Core state with safe defaults for SSR
+  const [step, setStep] = useState(1);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [country, setCountry] = useState("");
+  const [motivations, setMotivations] = useState<string[]>([]);
+  const [selectedPlan, setSelectedPlan] = useState("Family");
+  const [paymentFrequency, setPaymentFrequency] = useState<PaymentFrequency>("Quarterly");
+  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>("Card");
+  const [mobileProvider, setMobileProvider] = useState("Vodacom");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [cardHolder, setCardHolder] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [childrenList, setChildrenList] = useState<Child[]>([]);
+  const [currentChild, setCurrentChild] = useState<Child>({
+    name: "",
+    age: "",
+    gender: "",
+    avatar: 0,
+    program: "",
+  });
+
+  // Sync from URL and localStorage on mount
+  useEffect(() => {
+    setIsMounted(true);
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : null;
-  };
+    if (saved) {
+      const savedState = JSON.parse(saved);
+      if (savedState.step && !stepFromUrl) setStep(savedState.step);
+      if (savedState.firstName) setFirstName(savedState.firstName);
+      if (savedState.lastName) setLastName(savedState.lastName);
+      if (savedState.email) setEmail(savedState.email);
+      if (savedState.country) setCountry(savedState.country);
+      if (savedState.motivations) setMotivations(savedState.motivations);
+      if (savedState.selectedPlan && !planFromUrl) setSelectedPlan(savedState.selectedPlan);
+      if (savedState.paymentFrequency) setPaymentFrequency(savedState.paymentFrequency);
+      if (savedState.paymentGateway) setPaymentGateway(savedState.paymentGateway);
+      if (savedState.mobileProvider) setMobileProvider(savedState.mobileProvider);
+      if (savedState.phoneNumber) setPhoneNumber(savedState.phoneNumber);
+      if (savedState.cardHolder) setCardHolder(savedState.cardHolder);
+      if (savedState.cardNumber) setCardNumber(savedState.cardNumber);
+      if (savedState.expiryDate) setExpiryDate(savedState.expiryDate);
+      if (savedState.cvv) setCvv(savedState.cvv);
+      if (savedState.childrenList) setChildrenList(savedState.childrenList);
+      if (savedState.currentChild) setCurrentChild(savedState.currentChild);
+    }
 
-  const savedState = getInitialState();
+    if (stepFromUrl) {
+      const newStep = parseInt(stepFromUrl);
+      if (!isNaN(newStep)) setStep(newStep);
+    }
+    if (planFromUrl) {
+      setSelectedPlan(planFromUrl);
+    }
+  }, []); // Only on mount
 
-  const [step, setStep] = useState(savedState?.step || 1);
-  const [firstName, setFirstName] = useState(savedState?.firstName || "");
-  const [lastName, setLastName] = useState(savedState?.lastName || "");
-  const [email, setEmail] = useState(savedState?.email || "");
-  const [password, setPassword] = useState(savedState?.password || "");
-  const [confirmPassword, setConfirmPassword] = useState(
-    savedState?.confirmPassword || "",
-  );
-  const [country, setCountry] = useState(savedState?.country || "");
-  const [motivations, setMotivations] = useState<string[]>(
-    savedState?.motivations || [],
-  );
-
-  const [selectedPlan, setSelectedPlan] = useState(
-    planFromUrl || savedState?.selectedPlan || "Family",
-  );
-  const [paymentFrequency, setPaymentFrequency] = useState<PaymentFrequency>(
-    savedState?.paymentFrequency || "Quarterly",
-  );
-  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(
-    savedState?.paymentGateway || "Card",
-  );
-
-  const [mobileProvider, setMobileProvider] = useState(
-    savedState?.mobileProvider || "Vodacom",
-  );
-  const [phoneNumber, setPhoneNumber] = useState(savedState?.phoneNumber || "");
-
-  const [cardHolder, setCardHolder] = useState(savedState?.cardHolder || "");
-  const [cardNumber, setCardNumber] = useState(savedState?.cardNumber || "");
-  const [expiryDate, setExpiryDate] = useState(savedState?.expiryDate || "");
-  const [cvv, setCvv] = useState(savedState?.cvv || "");
-
-  const [childrenList, setChildrenList] = useState<Child[]>(
-    savedState?.childrenList || [],
-  );
-  const [currentChild, setCurrentChild] = useState<Child>(
-    savedState?.currentChild || {
-      name: "",
-      age: "",
-      gender: "",
-      avatar: 0,
-      program: "",
-    },
-  );
+  // Handle subsequent URL step changes
+  useEffect(() => {
+    if (isMounted && stepFromUrl) {
+      const newStep = parseInt(stepFromUrl);
+      if (!isNaN(newStep) && newStep !== step) {
+        setStep(newStep);
+      }
+    }
+  }, [stepFromUrl, isMounted]);
 
   // Save to localStorage on change
   useEffect(() => {
+    if (!isMounted) return;
     const stateToSave = {
       step,
       firstName,
@@ -154,25 +173,10 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
   }, [
-    step,
-    firstName,
-    lastName,
-    email,
-    password,
-    confirmPassword,
-    country,
-    motivations,
-    selectedPlan,
-    paymentFrequency,
-    paymentGateway,
-    mobileProvider,
-    phoneNumber,
-    cardHolder,
-    cardNumber,
-    expiryDate,
-    cvv,
-    childrenList,
-    currentChild,
+    step, firstName, lastName, email, password, confirmPassword,
+    country, motivations, selectedPlan, paymentFrequency, paymentGateway,
+    mobileProvider, phoneNumber, cardHolder, cardNumber, expiryDate,
+    cvv, childrenList, currentChild, isMounted
   ]);
 
   const clearSignupData = () => {

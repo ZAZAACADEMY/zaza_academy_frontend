@@ -175,11 +175,15 @@ export const Step5Payment = () => {
         return;
       }
 
+      const returnBaseUrl = `${window.location.origin}/${locale}/payment/return`;
+      
       const paymentPayload = {
         subscription: subscriptionId,
         duration: durationApi,
         amount: parseFloat(amount).toFixed(2),
         method: methodApi,
+        success_url: `${returnBaseUrl}?status=success&payment_id={PAYMENT_ID}`,
+        cancel_url: `${returnBaseUrl}?status=cancel&payment_id={PAYMENT_ID}`,
       };
 
       const paymentResult = await initiatePayment(paymentPayload as any).unwrap();
@@ -188,7 +192,12 @@ export const Step5Payment = () => {
       const checkoutUrl = paymentResult.payment_data?.checkout_url;
 
       if (checkoutUrl) {
+        // Stripe usually handles its own redirect, but we provide our return URL
         window.location.href = checkoutUrl;
+      } else if (methodApi === "TARAMONEY") {
+        // Handle Mobile Money (which might have its own logic or automatic processing)
+        // If it's a mobile money provider that doesn't redirect, we move to processing
+        setStep(6);
       } else {
         setError(t("errorPaymentUrl"));
       }
@@ -220,7 +229,7 @@ export const Step5Payment = () => {
         <p className="text-center text-sm">{t("errorTryAgain")}</p>
         <button 
           type="button"
-          onClick={() => setStep(3)} 
+          onClick={() => setStep(2)} 
           className="mt-4 text-brand-purple font-bold hover:underline"
         >
           Go back to plans
@@ -403,63 +412,26 @@ export const Step5Payment = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <label className="font-bold text-brand-black text-[14px]">
-                {t("cardHolder")}
-              </label>
-              <input
-                type="text"
-                value={cardHolder}
-                onChange={(e) => setCardHolder(e.target.value)}
-                placeholder={t("cardHolderPlaceholder")}
-                className="w-full px-6 py-4 rounded-[50px] border border-gray-200 focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all"
-              />
+          <div className="flex flex-col items-center justify-center py-8 px-4 text-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-[#F3F0FF] flex items-center justify-center text-[#A655F7] animate-pulse">
+              <CreditCard size={40} />
             </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="font-bold text-brand-black text-[14px]">
-                {t("cardNumber")}
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  placeholder={t("cardNumberPlaceholder")}
-                  className="w-full px-6 py-4 rounded-[50px] border border-gray-200 focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all pl-12"
-                />
-                <CreditCard
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-              </div>
+            <div className="flex flex-col gap-3">
+              <h3 className="font-display font-bold text-xl text-brand-black">
+                {t("cardGateway")}
+              </h3>
+              <p className="text-gray-500 max-w-[320px] leading-relaxed">
+                You will be securely redirected to our payment partner, <strong>Stripe</strong>, to complete your transaction with your credit or debit card.
+              </p>
             </div>
-
-            <div className="flex gap-4">
-              <div className="flex flex-col gap-2 w-1/2">
-                <label className="font-bold text-brand-black text-[14px]">
-                  {t("expiry")}
-                </label>
-                <input
-                  type="text"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
-                  placeholder={t("expiryPlaceholder")}
-                  className="w-full px-6 py-4 rounded-[50px] border border-gray-200 focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all"
-                />
-              </div>
-              <div className="flex flex-col gap-2 w-1/2">
-                <label className="font-bold text-brand-black text-[14px]">
-                  {t("cvv")}
-                </label>
-                <input
-                  type="text"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value)}
-                  placeholder={t("cvvPlaceholder")}
-                  className="w-full px-6 py-4 rounded-[50px] border border-gray-200 focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all"
-                />
+            
+            <div className="flex items-center gap-4 py-2 opacity-60 grayscale">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-6" />
+              <div className="h-4 w-[1px] bg-gray-300" />
+              <div className="flex gap-2">
+                <div className="w-8 h-5 bg-gray-200 rounded-sm" />
+                <div className="w-8 h-5 bg-gray-200 rounded-sm" />
+                <div className="w-8 h-5 bg-gray-200 rounded-sm" />
               </div>
             </div>
           </div>
@@ -469,7 +441,7 @@ export const Step5Payment = () => {
       <div className="flex gap-4 mt-2">
         <button
           type="button"
-          onClick={() => setStep(5)}
+          onClick={() => setStep(4)}
           disabled={isActionLoading}
           className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
@@ -480,7 +452,11 @@ export const Step5Payment = () => {
           disabled={isButtonDisabled}
           className="flex-1 bg-brand-dark text-white font-bold text-[16px] rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
         >
-          {isActionLoading ? <Loader2 className="animate-spin" /> : t("payNow")}
+          {isActionLoading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            paymentGateway === "Card" ? "Continue to Stripe" : t("payNow")
+          )}
           {!isActionLoading && <ArrowLeft className="rotate-180" size={20} />}
         </button>
       </div>

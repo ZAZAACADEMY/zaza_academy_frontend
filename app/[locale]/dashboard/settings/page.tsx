@@ -1,11 +1,25 @@
+"use client";
+
 import React from "react";
 import { SettingsTabs } from "@/components/dashboard/settings/SettingsTabs";
 import { AccountInfoForm } from "@/components/dashboard/settings/AccountInfoForm";
 import { SecurityForm } from "@/components/dashboard/settings/SecurityForm";
 import { useTranslations } from "next-intl";
+import { useGetCurrentUserQuery } from "@/lib/store/services/authApi";
+import { Loader2 } from "lucide-react";
 
 export default function SettingsPage() {
   const t = useTranslations("dashboard.settings");
+  const { isLoading } = useGetCurrentUserQuery();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-brand-purple" />
+        <p className="text-gray-500 font-medium">{t("loading")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto mb-20">
