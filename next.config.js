@@ -1,7 +1,10 @@
 ﻿const withNextIntl = require("next-intl/plugin")("./i18n/request.ts");
 
 // Allow fetch/XHR to the Django backend from the browser
-const backendOrigin = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+const backendOrigin = (process.env.NEXT_PUBLIC_API_URL || "").replace(
+  /\/$/,
+  "",
+);
 
 const securityHeaders = [
   {
