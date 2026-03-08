@@ -3,7 +3,7 @@ import { RootState } from "../store";
 import { tokenStore } from "@/lib/api/tokenStore";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "https://api-zaza.promtimal.com/",
   prepareHeaders: (headers) => {
     const token = tokenStore.getToken();
     if (token) {
@@ -20,7 +20,7 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result.error && result.error.status === 401) {
+  if (result.error && result.error.status === 403) {
     const refreshToken = tokenStore.getRefreshToken();
     if (refreshToken) {
       // try to get a new token

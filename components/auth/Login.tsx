@@ -45,9 +45,9 @@ export const Login = () => {
   // Redirect if a token is already present
   useEffect(() => {
     if (tokenStore.getToken()) {
-      router.replace("/dashboard", { locale });
+      router.replace("/dashboard");
     }
-  }, [router, locale]);
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,9 +90,10 @@ export const Login = () => {
             }
           }
           
-          router.push(targetPath as any, { locale });
+          router.push(targetPath as any);
         }
       } catch (err: any) {
+        console.log("Login error:", err);
         if (err.status === 401 || err.data?.detail) {
           setGeneralError(t("errors.invalidCredentials"));
         } else {
@@ -158,7 +159,7 @@ export const Login = () => {
           }
         }
         
-        router.push(targetPath as any, { locale });
+        router.push(targetPath as any);
       }
     } catch (err: any) {
       setGeneralError(err.data?.detail || err.data?.message || "2FA Verification failed");

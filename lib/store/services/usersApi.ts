@@ -7,14 +7,14 @@ export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Endpoint to get the current user's profile
     getMe: builder.query<UserProfile, void>({
-      query: () => "/api/v1/users/me/",
+      query: () => "/api/v1/users/me",
       providesTags: ["Me"],
     }),
     
     // Endpoint to update the current user's profile
     updateMe: builder.mutation<UserProfile, Partial<UserProfile>>({
       query: (body) => ({
-        url: "/api/v1/users/me/",
+        url: "/api/v1/users/me",
         method: "PATCH",
         body,
       }),

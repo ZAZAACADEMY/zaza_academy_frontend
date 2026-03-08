@@ -12,7 +12,7 @@ export const subscriptionsApi = baseApi.injectEndpoints({
     // Endpoint to list all subscriptions (admin only)
     listSubscriptions: builder.query<PaginatedSubscriptionList, { status?: string; plan?: string; page?: number } | void>({
       query: (params) => ({
-        url: "/api/subscriptions",
+        url: "/api/v1/subscriptions",
         params: params || {},
       }),
       providesTags: (result) =>
@@ -27,7 +27,7 @@ export const subscriptionsApi = baseApi.injectEndpoints({
     // Endpoint to create a new subscription
     createSubscription: builder.mutation<Subscription, SubscriptionCreate>({
       query: (body) => ({
-        url: "/api/subscriptions",
+        url: "/api/v1/subscriptions",
         method: "POST",
         body,
       }),
@@ -36,26 +36,26 @@ export const subscriptionsApi = baseApi.injectEndpoints({
 
     // Endpoint to get the current user's subscriptions
     getMySubscriptions: builder.query<PaginatedSubscriptionList, void>({
-      query: () => "/api/subscriptions/my_subscriptions",
+      query: () => "/api/v1/subscriptions/my_subscriptions",
       providesTags: [{ type: "Subscriptions", id: "MY_LIST" }],
     }),
 
     // Endpoint to get the current user's active subscriptions
-    getMyActiveSubscriptions: builder.query<Subscription, void>({
-      query: () => "/api/subscriptions/my_active_subscriptions",
+    getMyActiveSubscriptions: builder.query<Subscription[], void>({
+      query: () => "/api/v1/subscriptions/my_active_subscriptions",
       providesTags: [{ type: "Subscriptions", id: "MY_ACTIVE" }],
     }),
 
     // Endpoint to get a single subscription by ID
     getSubscriptionById: builder.query<Subscription, string>({
-      query: (id) => `/api/subscriptions/${id}`,
+      query: (id) => `/api/v1/subscriptions/${id}`,
       providesTags: (result, error, id) => [{ type: "Subscriptions", id }],
     }),
 
     // Management endpoints
     updateSubscription: builder.mutation<Subscription, { id: string; body: Subscription }>({
       query: ({ id, body }) => ({
-        url: `/api/subscriptions/${id}`,
+        url: `/api/v1/subscriptions/${id}`,
         method: "PUT",
         body,
       }),
@@ -63,7 +63,7 @@ export const subscriptionsApi = baseApi.injectEndpoints({
     }),
     partialUpdateSubscription: builder.mutation<Subscription, { id: string; body: PatchedSubscriptionDetail }>({
       query: ({ id, body }) => ({
-        url: `/api/subscriptions/${id}`,
+        url: `/api/v1/subscriptions/${id}`,
         method: "PATCH",
         body,
       }),
@@ -71,7 +71,7 @@ export const subscriptionsApi = baseApi.injectEndpoints({
     }),
     deleteSubscription: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/subscriptions/${id}`,
+        url: `/api/v1/subscriptions/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "Subscriptions", id }, { type: "Subscriptions", id: "LIST" }],

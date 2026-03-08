@@ -299,6 +299,7 @@
     },
     "settings": {
       "title": "Paramètres",
+      "loading": "Chargement des paramètres...",
       "tabs": {
         "profile": "Profil",
         "notifications": "Notifications",
@@ -318,7 +319,14 @@
         "currentPassword": "Mot de passe actuel",
         "newPassword": "Nouveau mot de passe",
         "confirmNewPassword": "Confirmer le nouveau mot de passe",
-        "updateButton": "Mettre à jour le mot de passe"
+        "updateButton": "Mettre à jour le mot de passe",
+        "errorMatch": "Les mots de passe ne correspondent pas",
+        "errorLength": "Le nouveau mot de passe doit contenir au moins 8 caractères",
+        "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+        "successTitle": "Consultez vos e-mails",
+        "successBody": "Nous avons envoyé un code à 6 chiffres à votre adresse e-mail pour vérifier votre identité et mettre à jour votre mot de passe.",
+        "successCta": "Je suis prêt à saisir le code",
+        "infoNote": "Pour changer votre mot de passe, nous enverrons un code de vérification à votre adresse e-mail."
       }
     }
   },
@@ -435,7 +443,6 @@
     "progress": "Étape {step} sur {total}",
     "stepTitles": {
       "1": "Créer un compte",
-      "1_5": "Vérifier l'e-mail",
       "2": "Choisir un plan",
       "3": "Cycle de facturation",
       "4": "Vérifier la commande",
@@ -447,7 +454,6 @@
     },
     "stepSubtitles": {
       "1": "On vous équipe pour démarrer",
-      "1_5": "Saisissez le code envoyé à votre adresse e-mail",
       "2": "Choisissez la meilleure formule pour votre famille",
       "3": "Choisissez votre mode de paiement",
       "4": "Merci de vérifier les détails de l'abonnement",
@@ -677,7 +683,7 @@
         "content": "Si vous résidez dans l'UE, vous avez le droit d'accéder, de corriger, de supprimer ou de limiter le traitement de vos données personnelles. Vous disposez spécifiquement du « droit à l'oubli ». Pour exercer ces droits, veuillez contacter notre délégué à la protection des données."
       },
       {
-        "title": "4. Sécurité des données",
+        "title": "4. Securité des données",
         "content": "Nous mettons en œuvre des mesures de sécurité conformes aux normes de l'industrie pour protéger vos données. Cela inclut le chiffrement en transit et au repos, ainsi que des contrôles d'accès stricts."
       },
       {

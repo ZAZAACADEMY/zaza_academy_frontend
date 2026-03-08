@@ -900,6 +900,7 @@ export interface components {
          *         - avatar (URL, optional): URL to child avatar stored in a bucket.
          */
         Child: {
+            pseudo: string;
             /**
              * Unique ID
              * Format: uuid

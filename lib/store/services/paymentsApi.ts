@@ -2,7 +2,7 @@ import { baseApi } from "./api";
 import { components } from "@/lib/api/v1";
 
 type Payment = components["schemas"]["PaymentDetail"];
-type PaymentList = components["schemas"]["PaymentList"];
+type PaymentList = components["schemas"]["PaymentList"][];
 type PaymentInitiate = components["schemas"]["PaymentInitiate"];
 type PaginatedPaymentList = components["schemas"]["PaginatedPaymentListList"];
 
@@ -19,7 +19,7 @@ export const paymentsApi = baseApi.injectEndpoints({
     // Endpoint to list all payments (admin only)
     listPayments: builder.query<PaginatedPaymentList, { status?: string; method?: string; page?: number } | void>({
       query: (params) => ({
-        url: "/api/payments",
+        url: "/api/v1/payments",
         params: params || {},
       }),
       providesTags: (result) =>
@@ -34,7 +34,7 @@ export const paymentsApi = baseApi.injectEndpoints({
     // Endpoint to initiate a new payment
     initiatePayment: builder.mutation<InitiatePaymentResponse, PaymentInitiate>({
       query: (body) => ({
-        url: "/api/payments/initiate",
+        url: "/api/v1/payments/initiate",
         method: "POST",
         body,
       }),
@@ -42,12 +42,12 @@ export const paymentsApi = baseApi.injectEndpoints({
     }),
 
     // Endpoint to get the current user's payment history
-    getMyPayments: builder.query<PaginatedPaymentList, void>({
-      query: () => "/api/payments/my_payments",
-      providesTags: (result) =>
+    getMyPayments: builder.query<PaymentList, void>({
+      query: () => "/api/v1/payments/my_payments",
+      providesTags: (result: any) =>
         result
           ? [
-              ...result.results.map(({ id }) => ({ type: "Payments" as const, id })),
+              ...result.map(({ id }: { id: string }) => ({ type: "Payments" as const, id })),
               { type: "Payments", id: "MY_LIST" },
             ]
           : [{ type: "Payments", id: "MY_LIST" }],
@@ -55,7 +55,7 @@ export const paymentsApi = baseApi.injectEndpoints({
 
     // Endpoint to get a single payment by ID
     getPaymentById: builder.query<Payment, string>({
-      query: (id) => `/api/payments/${id}`,
+      query: (id) => `/api/v1/payments/${id}`,
       providesTags: (result, error, id) => [{ type: "Payments", id }],
     }),
   }),

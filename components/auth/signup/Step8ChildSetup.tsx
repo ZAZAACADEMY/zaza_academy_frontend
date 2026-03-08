@@ -22,57 +22,97 @@ import {
   Plus,
   Trash2,
   ArrowLeft,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
 import { useSignup } from "./SignupContext";
+import { useAddChildMutation, useListChildrenQuery } from "@/lib/store/services/childrenApi";
+import { useGetPlanByIdQuery } from "@/lib/store/services/plansApi";
+import { getAvatarPath } from "@/lib/api/avatarUtils";
 
 const avatars = [
-  Avatar1,
-  Avatar2,
-  Avatar3,
-  Avatar4,
-  Avatar5,
-  Avatar6,
-  Avatar7,
-  Avatar8,
-  Avatar9,
-  Avatar10,
+  { src: Avatar1, url: "/avatars/A1.jpeg" },
+  { src: Avatar2, url: "/avatars/A2.jpeg" },
+  { src: Avatar3, url: "/avatars/A3.jpeg" },
+  { src: Avatar4, url: "/avatars/A4.jpeg" },
+  { src: Avatar5, url: "/avatars/A5.jpeg" },
+  { src: Avatar6, url: "/avatars/A6.jpeg" },
+  { src: Avatar7, url: "/avatars/A7.jpeg" },
+  { src: Avatar8, url: "/avatars/A8.jpeg" },
+  { src: Avatar9, url: "/avatars/A9.jpeg" },
+  { src: Avatar10, url: "/avatars/A10.jpeg" },
 ];
+
+const getAgeGroup = (age: number): "5-8" | "9-12" | "13-16" => {
+  if (age <= 8) return "5-8";
+  if (age <= 12) return "9-12";
+  return "13-16";
+};
 
 export const Step8ChildSetup = () => {
   const {
     currentChild,
     setCurrentChild,
-    setChildrenList,
-    childrenList,
     setStep,
     selectedPlan,
   } = useSignup();
   const t = useTranslations("Signup.step8");
   const [ageError, setAgeError] = useState("");
+  const [generalError, setGeneralError] = useState("");
+
+  const { data: plan } = useGetPlanByIdQuery(selectedPlan, { skip: !selectedPlan });
+  const { data: childrenFromApi } = useListChildrenQuery();
+  const [addChild, { isLoading: isAdding }] = useAddChildMutation();
+
   const planChildLimit: Record<string, number> = {
     STANDARD: 1,
     PREMIUM: 3,
     FAMILLE: 5,
   };
-  const childLimit = planChildLimit[selectedPlan] ?? 1;
-  const remainingSlots = Math.max(childLimit - childrenList.length, 0);
+  
+  const planName = plan?.name || "STANDARD";
+  const childLimit = planChildLimit[planName] ?? 1;
+  const childrenCount = childrenFromApi?.length || 0;
+  const remainingSlots = Math.max(childLimit - childrenCount, 0);
   const limitReached = remainingSlots === 0;
 
-  const handleAddChild = () => {
+  const handleAddChild = async () => {
+    setGeneralError("");
     const ageNum = Number(currentChild.age);
     if (!ageNum || ageNum < 5 || ageNum > 16) {
       setAgeError(t("ageError"));
       return;
     }
     if (limitReached) return;
-    setChildrenList([...childrenList, currentChild]);
-    setCurrentChild({ name: "", age: "", gender: "", avatar: 0, program: "" });
-    setStep(9); // Go to summary
-    setAgeError("");
+
+    try {
+      const avatarPath = avatars[currentChild.avatar].url;
+      const absoluteAvatarUrl = `${window.location.origin}${avatarPath}`;
+      
+      await addChild({
+        pseudo: currentChild.name,
+        age: ageNum,
+        age_group: getAgeGroup(ageNum),
+        avatar: absoluteAvatarUrl,
+      } as any).unwrap();
+
+      setCurrentChild({ name: "", age: "", gender: "", avatar: 0, program: "" });
+      setStep(9); // Go to summary
+      setAgeError("");
+    } catch (err: any) {
+      setGeneralError(err.data?.detail || "Failed to add child profile.");
+    }
   };
 
   return (
     <div className="flex flex-col gap-8">
+      {generalError && (
+        <div className="flex items-center gap-3 bg-red-50 text-red-700 p-4 rounded-xl">
+          <AlertTriangle size={20} />
+          <p className="text-sm font-medium">{generalError}</p>
+        </div>
+      )}
+
       <div className="flex flex-col gap-6">
         {/* Avatar Selection */}
         <div className="bg-gradient-to-r from-[#F5ECFF] via-white to-[#E7F2FF] border border-gray-100 rounded-[20px] p-4 shadow-sm">
@@ -91,7 +131,7 @@ export const Step8ChildSetup = () => {
             <div className="hidden sm:flex items-center gap-3 text-xs text-gray-600 bg-white/80 border border-gray-100 rounded-full px-3 py-2 shadow-inner">
               <div className="relative h-10 w-10 rounded-full overflow-hidden shadow-sm">
                 <Image
-                  src={avatars[currentChild.avatar]}
+                  src={avatars[currentChild.avatar].src}
                   alt="selected avatar"
                   fill
                   className="object-cover"
@@ -102,7 +142,7 @@ export const Step8ChildSetup = () => {
           </div>
 
           <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            {avatars.map((avatarSrc, idx) => {
+            {avatars.map((avatar, idx) => {
               const isActive = currentChild.avatar === idx;
               return (
                 <button
@@ -122,7 +162,7 @@ export const Step8ChildSetup = () => {
                     aria-hidden
                   />
                   <Image
-                    src={avatarSrc}
+                    src={avatar.src}
                     alt="avatar"
                     fill
                     className="object-cover"
@@ -218,13 +258,21 @@ export const Step8ChildSetup = () => {
         </div>
       </div>
 
-      <button
-        onClick={handleAddChild}
-        disabled={!currentChild.name || !currentChild.age || limitReached}
-        className="w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {limitReached ? "Plan limit reached" : t("saveProfile")}
-      </button>
+      <div className="flex gap-4">
+        <button
+          onClick={() => setStep(7)}
+          className="w-14 h-14 shrink-0 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+        >
+          <ArrowLeft size={24} className="text-gray-600" />
+        </button>
+        <button
+          onClick={handleAddChild}
+          disabled={!currentChild.name || !currentChild.age || limitReached || isAdding}
+          className="flex-1 bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isAdding ? <Loader2 className="animate-spin" size={20} /> : (limitReached ? "Plan limit reached" : t("saveProfile"))}
+        </button>
+      </div>
       {limitReached && (
         <p className="text-sm text-gray-500 text-center">
           You have used all child profiles for this plan.
@@ -235,42 +283,56 @@ export const Step8ChildSetup = () => {
 };
 
 export const Step9ChildSummary = () => {
-  const { childrenList, setStep, setCurrentChild, selectedPlan, clearSignupData } = useSignup();
+  const { setStep, setCurrentChild, selectedPlan, clearSignupData } = useSignup();
   const router = useRouter();
   const t = useTranslations("Signup.step9");
+
+  const { data: plan } = useGetPlanByIdQuery(selectedPlan, { skip: !selectedPlan });
+  const { data: childrenList, isLoading } = useListChildrenQuery();
 
   const planChildLimit: Record<string, number> = {
     STANDARD: 1,
     PREMIUM: 3,
     FAMILLE: 5,
   };
-  const childLimit = planChildLimit[selectedPlan] ?? 1;
-  const canAddMore = childrenList.length < childLimit;
+  
+  const planName = plan?.name || "STANDARD";
+  const childLimit = planChildLimit[planName] ?? 1;
+  const canAddMore = (childrenList?.length || 0) < childLimit;
 
   const startNewChild = () => {
     setCurrentChild({ name: "", age: "", gender: "", avatar: 0, program: "" });
     setStep(8);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-[#A655F7]" />
+        <p className="text-gray-500">Updating your family...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <h3 className="text-xl font-bold text-brand-black">{t("title")}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {childrenList.map((child, idx) => (
+        {childrenList?.map((child, idx) => (
           <div
-            key={idx}
+            key={child.id || idx}
             className="bg-white p-4 rounded-[20px] border border-gray-100 shadow-sm flex items-center gap-4"
           >
-            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-gray-50">
               <Image
-                src={avatars[child.avatar]}
-                alt={child.name}
+                src={getAvatarPath(child.avatar)}
+                alt={child.pseudo || child.name}
                 fill
                 className="object-cover"
               />
             </div>
             <div>
-              <h4 className="font-bold text-brand-black">{child.name}</h4>
+              <h4 className="font-bold text-brand-black">{child.pseudo || child.name}</h4>
               <p className="text-sm text-gray-500">
                 {t("ageDisplay", { age: child.age })}
               </p>
@@ -287,8 +349,8 @@ export const Step9ChildSummary = () => {
             <span className="font-bold">{t("addChild")}</span>
           </button>
         ) : (
-          <div className="h-[80px] rounded-[20px] border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 text-sm font-semibold">
-            Plan limit reached
+          <div className="h-[80px] rounded-[20px] border border-gray-100 bg-gray-50 flex items-center justify-center text-gray-500 text-sm font-semibold p-4 text-center">
+            Plan limit reached ({childLimit})
           </div>
         )}
       </div>

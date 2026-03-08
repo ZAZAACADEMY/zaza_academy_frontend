@@ -3,19 +3,7 @@ import Image from "next/image";
 import { Link } from "@/navigation";
 import { Video, Award, Clock, TrendingUp, ChevronRight } from "lucide-react";
 import { Child } from "@/lib/store/services/childrenApi";
-
-// Helper to get avatar path - mapping index to local path or external URL
-const getAvatarPath = (avatarStr?: string | null) => {
-  if (!avatarStr) return "/avatars/A1.jpeg";
-  
-  // If it's a number/index string or API provides a direct URL
-  const index = parseInt(avatarStr);
-  if (!isNaN(index) && index >= 0 && index < 10) { // Assuming 0-9 for A1-A10
-    return `/avatars/A${index + 1}.jpeg`;
-  }
-  // Fallback if avatarStr is a URL
-  return avatarStr;
-};
+import { getAvatarPath } from "@/lib/api/avatarUtils";
 
 export const ChildOverviewCard = ({ child }: { child: Child }) => {
   // These fields are currently mock as the API doesn't provide them yet
@@ -39,13 +27,13 @@ export const ChildOverviewCard = ({ child }: { child: Child }) => {
           <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-sm bg-gray-50">
             <Image
               src={getAvatarPath(child.avatar)}
-              alt={child.name}
+              alt={(child as any).pseudo || child.name}
               fill
               className="object-cover"
             />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-brand-dark">{child.name}</h3>
+            <h3 className="text-lg font-bold text-brand-dark">{(child as any).pseudo || child.name}</h3>
             <p className="text-gray-500 text-sm">Age {child.age}</p>
           </div>
         </div>
