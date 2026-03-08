@@ -83,9 +83,6 @@ This document provides a detailed specification of the backend functionalities r
 
 ## 3. Subscription & Billing Lifecycle
 
-### Stripe/Momo Webhooks (Non-API Endpoint)
-*   **Requirement**: A listener at `/api/v1/payments/webhook/` to handle `payment_intent.succeeded`, `subscription.deleted`, etc.
-
 ### `GET /api/v1/payments/{id}/invoice/`
 *   **Description**: Download a PDF invoice.
 *   **Input**: `id` (UUID) in path.

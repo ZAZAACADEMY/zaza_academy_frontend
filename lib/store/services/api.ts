@@ -3,7 +3,7 @@ import { RootState } from "../store";
 import { tokenStore } from "@/lib/api/tokenStore";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "https://api-zaza.promtimal.com/",
   prepareHeaders: (headers) => {
     const token = tokenStore.getToken();
     if (token) {
