@@ -25,12 +25,22 @@ type Step = "email" | "otp" | "newPassword" | "success";
 
 const OTP_LENGTH = 6;
 
-export const ForgotPassword = () => {
+export const ForgotPassword = ({
+  initialStep,
+  initialEmail,
+}: {
+  initialStep?: string;
+  initialEmail?: string;
+} = {}) => {
   const t = useTranslations("ForgotPassword");
   const router = useRouter();
 
-  const [step, setStep] = useState<Step>("email");
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState<Step>(
+    (["email", "otp", "newPassword", "success"].includes(initialStep ?? "")
+      ? initialStep
+      : "email") as Step,
+  );
+  const [email, setEmail] = useState(initialEmail ?? "");
   const [otpDigits, setOtpDigits] = useState<string[]>(
     Array(OTP_LENGTH).fill(""),
   );
@@ -246,20 +256,28 @@ export const ForgotPassword = () => {
 
           {step === "otp" && (
             <div className="w-full">
-              {/* Icon */}
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-brand-purple/20 to-[#F46AA3]/20 mb-6">
-                <ShieldCheck size={32} className="text-brand-purple" />
+              {/* Icon with glow */}
+              <div className="relative flex items-center justify-center mb-8">
+                <div className="absolute w-28 h-28 rounded-full bg-linear-to-br from-brand-purple/20 to-[#F46AA3]/20 blur-2xl" />
+                <div className="relative flex items-center justify-center w-20 h-20 rounded-full bg-linear-to-br from-brand-purple/15 to-[#F46AA3]/15 border-2 border-brand-purple/20">
+                  <ShieldCheck size={38} className="text-brand-purple" />
+                </div>
               </div>
 
-              <h1 className="font-display font-bold text-[32px] md:text-[36px] text-brand-black mb-2">
+              <h1 className="font-display font-bold text-[32px] md:text-[36px] text-brand-black mb-2 text-center">
                 {t("otpStep.title")}
               </h1>
-              <p className="text-[#6B7280] text-[16px] mb-1">
+              <p className="text-[#6B7280] text-[15px] mb-5 text-center">
                 {t("otpStep.subtitle")}
               </p>
-              <p className="text-brand-purple font-semibold text-[15px] mb-8 truncate">
-                {email}
-              </p>
+
+              {/* Email badge */}
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-brand-purple/8 border border-brand-purple/20 text-brand-purple font-semibold text-[14px] px-4 py-2 rounded-full max-w-full overflow-hidden">
+                  <Mail size={14} className="shrink-0" />
+                  <span className="truncate">{email}</span>
+                </div>
+              </div>
 
               {error && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
@@ -269,6 +287,10 @@ export const ForgotPassword = () => {
               )}
 
               <form onSubmit={handleOtpSubmit} className="flex flex-col gap-6">
+                <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  {t("otpStep.otpLabel")}
+                </p>
+
                 {/* 6 individual digit boxes */}
                 <div
                   className="flex gap-2 sm:gap-3 justify-center"
@@ -292,10 +314,10 @@ export const ForgotPassword = () => {
                       onPaste={i === 0 ? handleOtpPaste : undefined}
                       onFocus={(e) => e.target.select()}
                       className={[
-                        "w-11 h-14 sm:w-13 sm:h-16 text-center text-2xl font-bold rounded-2xl border-2 outline-none transition-all duration-200 select-none",
+                        "w-12 h-16 sm:w-14 sm:h-18 text-center text-2xl font-bold rounded-2xl border-2 outline-none transition-all duration-200 select-none",
                         otpDigits[i]
-                          ? "border-brand-purple bg-brand-purple/5 text-brand-purple shadow-sm"
-                          : "border-gray-200 bg-white text-brand-black",
+                          ? "border-brand-purple bg-linear-to-b from-brand-purple/10 to-brand-purple/5 text-brand-purple shadow-md shadow-brand-purple/20"
+                          : "border-gray-200 bg-white text-brand-black hover:border-brand-purple/40",
                         "focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/15 focus:bg-white",
                       ].join(" ")}
                       aria-label={`Digit ${i + 1}`}
@@ -303,25 +325,10 @@ export const ForgotPassword = () => {
                   ))}
                 </div>
 
-                {/* Progress dots */}
-                <div className="flex justify-center gap-2">
-                  {Array.from({ length: OTP_LENGTH }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={[
-                        "w-1.5 h-1.5 rounded-full transition-all duration-200",
-                        otpDigits[i]
-                          ? "bg-brand-purple scale-110"
-                          : "bg-gray-200",
-                      ].join(" ")}
-                    />
-                  ))}
-                </div>
-
                 <button
                   type="submit"
                   disabled={isLoading || otp.length !== OTP_LENGTH}
-                  className="w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-linear-to-r from-[#2D1B4E] to-[#7F26D9] text-white font-bold text-[16px] py-4 rounded-[50px] hover:opacity-90 transition-all shadow-lg shadow-brand-purple/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <Loader2 className="animate-spin" size={20} />

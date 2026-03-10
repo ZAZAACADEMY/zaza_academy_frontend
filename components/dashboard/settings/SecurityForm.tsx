@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/navigation";
 import {
   usePasswordResetRequestMutation,
   useGetCurrentUserQuery,
@@ -22,6 +23,7 @@ export const SecurityForm = () => {
   const [requestReset, { isLoading, isSuccess, isError, error }] =
     usePasswordResetRequestMutation();
 
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
 
   const handleCancel = () => {
@@ -57,7 +59,11 @@ export const SecurityForm = () => {
           </h3>
           <p className="text-green-700 text-sm">{t("successBody")}</p>
           <button
-            onClick={handleCancel}
+            onClick={() =>
+              router.push(
+                `/forgot-password?step=otp&email=${encodeURIComponent((user as any)?.email ?? "")}`,
+              )
+            }
             className="mt-4 text-green-600 font-bold hover:underline text-sm"
           >
             {t("successCta")}
