@@ -172,6 +172,7 @@ const FAQItem = ({
 
 export default function BillingPage() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const t = useTranslations("DashboardBilling");
   const tPricing = useTranslations("Pricing");
   const locale = useLocale();
@@ -377,53 +378,68 @@ export default function BillingPage() {
             </div>
           </div>
 
-          <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-            <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
-              <p className="text-xs text-gray-500 mb-1">{t("nextBilling")}</p>
-              <p className="text-sm font-semibold text-[#1F1235]">
-                {nextBillingDate}
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
-              <p className="text-xs text-gray-500 mb-1">{t("paymentMethod")}</p>
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#1F1235]">
-                <CreditCard size={16} />
-                <span>{paymentMethodMasked}</span>
-              </div>
-            </div>
-            <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
-              <p className="text-xs text-gray-500 mb-1">
-                {t("installmentStatus")}
-              </p>
-              <p className="text-sm font-semibold text-[#7F26D9]">
-                {t("onTrack")}
-              </p>
-              <p className="text-xs text-[#7F26D9] text-right">
-                {t("remaining", { amount: "$0.00" })}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-2">
-            <p className="text-sm text-gray-700">{t("progressLabel")}</p>
-            <div className="h-2 w-full rounded-full bg-[#E7DFFF] overflow-hidden">
-              <div
-                className="h-full w-[100%] bg-gradient-to-r from-[#7F26D9] via-[#AC77F2] to-[#E6A1FF]"
-                aria-hidden
-              />
-            </div>
-            <div className="flex items-center justify-between text-xs text-gray-600">
-              <span>{t("nextInstallment", { date: nextBillingDate })}</span>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-col md:flex-row gap-3">
-            <button className="w-full md:flex-1 px-6 py-3 rounded-full bg-white text-[#1F1235] font-semibold border border-[#E0DEFA] hover:bg-[#F4F2FF] transition shadow-sm">
-              {t("updatePayment")}
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => setShowPaymentDetails((v) => !v)}
+              className="flex items-center gap-2 text-sm font-semibold text-[#7F26D9] hover:text-[#6b21b8] transition-colors"
+            >
+              {showPaymentDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              {t("paymentDetails")}
             </button>
-            <button className="w-full md:flex-1 px-6 py-3 rounded-full bg-[#F25A73] text-white font-semibold shadow hover:bg-[#E64E66] transition">
-              {t("cancel")}
-            </button>
+
+            <AnimatePresence initial={false}>
+              {showPaymentDetails && (
+                <motion.div
+                  key="payment-details"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                    <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
+                      <p className="text-xs text-gray-500 mb-1">{t("nextBilling")}</p>
+                      <p className="text-sm font-semibold text-[#1F1235]">
+                        {nextBillingDate}
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
+                      <p className="text-xs text-gray-500 mb-1">{t("paymentMethod")}</p>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-[#1F1235]">
+                        <CreditCard size={16} />
+                        <span>{paymentMethodMasked}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white/80 border border-[#E7DFFF] shadow-sm">
+                      <p className="text-xs text-gray-500 mb-1">
+                        {t("installmentStatus")}
+                      </p>
+                      <p className="text-sm font-semibold text-[#7F26D9]">
+                        {t("onTrack")}
+                      </p>
+                      <p className="text-xs text-[#7F26D9] text-right">
+                        {t("remaining", { amount: "$0.00" })}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-2">
+                    <p className="text-sm text-gray-700">{t("progressLabel")}</p>
+                    <div className="h-2 w-full rounded-full bg-[#E7DFFF] overflow-hidden">
+                      <div
+                        className="h-full w-[100%] bg-linear-to-r from-[#7F26D9] via-[#AC77F2] to-[#E6A1FF]"
+                        aria-hidden
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-gray-600">
+                      <span>{t("nextInstallment", { date: nextBillingDate })}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
