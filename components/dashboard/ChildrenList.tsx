@@ -22,6 +22,7 @@ import { AddChildModal } from "./children/AddChildModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export const ChildrenList = () => {
   const t = useTranslations("ChildrenList");
@@ -61,8 +62,10 @@ export const ChildrenList = () => {
     try {
       setIsDeleting(true);
       await deleteChild(childToDelete).unwrap();
+      toast.success(t("toastDeleted"), { duration: 3000, icon: "🗑️" });
     } catch (err) {
       console.error("Delete failed", err);
+      toast.error(t("errorTryAgain"), { duration: 4000 });
     } finally {
       setIsDeleting(false);
       setDeleteModalOpen(false);
@@ -94,9 +97,9 @@ export const ChildrenList = () => {
   return (
     <>
       <div className="bg-white p-6 md:p-8 rounded-[32px] shadow-xl shadow-indigo-100/50">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-wrap justify-between items-center gap-3 mb-8">
           <div>
-            <h3 className="text-2xl font-bold text-[#1F1235] flex items-center gap-3">
+            <h3 className="text-xl md:text-2xl font-bold text-[#1F1235] flex items-center gap-3">
               <span className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
                 <Users size={20} />
               </span>
@@ -105,11 +108,11 @@ export const ChildrenList = () => {
           </div>
           <button
             onClick={handleAddClick}
-            className="group flex items-center gap-2 bg-[#2D1B4E] text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-[#432C7A] transition-all shadow-lg shadow-indigo-900/20 active:scale-95"
+            className="group flex items-center gap-1.5 bg-linear-to-r from-[#7F26D9] to-[#C23CDD] text-white px-3.5 py-1.5 rounded-full font-semibold text-xs hover:opacity-90 transition-all shadow-md shadow-purple-500/25 active:scale-95 whitespace-nowrap"
           >
             <Plus
-              size={18}
-              className="group-hover:rotate-90 transition-transform duration-300"
+              size={15}
+              className="group-hover:rotate-90 transition-transform duration-300 shrink-0"
             />
             {t("addChild")}
           </button>
@@ -152,7 +155,9 @@ export const ChildrenList = () => {
                   <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-xl shadow-brand-purple/15 border-4 border-white group-hover:rotate-3 transition-transform duration-300 bg-gray-50">
                     <Image
                       src={getAvatarPath(child.avatar)}
-                      alt={(child as any).pseudo || child.name || "Child avatar"}
+                      alt={
+                        (child as any).pseudo || child.name || "Child avatar"
+                      }
                       fill
                       className="object-cover"
                     />
@@ -177,13 +182,9 @@ export const ChildrenList = () => {
                         {t("videosWatched")}
                       </div>
                       <div className="text-xl font-bold text-brand-dark mt-1">
-                        <span className="text-brand-purple">
-                          0
-                        </span>
+                        <span className="text-brand-purple">0</span>
                         <span className="text-gray-400 text-lg mx-1">/</span>
-                        <span className="text-gray-600">
-                          0
-                        </span>
+                        <span className="text-gray-600">0</span>
                       </div>
                     </div>
 

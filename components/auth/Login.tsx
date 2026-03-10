@@ -15,10 +15,10 @@ import {
 import { useRouter, Link } from "@/navigation";
 import { z } from "zod";
 import { getLoginSchema } from "./loginValidation";
-import { 
-  useLoginMutation, 
-  useVerify2FAMutation, 
-  useResend2FACodeMutation 
+import {
+  useLoginMutation,
+  useVerify2FAMutation,
+  useResend2FACodeMutation,
 } from "@/lib/store/services/authApi";
 import { tokenStore } from "@/lib/api/tokenStore";
 import ImageLogin from "../../public/images/ImageLogin.png";
@@ -40,7 +40,8 @@ export const Login = () => {
 
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
   const [verify2FA, { isLoading: is2FAVerifyLoading }] = useVerify2FAMutation();
-  const [resend2FA, { isLoading: isResendLoading }] = useResend2FACodeMutation();
+  const [resend2FA, { isLoading: isResendLoading }] =
+    useResend2FACodeMutation();
 
   // Redirect if a token is already present
   useEffect(() => {
@@ -70,16 +71,20 @@ export const Login = () => {
           if (response.refresh) {
             tokenStore.setRefreshToken(response.refresh);
           }
-          
+
           // Check if user was in the middle of signup
           const savedSignup = localStorage.getItem("zaza_signup_state");
           let targetPath = "/dashboard";
-          
+
           if (savedSignup) {
             try {
               const signupData = JSON.parse(savedSignup);
               // Only resume if it's the same user and they were in an active signup flow (Steps 2-7)
-              if (signupData.email === email && signupData.step > 1 && signupData.step < 8) {
+              if (
+                signupData.email === email &&
+                signupData.step > 1 &&
+                signupData.step < 8
+              ) {
                 targetPath = "/signup";
               } else {
                 // Clear stale or irrelevant signup data
@@ -89,7 +94,7 @@ export const Login = () => {
               localStorage.removeItem("zaza_signup_state");
             }
           }
-          
+
           router.push(targetPath as any);
         }
       } catch (err: any) {
@@ -126,29 +131,36 @@ export const Login = () => {
   const handle2FAVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setGeneralError("");
-    
+
     if (otpCode.length !== 6) {
       setGeneralError(t("errors.otpLength"));
       return;
     }
 
     try {
-      const response = await verify2FA({ token: tempToken, otp: otpCode }).unwrap();
+      const response = await verify2FA({
+        token: tempToken,
+        otp: otpCode,
+      }).unwrap();
       if (response.access) {
         tokenStore.setToken(response.access);
         if (response.refresh) {
           tokenStore.setRefreshToken(response.refresh);
         }
-        
+
         // Check if user was in the middle of signup
         const savedSignup = localStorage.getItem("zaza_signup_state");
         let targetPath = "/dashboard";
-        
+
         if (savedSignup) {
           try {
             const signupData = JSON.parse(savedSignup);
             // Only resume if it's the same user and they were in an active signup flow (Steps 2-7)
-            if (signupData.email === email && signupData.step > 1 && signupData.step < 8) {
+            if (
+              signupData.email === email &&
+              signupData.step > 1 &&
+              signupData.step < 8
+            ) {
               targetPath = "/signup";
             } else {
               // Clear stale or irrelevant signup data
@@ -158,11 +170,13 @@ export const Login = () => {
             localStorage.removeItem("zaza_signup_state");
           }
         }
-        
+
         router.push(targetPath as any);
       }
     } catch (err: any) {
-      setGeneralError(err.data?.detail || err.data?.message || "2FA Verification failed");
+      setGeneralError(
+        err.data?.detail || err.data?.message || "2FA Verification failed",
+      );
     }
   };
 
@@ -184,7 +198,9 @@ export const Login = () => {
         <div className="w-full max-w-[560px] bg-[#FFFFFF] border border-[#E6E6E6] rounded-[24px] p-6 md:p-12">
           {/* Back Button */}
           <button
-            onClick={() => requires2FA ? setRequires2FA(false) : router.push("/")}
+            onClick={() =>
+              requires2FA ? setRequires2FA(false) : router.push("/")
+            }
             className="inline-flex items-center gap-2 text-[#6B7280] font-medium mb-8 hover:text-brand-dark transition-colors"
           >
             <ArrowLeft size={20} />
@@ -292,6 +308,14 @@ export const Login = () => {
                       {errors.password}
                     </p>
                   )}
+                  <div className="flex justify-end mt-1">
+                    <Link
+                      href="/forgot-password"
+                      className="text-sm text-[#A655F7] hover:underline font-medium"
+                    >
+                      {t("forgotPassword")}
+                    </Link>
+                  </div>
                 </div>
 
                 <button
@@ -299,7 +323,11 @@ export const Login = () => {
                   disabled={isLoginLoading}
                   className="mt-4 w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isLoginLoading ? <Loader2 className="animate-spin" size={20} /> : t("submit")}
+                  {isLoginLoading ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
+                    t("submit")
+                  )}
                 </button>
 
                 <div className="text-center mt-4">
@@ -332,7 +360,9 @@ export const Login = () => {
                     maxLength={6}
                     placeholder="000000"
                     value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                    onChange={(e) =>
+                      setOtpCode(e.target.value.replace(/\D/g, ""))
+                    }
                     className="w-full px-6 py-4 rounded-[50px] border border-gray-200 focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all text-center text-2xl tracking-[0.5em] font-bold"
                   />
                 </div>
@@ -342,7 +372,11 @@ export const Login = () => {
                   disabled={is2FAVerifyLoading || otpCode.length !== 6}
                   className="mt-4 w-full bg-brand-dark text-white font-bold text-[16px] py-4 rounded-[50px] hover:bg-[#1F1235] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {is2FAVerifyLoading ? <Loader2 className="animate-spin" size={20} /> : t("verifyButton")}
+                  {is2FAVerifyLoading ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
+                    t("verifyButton")
+                  )}
                 </button>
 
                 <div className="text-center">

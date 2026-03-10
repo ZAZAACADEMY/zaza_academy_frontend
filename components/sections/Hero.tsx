@@ -14,6 +14,7 @@ import { UnderlineDoodle, SparkleDoodle } from "../ui/Doodles";
 import { FloatingElements } from "../ui/FloatingElements";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/navigation";
+import { useGetCurrentUserQuery } from "@/lib/store/services/authApi";
 import HeroChild1 from "../../public/images/HeroChild1.png";
 import HeroChild2 from "../../public/images/HeroChild2.png";
 import HeroChild3 from "../../public/images/HeroChild3.png";
@@ -116,6 +117,8 @@ export const Hero = () => {
   const t = useTranslations("Hero");
   const router = useRouter();
   const { navigateTo } = usePageTransition();
+  const { data: currentUser } = useGetCurrentUserQuery();
+  const isAuthenticated = !!currentUser;
 
   // --- Parallax scroll layers ---
   // scrollY tracks the page scroll position (works with Lenis via RAF sync)
@@ -451,7 +454,9 @@ export const Hero = () => {
         <FadeIn delay={1.4}>
           <div className="flex flex-col sm:flex-row items-center gap-[16px] md:gap-[28px] mb-[60px] md:mb-0 w-full sm:w-auto px-4 sm:px-0">
             <JellyButton
-              onClick={() => navigateTo("/signup")}
+              onClick={() =>
+                navigateTo(isAuthenticated ? "/dashboard" : "/signup")
+              }
               className="group flex items-center justify-center gap-[10px] w-auto min-w-[200px] px-8 sm:px-0 sm:w-[242px] h-[54px] bg-brand-dark rounded-[50px] shadow-btn-enroll transition-all duration-300"
             >
               <span className="font-montserrat font-medium text-[16px] md:text-[18px] text-[#FDFDFD]">

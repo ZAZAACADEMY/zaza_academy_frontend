@@ -1,7 +1,7 @@
 /**
  * Safely handles avatar paths for next/image.
- * If the URL is absolute and matches the current origin, it converts it to a relative path
- * to avoid Next.js Image Optimization "url parameter is not allowed" errors.
+ * Always returns a relative path so Next.js Image Optimization works regardless
+ * of which origin the URL was originally stored from.
  */
 export const getAvatarPath = (avatarStr?: string | null): string => {
   if (!avatarStr) return "/avatars/A1.jpeg";
@@ -12,18 +12,12 @@ export const getAvatarPath = (avatarStr?: string | null): string => {
     return `/avatars/A${index + 1}.jpeg`;
   }
 
-  // If we are on the client side, try to make local URLs relative
-  if (typeof window !== "undefined") {
-    try {
-      const url = new URL(avatarStr);
-      if (url.origin === window.location.origin) {
-        return url.pathname;
-      }
-    } catch (e) {
-      // Not a valid absolute URL, probably already relative
-      return avatarStr;
-    }
+  // If it's an absolute URL (any origin), extract just the pathname
+  try {
+    const url = new URL(avatarStr);
+    return url.pathname;
+  } catch {
+    // Not a valid absolute URL — already a relative path
+    return avatarStr;
   }
-
-  return avatarStr;
 };

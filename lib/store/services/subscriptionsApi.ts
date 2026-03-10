@@ -4,13 +4,18 @@ import { components } from "@/lib/api/v1";
 type Subscription = components["schemas"]["SubscriptionDetail"];
 type SubscriptionList = components["schemas"]["SubscriptionList"];
 type SubscriptionCreate = components["schemas"]["SubscriptionCreate"];
-type PatchedSubscriptionDetail = components["schemas"]["PatchedSubscriptionDetail"];
-type PaginatedSubscriptionList = components["schemas"]["PaginatedSubscriptionListList"];
+type PatchedSubscriptionDetail =
+  components["schemas"]["PatchedSubscriptionDetail"];
+type PaginatedSubscriptionList =
+  components["schemas"]["PaginatedSubscriptionListList"];
 
 export const subscriptionsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Endpoint to list all subscriptions (admin only)
-    listSubscriptions: builder.query<PaginatedSubscriptionList, { status?: string; plan?: string; page?: number } | void>({
+    listSubscriptions: builder.query<
+      PaginatedSubscriptionList,
+      { status?: string; plan?: string; page?: number } | void
+    >({
       query: (params) => ({
         url: "/api/v1/subscriptions",
         params: params || {},
@@ -18,7 +23,10 @@ export const subscriptionsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.results.map(({ id }) => ({ type: "Subscriptions" as const, id })),
+              ...result.results.map(({ id }) => ({
+                type: "Subscriptions" as const,
+                id,
+              })),
               { type: "Subscriptions", id: "LIST" },
             ]
           : [{ type: "Subscriptions", id: "LIST" }],
@@ -31,7 +39,10 @@ export const subscriptionsApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "Subscriptions", id: "LIST" }, { type: "Subscriptions", id: "MY_LIST" }],
+      invalidatesTags: [
+        { type: "Subscriptions", id: "LIST" },
+        { type: "Subscriptions", id: "MY_LIST" },
+      ],
     }),
 
     // Endpoint to get the current user's subscriptions
@@ -53,39 +64,54 @@ export const subscriptionsApi = baseApi.injectEndpoints({
     }),
 
     // Management endpoints
-    updateSubscription: builder.mutation<Subscription, { id: string; body: Subscription }>({
+    updateSubscription: builder.mutation<
+      Subscription,
+      { id: string; body: Subscription }
+    >({
       query: ({ id, body }) => ({
         url: `/api/v1/subscriptions/${id}`,
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Subscriptions", id }, { type: "Subscriptions", id: "LIST" }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Subscriptions", id },
+        { type: "Subscriptions", id: "LIST" },
+      ],
     }),
-    partialUpdateSubscription: builder.mutation<Subscription, { id: string; body: PatchedSubscriptionDetail }>({
+    partialUpdateSubscription: builder.mutation<
+      Subscription,
+      { id: string; body: PatchedSubscriptionDetail }
+    >({
       query: ({ id, body }) => ({
         url: `/api/v1/subscriptions/${id}`,
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Subscriptions", id }, { type: "Subscriptions", id: "LIST" }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Subscriptions", id },
+        { type: "Subscriptions", id: "LIST" },
+      ],
     }),
     deleteSubscription: builder.mutation<void, string>({
       query: (id) => ({
         url: `/api/v1/subscriptions/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Subscriptions", id }, { type: "Subscriptions", id: "LIST" }],
+      invalidatesTags: (result, error, id) => [
+        { type: "Subscriptions", id },
+        { type: "Subscriptions", id: "LIST" },
+      ],
     }),
   }),
 });
 
 export const {
-    useListSubscriptionsQuery,
-    useCreateSubscriptionMutation,
-    useGetMySubscriptionsQuery,
-    useGetMyActiveSubscriptionsQuery,
-    useGetSubscriptionByIdQuery,
-    useUpdateSubscriptionMutation,
-    usePartialUpdateSubscriptionMutation,
-    useDeleteSubscriptionMutation,
+  useListSubscriptionsQuery,
+  useCreateSubscriptionMutation,
+  useGetMySubscriptionsQuery,
+  useGetMyActiveSubscriptionsQuery,
+  useGetSubscriptionByIdQuery,
+  useUpdateSubscriptionMutation,
+  usePartialUpdateSubscriptionMutation,
+  useDeleteSubscriptionMutation,
 } = subscriptionsApi;

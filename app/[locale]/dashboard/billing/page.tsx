@@ -19,7 +19,10 @@ import {
 import React, { useState, useMemo } from "react";
 import { ContactModal } from "@/components/ui/ContactModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGetMySubscriptionsQuery, useGetMyActiveSubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
+import {
+  useGetMySubscriptionsQuery,
+  useGetMyActiveSubscriptionsQuery,
+} from "@/lib/store/services/subscriptionsApi";
 import { useGetMyPaymentsQuery } from "@/lib/store/services/paymentsApi";
 import { useListChildrenQuery } from "@/lib/store/services/childrenApi";
 import { useGetActivePlansQuery } from "@/lib/store/services/plansApi";
@@ -50,6 +53,7 @@ const planIconMap: Record<string, React.ComponentType<LucideIconProps>> = {
 type PricingPlan = Omit<PlanMessage, "icon"> & {
   icon: React.ComponentType<LucideIconProps>;
   isPopular: boolean;
+  priceNumeric?: number;
 };
 
 const PlanCard = ({
@@ -69,7 +73,7 @@ const PlanCard = ({
 }) => {
   const Icon = plan.icon;
   return (
-    <div className="h-full rounded-[32px] bg-white border border-[#E0E0E0] p-8 flex flex-col gap-6 shadow-sm hover:shadow-xl transition-all duration-300">
+    <div className="h-full rounded-[32px] bg-white border border-[#E0E0E0] p-5 md:p-8 flex flex-col gap-4 md:gap-6 shadow-sm hover:shadow-xl transition-all duration-300">
       {/* Icon */}
       <div className="w-16 h-16 rounded-[20px] bg-gradient-to-br from-[#A655F7] to-[#F46AA3] flex items-center justify-center text-white shadow-lg mb-2">
         <Icon size={32} strokeWidth={1.5} />
@@ -77,7 +81,7 @@ const PlanCard = ({
 
       {/* Title & Desc */}
       <div>
-        <h3 className="text-3xl font-display font-bold text-[#1F1235] mb-2">
+        <h3 className="text-xl md:text-3xl font-display font-bold text-[#1F1235] mb-2">
           {plan.title}
         </h3>
         <p className="text-[#6B7280] text-sm leading-relaxed">
@@ -88,7 +92,7 @@ const PlanCard = ({
       {/* Price */}
       <div>
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-display font-bold text-[#1F1235]">
+          <span className="text-3xl md:text-4xl font-display font-bold text-[#1F1235]">
             {plan.price}
           </span>
           <span className="text-gray-500 text-sm font-medium">
@@ -119,7 +123,7 @@ const PlanCard = ({
       </ul>
 
       {/* Button */}
-      <button className="mt-auto w-full py-4 rounded-full border-2 border-[#1F1235] text-[#1F1235] font-bold text-base hover:bg-[#1F1235] hover:text-white transition-colors">
+      <button className="mt-auto w-full py-3 rounded-full border-2 border-[#1F1235] text-[#1F1235] font-bold text-sm hover:bg-[#1F1235] hover:text-white transition-colors">
         {ctaLabel}
       </button>
     </div>
@@ -172,11 +176,17 @@ export default function BillingPage() {
   const tPricing = useTranslations("Pricing");
   const locale = useLocale();
 
-  const { data: subscriptionsData, isLoading: isLoadingSubs, isError: isErrorSubs } = useGetMySubscriptionsQuery();
+  const {
+    data: subscriptionsData,
+    isLoading: isLoadingSubs,
+    isError: isErrorSubs,
+  } = useGetMySubscriptionsQuery();
   const { data: activeSubsData } = useGetMyActiveSubscriptionsQuery();
-  const { data: paymentsData, isLoading: isLoadingPayments } = useGetMyPaymentsQuery();
+  const { data: paymentsData, isLoading: isLoadingPayments } =
+    useGetMyPaymentsQuery();
   const { data: childrenData } = useListChildrenQuery();
-  const { data: activePlans, isLoading: isLoadingPlans } = useGetActivePlansQuery();
+  const { data: activePlans, isLoading: isLoadingPlans } =
+    useGetActivePlansQuery();
 
   // Helper to safely render amounts that might be strings or objects {amount, currency}
   const formatAmount = (amount: any) => {
@@ -196,65 +206,104 @@ export default function BillingPage() {
     ? (rawFaqItems as { question: string; answer: string }[])
     : [];
 
-  const currentSubscription = activeSubsData?.[0] || subscriptionsData?.results?.find(sub => sub.status === "ACTIVE") || subscriptionsData?.results?.[0];
-  
+  const currentSubscription =
+    activeSubsData?.[0] ||
+    subscriptionsData?.results?.find((sub) => sub.status === "ACTIVE") ||
+    subscriptionsData?.results?.[0];
+
   // Map API plans to display format, merging with translations for features/icons
   const mappedPlans = useMemo(() => {
     if (!activePlans) return [];
-    
+
     // Get translations for plans to extract icons and features
     const translatedPlans = tPricing.raw("plans") as PlanMessage[];
-    
+
     return activePlans.map((apiPlan) => {
       // Find matching translation by name (STANDARD, PREMIUM, FAMILLE)
-      const translation = translatedPlans.find(p => p.planId === apiPlan.name);
-      
-      const Icon = translation?.icon ? planIconMap[translation.icon] || Sparkles : Sparkles;
-      
+      const translation = translatedPlans.find(
+        (p) => p.planId === apiPlan.name,
+      );
+
+      const Icon = translation?.icon
+        ? planIconMap[translation.icon] || Sparkles
+        : Sparkles;
+
+      const priceNumeric = parseFloat(apiPlan.price_three_months || "0");
+      const price = `$${priceNumeric.toFixed(2).replace(/\.00$/, "")}`;
+
+      const monthlyNumeric = parseFloat(apiPlan.price_one_month || "0");
+      const installmentAmount = `$${monthlyNumeric.toFixed(2).replace(/\.00$/, "")}`;
+      const installment = tPricing("installmentLabel", {
+        amount: installmentAmount,
+      });
+
       return {
         planId: apiPlan.id,
-        name: apiPlan.name, // Slug like STANDARD
+        name: apiPlan.name,
         title: apiPlan.name_display,
         description: apiPlan.description || translation?.description || "",
-        price: formatAmount(apiPlan.price_three_months).startsWith("$") || formatAmount(apiPlan.price_three_months).includes(" ") 
-               ? formatAmount(apiPlan.price_three_months) 
-               : `$${formatAmount(apiPlan.price_three_months)}`,
-        installment: translation?.installment || "",
+        price,
+        installment,
         features: translation?.features || [],
         icon: Icon,
         isPopular: Boolean(translation?.mostPopular),
-      } satisfies PricingPlan & { name: string };
+        priceNumeric,
+      } as PricingPlan & { name: string };
     });
   }, [activePlans, tPricing]);
 
   // Find current plan details from the mapped plans
   const currentPlanInfo = useMemo(() => {
     if (!currentSubscription) return null;
-    return mappedPlans.find(p => p.planId === currentSubscription.plan);
+    return mappedPlans.find((p) => p.planId === currentSubscription.plan);
   }, [mappedPlans, currentSubscription]);
 
   const planStatus = currentSubscription?.status_display || t("statusActive");
-  const planName = currentPlanInfo?.title || (currentSubscription as any)?.plan_details?.split(" - ")[0] || t("notAvailable");
-  const planDescription = currentPlanInfo?.description || (currentSubscription as any)?.plan_details?.split(" - ")[1] || t("noDescription");
-  
+  const planName =
+    currentPlanInfo?.title ||
+    (currentSubscription as any)?.plan_details?.split(" - ")[0] ||
+    t("notAvailable");
+  const planDescription =
+    currentPlanInfo?.description ||
+    (currentSubscription as any)?.plan_details?.split(" - ")[1] ||
+    t("noDescription");
+
   // Get latest successful payment for this subscription
-  const latestPayment = paymentsData?.find(p => p.subscription === currentSubscription?.id && p.status === "SUCCESSFUL");
+  const latestPayment = paymentsData?.find(
+    (p) =>
+      p.subscription === currentSubscription?.id && p.status === "SUCCESSFUL",
+  );
   const rawAmount = latestPayment?.amount;
-  const planPrice = rawAmount ? (typeof rawAmount === 'object' ? formatAmount(rawAmount) : `$${rawAmount}`) : "—";
-  const planPeriod = latestPayment?.duration_display || "";
-  const nextBillingDate = latestPayment?.coverage_end_date 
-    ? new Date(latestPayment.coverage_end_date).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })
+  const planPrice = rawAmount
+    ? typeof rawAmount === "object"
+      ? formatAmount(rawAmount)
+      : `$${rawAmount}`
     : "—";
-  const paymentMethodMasked = latestPayment?.method_display || t("paymentMethodMasked");
+  const planPeriod = latestPayment?.duration_display || "";
+  const nextBillingDate = latestPayment?.coverage_end_date
+    ? new Date(latestPayment.coverage_end_date).toLocaleDateString(locale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "—";
+  const paymentMethodMasked =
+    latestPayment?.method_display || t("paymentMethodMasked");
 
   const childrenCount = childrenData?.length || 0;
 
-  // Filter to show only plans above the current plan price
-  const currentPriceNumber = latestPayment ? Number(latestPayment.amount) : 0;
-  const plansToDisplay = mappedPlans.filter((plan) => {
-    const numeric = Number((plan.price || "").replace(/[^0-9.]/g, ""));
-    return !currentSubscription || (Number.isFinite(numeric) && numeric > currentPriceNumber);
-  });
+  // Filter to show only plans above the current plan price (compare quarterly prices)
+  const currentApiPlan = activePlans?.find(
+    (p) => p.id === currentSubscription?.plan,
+  );
+  const currentPlanPriceNumeric = parseFloat(
+    (currentApiPlan as any)?.price_three_months || "0",
+  );
+  const plansToDisplay = mappedPlans.filter(
+    (plan) =>
+      !currentSubscription ||
+      ((plan as any).priceNumeric ?? 0) > currentPlanPriceNumeric,
+  );
 
   if (isLoadingSubs || isLoadingPayments || isLoadingPlans) {
     return (
@@ -268,9 +317,11 @@ export default function BillingPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F2FF] p-6 text-center">
         <AlertTriangle className="w-16 h-16 text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("errorLoadingData")}</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          {t("errorLoadingData")}
+        </h1>
         <p className="text-gray-600 mb-6">{t("errorTryAgain")}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="px-6 py-3 bg-[#7F26D9] text-white rounded-full font-bold shadow-lg hover:bg-[#6b21b8] transition-all"
         >
@@ -281,7 +332,7 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="p-6 md:p-10 lg:p-12 space-y-8 bg-[#F5F2FF] min-h-screen">
+    <div className="p-4 md:p-10 lg:p-12 space-y-6 md:space-y-8 bg-[#F5F2FF] min-h-screen">
       <Link
         href={`/${locale}/dashboard`}
         className="inline-flex items-center gap-2 text-[#7F26D9] font-semibold hover:underline"
@@ -312,21 +363,17 @@ export default function BillingPage() {
                 )}
               </div>
               <div>
-                <h1 className="text-4xl md:text-[40px] font-display font-bold text-[#1F1235]">
+                <h1 className="text-2xl md:text-[40px] font-display font-bold text-[#1F1235]">
                   {planName}
                 </h1>
-                <p className="text-sm text-gray-700">
-                  {planDescription}
-                </p>
+                <p className="text-sm text-gray-700">{planDescription}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-4xl md:text-5xl font-display font-bold text-[#1F1235] leading-none">
+              <div className="text-2xl md:text-5xl font-display font-bold text-[#1F1235] leading-none">
                 {planPrice}
               </div>
-              <div className="text-sm text-gray-600">
-                {planPeriod}
-              </div>
+              <div className="text-sm text-gray-600">{planPeriod}</div>
             </div>
           </div>
 
@@ -398,13 +445,20 @@ export default function BillingPage() {
                   {childrenCount}
                 </p>
                 <p className="text-sm text-gray-500 mb-1.5 font-medium">
-                  / {currentPlanInfo?.name === "STANDARD" ? "1" : currentPlanInfo?.name === "PREMIUM" ? "3" : "5"}
+                  /{" "}
+                  {currentPlanInfo?.name === "STANDARD"
+                    ? "1"
+                    : currentPlanInfo?.name === "PREMIUM"
+                      ? "3"
+                      : "5"}
                 </p>
               </div>
               <div className="h-2 w-full bg-white/60 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-[#7F26D9] rounded-full" 
-                  style={{ width: `${Math.min((childrenCount / (currentPlanInfo?.name === "STANDARD" ? 1 : currentPlanInfo?.name === "PREMIUM" ? 3 : 5)) * 100, 100)}%` }}
+                <div
+                  className="h-full bg-[#7F26D9] rounded-full"
+                  style={{
+                    width: `${Math.min((childrenCount / (currentPlanInfo?.name === "STANDARD" ? 1 : currentPlanInfo?.name === "PREMIUM" ? 3 : 5)) * 100, 100)}%`,
+                  }}
                 />
               </div>
             </div>
@@ -447,7 +501,7 @@ export default function BillingPage() {
       <section className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <div>
-            <h2 className="text-2xl font-display font-bold text-[#1F1235]">
+            <h2 className="text-xl md:text-2xl font-display font-bold text-[#1F1235]">
               {t("plansTitle")}
             </h2>
             <p className="text-sm text-gray-600">{t("plansSubtitle")}</p>
@@ -471,9 +525,9 @@ export default function BillingPage() {
 
       <section className="space-y-6 max-w-6xl mx-auto">
         {/* Billing History Card */}
-        <div className="rounded-[32px] bg-white border border-[#E5E7EB] p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-display font-bold text-[#1F1235]">
+        <div className="rounded-[32px] bg-white border border-[#E5E7EB] p-5 md:p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h3 className="text-xl md:text-2xl font-display font-bold text-[#1F1235]">
               {t("historyTitle")}
             </h3>
           </div>
@@ -484,39 +538,48 @@ export default function BillingPage() {
               paymentsData.map((payment) => (
                 <div
                   key={payment.id}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-[#F9FAFB] hover:bg-[#F3F4F6] transition-colors group"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 md:p-4 rounded-2xl bg-[#F9FAFB] hover:bg-[#F3F4F6] transition-colors group"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#F3F0FF] flex items-center justify-center text-[#7F26D9] shrink-0">
-                      <CreditCard size={20} />
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[#F3F0FF] flex items-center justify-center text-[#7F26D9] shrink-0">
+                      <CreditCard size={16} />
                     </div>
-                    <div>
-                      <p className="font-bold text-[#1F1235] text-[15px]">
+                    <div className="min-w-0">
+                      <p className="font-bold text-[#1F1235] text-sm truncate">
                         {payment.plan_name} - {payment.duration_display}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(payment.payment_date).toLocaleDateString(locale, {
-                          year: 'numeric', month: 'long', day: 'numeric'
-                        })}
+                      <p className="text-xs text-gray-500">
+                        {new Date(payment.payment_date).toLocaleDateString(
+                          locale,
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right flex flex-col items-end gap-2">
-                    <div>
-                      <p className="font-bold text-[#1F1235] mb-1">
+                  <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 pl-12 sm:pl-0">
+                    <div className="flex items-center gap-2 sm:flex-col sm:items-end">
+                      <p className="font-bold text-[#1F1235] text-sm whitespace-nowrap">
                         {formatAmount(payment.amount)}
                       </p>
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                        payment.status === "SUCCESSFUL" ? "bg-[#DCFCE7] text-[#15803D]" :
-                        payment.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
-                        "bg-red-100 text-red-700"
-                      }`}>
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold whitespace-nowrap ${
+                          payment.status === "SUCCESSFUL"
+                            ? "bg-[#DCFCE7] text-[#15803D]"
+                            : payment.status === "PENDING"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                        }`}
+                      >
                         {payment.status_display}
                       </span>
                     </div>
-                    <button className="text-xs text-gray-500 hover:text-[#7F26D9] flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-100 transition-all">
+                    <button className="text-xs text-gray-400 hover:text-[#7F26D9] flex items-center gap-1 p-1.5 rounded-md hover:bg-gray-100 transition-all shrink-0">
                       <Download size={14} />
-                      {t("downloadInvoice")}
+                      <span className="hidden sm:inline whitespace-nowrap">{t("downloadInvoice")}</span>
                     </button>
                   </div>
                 </div>

@@ -11,6 +11,7 @@
     "faq": "FAQ",
     "login": "Connexion",
     "getStarted": "Commencer",
+    "myDashboard": "Mon tableau de bord",
     "aria": {
       "switcher": "Sélecteur de langue",
       "switchToFr": "Passer en français",
@@ -26,7 +27,21 @@
     "liveSessions": "Sessions Live",
     "billing": "Facturation / Plan",
     "settings": "Paramètres",
-    "logout": "Déconnexion"
+    "account": "Compte",
+    "logout": "Déconnexion",
+    "farewellToast": "Au revoir ! À très bientôt 👋",
+    "navShortDashboard": "Accueil",
+    "navShortVideoLibrary": "Vidéos",
+    "navShortLiveSessions": "Live",
+    "navShortBilling": "Plan",
+    "navShortSettings": "Réglages"
+  },
+  "LogoutModal": {
+    "title": "Déconnexion",
+    "titleWithName": "À bientôt, {name} !",
+    "message": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre espace.",
+    "cancel": "Annuler",
+    "confirm": "Se déconnecter"
   },
   "Hero": {
     "title": "<strong1>Développer</strong1> <strong2>l’intelligence financière dès le</strong2> <highlight>plus jeune âge</highlight>",
@@ -150,6 +165,8 @@
     "perQuarter": "/trimestre",
     "quarterly": "Abonnement trimestriel",
     "installmentNote": "inclut de légers frais d'échelonnement",
+    "installmentLabel": "Ou 3 paiements de {amount}",
+    "perMonth": "/mois",
     "cta": "Choisir ce plan",
     "errorTitle": "Impossible de charger les plans",
     "errorMessage": "Un problème est survenu lors de la récupération des tarifs. Veuillez réessayer plus tard.",
@@ -161,6 +178,7 @@
         "price": "199 $",
         "installment": "ou 3 paiements de 32 $",
         "features": [
+          "1 enfant inclus",
           "30 cours en ligne en direct",
           "Fiches interactives",
           "Accès au groupe parents",
@@ -175,6 +193,7 @@
         "price": "249,99 $",
         "installment": "ou 3 paiements de 85 $",
         "features": [
+          "1 enfant inclus",
           "Tout le Standard",
           "Coaching familial bonus",
           "Replays à la demande",
@@ -228,16 +247,16 @@
     "faqTitle": "FAQ Facturation",
     "faqItems": [
       {
-        "question": "Comment résilier mon abonnement ?",
-        "answer": "Vous pouvez résilier votre abonnement à tout moment en cliquant sur le bouton 'Annuler l'abonnement'. Votre accès continuera jusqu'à la fin de la période en cours."
-      },
-      {
         "question": "Puis-je changer de forfait plus tard ?",
         "answer": "Oui ! Vous pouvez changer de forfait à tout moment. Les surclassements sont immédiats, les déclassements s'appliquent au prochain cycle."
       },
       {
         "question": "Où trouver mes factures ?",
         "answer": "Toutes vos factures sont listées dans la section 'Historique de facturation'. Vous pouvez les télécharger en PDF."
+      },
+      {
+        "question": "Comment résilier mon abonnement ?",
+        "answer": "Vous pouvez résilier votre abonnement à tout moment en cliquant sur le bouton 'Annuler l'abonnement'. Votre accès continuera jusqu'à la fin de la période en cours."
       }
     ],
     "usageTitle": "Utilisation ce mois-ci",
@@ -280,6 +299,10 @@
       "upcomingTitle": "Sessions à venir",
       "recordingsTitle": "Enregistrements",
       "viewArchive": "Voir toutes les archives",
+      "noUpcomingSessions": "Aucune session à venir pour le moment. Revenez bientôt !",
+      "noPastSessions": "Aucun enregistrement disponible pour l'instant.",
+      "errorLoadingSessions": "Impossible de charger les sessions",
+      "errorTryAgain": "Un problème est survenu lors du chargement des sessions. Veuillez réessayer plus tard.",
       "backToLive": "Retour aux sessions en direct",
       "archiveTitle": "Archives des sessions",
       "archiveDescription": "Vous avez manqué une session en direct ? Pas de souci ! Toutes nos sessions interactives passées sont enregistrées et disponibles ici pour que vous puissiez les regarder à tout moment.",
@@ -294,7 +317,8 @@
         "reserveSpot": "RÉSERVER",
         "spotReserved": "PLACE RÉSERVÉE",
         "sessionFull": "COMPLET",
-        "joinSession": "REJOINDRE"
+        "joinSession": "REJOINDRE",
+        "addCalendar": "Ajouter au calendrier"
       }
     },
     "settings": {
@@ -306,13 +330,42 @@
         "accounts": "Comptes",
         "security": "Sécurité"
       },
-      "form": {
+      "summary": {
+        "title": "Mon profil",
+        "sectionIdentity": "Informations personnelles",
         "firstName": "Prénom",
         "lastName": "Nom",
         "email": "Adresse e-mail",
         "country": "Pays",
+        "notSet": "Non renseigné",
+        "sectionSubscription": "Abonnement",
+        "noSubscription": "Aucun abonnement actif",
+        "plan": "Forfait",
+        "statusActive": "Actif",
+        "statusExpired": "Expiré",
+        "typeMonthly": "Mensuel (en 3 fois)",
+        "typeQuarterly": "Trimestriel",
+        "nextPayment": "Prochain paiement",
+        "activeUntil": "Actif jusqu'au",
+        "sectionChildren": "Enfants associés",
+        "childrenCount": "{count} / {max} enfant inclus dans le forfait",
+        "childrenCountPlural": "{count} / {max} enfants inclus dans le forfait",
+        "noChildren": "Aucun enfant ajouté pour l'instant",
+        "childAge": "{age} ans"
+      },
+      "form": {
+        "sectionTitle": "Modifier mes informations",
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Adresse e-mail",
+        "emailNote": "L'adresse e-mail ne peut pas être modifiée ici.",
+        "country": "Pays",
         "selectCountry": "Sélectionner un pays",
-        "noCountries": "Aucun pays trouvé"
+        "noCountries": "Aucun pays trouvé",
+        "save": "Enregistrer les modifications",
+        "successMessage": "Profil mis à jour avec succès !",
+        "edit": "Modifier",
+        "cancel": "Annuler"
       },
       "security": {
         "title": "Sécurité",
@@ -326,16 +379,62 @@
         "successTitle": "Consultez vos e-mails",
         "successBody": "Nous avons envoyé un code à 6 chiffres à votre adresse e-mail pour vérifier votre identité et mettre à jour votre mot de passe.",
         "successCta": "Je suis prêt à saisir le code",
-        "infoNote": "Pour changer votre mot de passe, nous enverrons un code de vérification à votre adresse e-mail."
+        "infoNote": "Pour changer votre mot de passe, nous enverrons un code de vérification à votre adresse e-mail.",
+        "edit": "Modifier",
+        "cancel": "Annuler",
+        "passwordLabel": "Mot de passe",
+        "errorCurrentRequired": "Veuillez saisir votre mot de passe actuel",
+        "toastEmailSent": "E-mail envoyé ! Suivez les instructions pour changer votre mot de passe."
       }
+    }
+  },
+  "EmailVerificationBanner": {
+    "title": "Veuillez vérifier votre adresse e-mail.",
+    "body": "Nous avons envoyé un lien de confirmation à {email}. Vérifiez votre boîte de réception pour activer votre compte.",
+    "resend": "Renvoyer l’e-mail",
+    "sent": "E-mail de vérification envoyé ! Vérifiez votre boîte de réception.",
+    "dismiss": "Fermer"
+  },
+  "DashboardChildren": {
+    "title": "Enfants",
+    "subtitle": "Suivez la progression d’apprentissage de vos enfants",
+    "addChild": "Ajouter un enfant",
+    "addFirstChild": "Ajouter mon premier enfant",
+    "errorTitle": "Impossible de charger les profils",
+    "errorBody": "Veuillez réessayer plus tard.",
+    "emptyTitle": "Aucun profil pour l’instant",
+    "emptySubtitle": "Ajoutez le profil de votre premier enfant pour commencer à suivre sa progression.",
+    "toastAdded": "Profil de {name} créé avec succès ! 🎉",
+    "toastUpdated": "Profil mis à jour ! ✨",
+    "upsell": {
+      "title": "Débloquez plus d’enfants !",
+      "body": "Votre forfait actuel n’inclut qu’un seul enfant. Passez au Pack Famille et offrez à tous vos enfants l’accès à l’éducation financière.",
+      "planHint": "Pack Famille — jusqu’à 3 enfants inclus",
+      "feature1": "Accès pour jusqu’à 3 enfants",
+      "feature2": "Tableau de bord parent partagé",
+      "feature3": "Support prioritaire & onboarding",
+      "cta": "Passer à un forfait supérieur",
+      "dismiss": "Pas maintenant"
     }
   },
   "DashboardHome": {
     "welcomeTitle": "Bon retour, {name} ! 👋",
+    "greeting_morning": "Bonjour, {name} ! ☀️",
+    "greeting_afternoon": "Bon après-midi, {name} ! 👋",
+    "greeting_evening": "Bonsoir, {name} ! 🌙",
     "welcomeSubtitle": "Voici où en sont vos enfants dans leur apprentissage",
     "whatsappTitle": "Rejoignez notre communauté de parents !",
     "whatsappSubtitle": "Échangez, partagez des astuces et suivez les nouveautés.",
-    "whatsappButton": "Rejoindre le groupe WhatsApp"
+    "whatsappButton": "Rejoindre le groupe WhatsApp",
+    "profile": {
+      "title": "Mon profil",
+      "editLink": "Modifier le profil",
+      "name": "Nom complet",
+      "email": "Adresse e-mail",
+      "country": "Pays",
+      "noName": "Nom non renseigné",
+      "noCountry": "Non renseigné"
+    }
   },
   "ChildrenList": {
     "myChildren": "Mes enfants",
@@ -345,7 +444,10 @@
     "videosWatched": "Vidéos regardées",
     "age": "{age} ans",
     "editProfile": "Modifier le profil",
-    "deleteProfile": "Supprimer le profil"
+    "deleteProfile": "Supprimer le profil",
+    "toastDeleted": "Profil supprimé.",
+    "errorLoadingChildren": "Impossible de charger les profils",
+    "errorTryAgain": "Impossible de supprimer le profil. Veuillez réessayer."
   },
   "CallToAction": {
     "title": "Offrez à vos enfants la confiance financière",
@@ -430,11 +532,53 @@
     "verifyButton": "Vérifier et se connecter",
     "resendCode": "Renvoyer le code",
     "resending": "Envoi en cours...",
+    "forgotPassword": "Mot de passe oublié ?",
     "errors": {
       "email": "Veuillez saisir une adresse e-mail valide",
       "password": "Le mot de passe est requis",
       "otpLength": "Le code doit comporter 6 chiffres",
       "invalidCredentials": "L'adresse e-mail ou le mot de passe est incorrect"
+    }
+  },
+  "ForgotPassword": {
+    "backToLogin": "Retour à la connexion",
+    "back": "Retour",
+    "illustrationAlt": "Réinitialiser votre mot de passe",
+    "emailStep": {
+      "title": "Mot de passe oublié ?",
+      "subtitle": "Pas de panique ! Entrez votre e-mail et nous vous enverrons un code de réinitialisation.",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "jhonros93@gmail.com",
+      "submit": "Envoyer le code"
+    },
+    "otpStep": {
+      "title": "Vérifiez votre e-mail",
+      "subtitle": "Nous avons envoyé un code à 6 chiffres à",
+      "otpLabel": "Code de vérification",
+      "submit": "Vérifier le code",
+      "noCode": "Vous ne l'avez pas reçu ?",
+      "resend": "Renvoyer le code"
+    },
+    "newPasswordStep": {
+      "title": "Créer un nouveau mot de passe",
+      "subtitle": "Votre nouveau mot de passe doit comporter au moins 8 caractères.",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+      "submit": "Réinitialiser le mot de passe"
+    },
+    "successStep": {
+      "title": "Mot de passe réinitialisé !",
+      "subtitle": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "loginButton": "Retour à la connexion"
+    },
+    "errors": {
+      "emailRequired": "Veuillez saisir votre adresse e-mail",
+      "requestFailed": "Impossible d'envoyer le code. Veuillez réessayer.",
+      "otpLength": "Le code doit comporter 6 chiffres",
+      "otpInvalid": "Code invalide ou expiré. Veuillez réessayer.",
+      "passwordLength": "Le mot de passe doit comporter au moins 8 caractères",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "resetFailed": "Impossible de réinitialiser le mot de passe. Veuillez réessayer."
     }
   },
   "Signup": {
@@ -663,32 +807,96 @@
       "tiktok": "Suivez-nous sur TikTok"
     },
     "poweredBy": "Zaza Academy",
-    "privacyPolicy": "Politique de Confidentialité"
+    "privacyPolicy": "Politique de Confidentialité",
+    "termsAndConditions": "Conditions Générales",
+    "refundPolicy": "Politique de Remboursement"
   },
   "PrivacyPolicy": {
     "title": "Politique de Confidentialité",
     "lastUpdated": "Dernière mise à jour : Février 2026",
-    "intro": "Bienvenue sur Zaza Academy. Nous nous engageons à protéger votre vie privée et à garantir un environnement en ligne sécurisé pour tous les utilisateurs, en particulier les enfants. Cette politique décrit comment nous recueillons, utilisons et traitons les informations personnelles conformément à la COPPA (Children's Online Privacy Protection Act) et au RGPD (Règlement Général sur la Protection des Données).",
+    "intro": "ZAZA Academy respecte la vie privée de votre famille et s'engage à protéger vos informations personnelles.",
     "sections": [
       {
         "title": "1. Informations que nous recueillons",
-        "content": "Nous recueillons les informations nécessaires pour fournir nos services éducatifs. Pour les parents : coordonnées détaillées et informations de facturation. Pour les enfants : informations minimales telles qu'un nom d'utilisateur (nous encourageons à ne pas utiliser de vrais noms) et les données de progression. Nous ne recueillons pas d'identifiants persistants à des fins de publicité comportementale auprès des enfants."
+        "content": "Nous pouvons collecter :\n• Le nom et l'adresse e-mail du parent ou tuteur\n• Le prénom et la tranche d'âge de l'enfant\n• Les informations de paiement (traitées de manière sécurisée par des prestataires tiers)"
       },
       {
-        "title": "2. Confidentialité des enfants (Conformité COPPA)",
-        "content": "Zaza Academy est conçu pour les enfants. Conformément à la COPPA, nous exigeons un consentement parental vérifiable avant de recueillir des informations personnelles d'un enfant de moins de 13 ans. Les parents ont un contrôle total sur le compte de leur enfant et peuvent consulter, modifier ou supprimer les informations de leur enfant à tout moment."
+        "title": "2. Confidentialité des enfants",
+        "content": "Nous ne collectons pas sciemment de données personnelles inutiles auprès des enfants.\nNous respectons les lois applicables sur la protection de la vie privée des enfants, notamment la COPPA."
       },
       {
-        "title": "3. Droits RGPD",
-        "content": "Si vous résidez dans l'UE, vous avez le droit d'accéder, de corriger, de supprimer ou de limiter le traitement de vos données personnelles. Vous disposez spécifiquement du « droit à l'oubli ». Pour exercer ces droits, veuillez contacter notre délégué à la protection des données."
+        "title": "3. Utilisation des informations",
+        "content": "Les informations sont utilisées uniquement pour :\n• L'inscription et la fourniture des programmes\n• La communication avec les parents\n• La transmission des mises à jour et des supports de cours"
       },
       {
-        "title": "4. Securité des données",
-        "content": "Nous mettons en œuvre des mesures de sécurité conformes aux normes de l'industrie pour protéger vos données. Cela inclut le chiffrement en transit et au repos, ainsi que des contrôles d'accès stricts."
+        "title": "4. Protection des données",
+        "content": "Nous ne vendons pas, ne louons pas et ne partageons pas les informations personnelles avec des tiers."
       },
       {
-        "title": "5. Nous contacter",
-        "content": "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante : \nEmail : privacy@zazaacademy.com"
+        "title": "5. Suppression des données",
+        "content": "Les parents peuvent demander l'accès à leurs données personnelles ou leur suppression en nous contactant à : zazaacademy@gmail.com"
+      }
+    ]
+  },
+  "TermsAndConditions": {
+    "title": "Conditions Générales d'Utilisation",
+    "lastUpdated": "Dernière mise à jour : Février 2026",
+    "intro": "Bienvenue sur ZAZA Academy. En inscrivant un enfant à l'un de nos programmes, vous acceptez les conditions générales suivantes.",
+    "sections": [
+      {
+        "title": "1. Description du programme",
+        "content": "ZAZA Academy propose des programmes d'éducation financière en ligne destinés aux enfants de 5 à 16 ans. Nos programmes comprennent des cours en direct, des rediffusions, des fiches de travail et des ressources pédagogiques."
+      },
+      {
+        "title": "2. Inscription et accès",
+        "content": "L'inscription donne accès uniquement pendant la durée du programme sélectionné.\nL'accès aux enregistrements et aux supports est réservé aux familles inscrites.\nLes supports ne peuvent pas être partagés, copiés, revendus ou distribués sans autorisation écrite de ZAZA Academy."
+      },
+      {
+        "title": "3. Responsabilité parentale",
+        "content": "Les parents ou tuteurs légaux sont responsables de superviser la participation de leur enfant et de garantir un environnement d'apprentissage sûr lors des sessions en ligne."
+      },
+      {
+        "title": "4. Propriété intellectuelle",
+        "content": "Tous les contenus, supports, leçons, fiches de travail et éléments de marque sont la propriété de ZAZA Academy et sont protégés par le droit d'auteur."
+      },
+      {
+        "title": "5. Limitation de responsabilité",
+        "content": "ZAZA Academy fournit uniquement du contenu éducatif et n'est pas responsable des résultats financiers individuels ni des décisions prises par les familles."
+      },
+      {
+        "title": "6. Modification des services",
+        "content": "ZAZA Academy se réserve le droit de mettre à jour le contenu des programmes, les horaires, les formateurs ou les supports selon les besoins."
+      },
+      {
+        "title": "7. Accord parental et participation de l'enfant",
+        "content": "En inscrivant mon enfant à ZAZA Academy, je confirme que :\n• Je suis le parent légal ou tuteur de l'enfant inscrit.\n• J'autorise mon enfant à participer aux sessions d'apprentissage en ligne.\n• Je comprends que les sessions peuvent être enregistrées à des fins éducatives et de rediffusion.\n• J'accepte que mon enfant participe de manière respectueuse et appropriate.\n• Je reconnais que ZAZA Academy fournit du contenu éducatif, et non des conseils financiers."
+      },
+      {
+        "title": "8. Code de conduite",
+        "content": "ZAZA Academy s'engage à offrir un environnement d'apprentissage sûr, respectueux et inclusif.\n\nAttentes pour les élèves et les parents :\n• Être respectueux envers les formateurs et les autres élèves\n• Utiliser un langage et un comportement appropriés\n• Suivre les consignes des formateurs\n• Ne pas perturber les sessions d'apprentissage\n• Ne pas partager de contenu inapproprié ou offensant\n\nZAZA Academy se réserve le droit d'exclure tout participant qui viole ce code de conduite, sans remboursement."
+      },
+      {
+        "title": "9. Avertissement éducatif",
+        "content": "ZAZA Academy fournit une éducation financière à des fins pédagogiques uniquement. Nous ne proposons pas de conseils financiers, juridiques ou en investissement. Les parents et tuteurs restent entièrement responsables des décisions financières prises au sein de leur foyer."
+      }
+    ]
+  },
+  "RefundPolicy": {
+    "title": "Politique de Remboursement",
+    "lastUpdated": "Dernière mise à jour : Février 2026",
+    "intro": "Chez ZAZA Academy, nous valorisons l'équité et la transparence.",
+    "sections": [
+      {
+        "title": "1. Éligibilité au remboursement",
+        "content": "Les remboursements complets sont disponibles jusqu'à 7 jours avant la date de début du programme.\nAucun remboursement ne sera accordé une fois le programme commencé."
+      },
+      {
+        "title": "2. Cours manqués",
+        "content": "Les cours manqués ne sont pas remboursables. Les rediffusions seront mises à disposition dans la mesure du possible."
+      },
+      {
+        "title": "3. Annulation de programme",
+        "content": "Si ZAZA Academy annule une cohorte pour quelque raison que ce soit, un crédit sera émis pour la cohorte suivante."
       }
     ]
   },

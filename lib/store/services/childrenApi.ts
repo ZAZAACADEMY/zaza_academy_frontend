@@ -17,7 +17,7 @@ export const childrenApi = baseApi.injectEndpoints({
             ]
           : [{ type: "Children", id: "LIST" }],
     }),
-    
+
     // Endpoint to get a single child profile
     getChildById: builder.query<Child, string>({
       query: (id) => `/api/v1/children/${id}`,
@@ -41,35 +41,47 @@ export const childrenApi = baseApi.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Children", id }, { type: "Children", id: "LIST" }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Children", id },
+        { type: "Children", id: "LIST" },
+      ],
     }),
 
     // Endpoint to partially update a child
-    partialUpdateChild: builder.mutation<Child, { id: string; body: PatchedChild }>({
+    partialUpdateChild: builder.mutation<
+      Child,
+      { id: string; body: PatchedChild }
+    >({
       query: ({ id, body }) => ({
         url: `/api/v1/children/${id}`,
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Children", id }, { type: "Children", id: "LIST" }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Children", id },
+        { type: "Children", id: "LIST" },
+      ],
     }),
 
     // Endpoint to delete a child
     deleteChild: builder.mutation<void, string>({
-        query: (id) => ({
-            url: `/api/v1/children/${id}`,
-            method: 'DELETE',
-        }),
-        invalidatesTags: (result, error, id) => [{ type: 'Children', id }, { type: "Children", id: "LIST" }],
+      query: (id) => ({
+        url: `/api/v1/children/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [
+        { type: "Children", id },
+        { type: "Children", id: "LIST" },
+      ],
     }),
   }),
 });
 
-export const { 
-    useListChildrenQuery,
-    useGetChildByIdQuery,
-    useAddChildMutation,
-    useUpdateChildMutation,
-    usePartialUpdateChildMutation,
-    useDeleteChildMutation,
+export const {
+  useListChildrenQuery,
+  useGetChildByIdQuery,
+  useAddChildMutation,
+  useUpdateChildMutation,
+  usePartialUpdateChildMutation,
+  useDeleteChildMutation,
 } = childrenApi;

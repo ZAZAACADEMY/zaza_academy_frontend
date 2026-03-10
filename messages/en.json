@@ -11,6 +11,7 @@
     "faq": "FAQ",
     "login": "Login",
     "getStarted": "Get Started",
+    "myDashboard": "My Dashboard",
     "aria": {
       "switcher": "Language switcher",
       "switchToFr": "Switch to French",
@@ -26,7 +27,21 @@
     "liveSessions": "Live Sessions",
     "billing": "Billing / Plan",
     "settings": "Settings",
-    "logout": "Log Out"
+    "account": "Account",
+    "logout": "Log Out",
+    "farewellToast": "Goodbye! See you soon 👋",
+    "navShortDashboard": "Home",
+    "navShortVideoLibrary": "Videos",
+    "navShortLiveSessions": "Live",
+    "navShortBilling": "Plan",
+    "navShortSettings": "Settings"
+  },
+  "LogoutModal": {
+    "title": "Log Out",
+    "titleWithName": "See you soon, {name}!",
+    "message": "Are you sure you want to log out? You\u2019ll need to sign in again to access your dashboard.",
+    "cancel": "Cancel",
+    "confirm": "Log Out"
   },
   "Hero": {
     "title": "<strong1>Empowering</strong1> <strong2>Young Minds with Smart</strong2> <highlight>Financial Skills</highlight>",
@@ -150,6 +165,8 @@
     "perQuarter": "/quarter",
     "quarterly": "Quarterly Subscription",
     "installmentNote": "includes small installment fee",
+    "installmentLabel": "Or 3 payments of {amount}",
+    "perMonth": "/month",
     "cta": "Start Quarterly Plan",
     "errorTitle": "Could not load plans",
     "errorMessage": "There was a problem fetching the pricing plans. Please try again later.",
@@ -161,6 +178,7 @@
         "price": "$199",
         "installment": "Or 3 payments of $32",
         "features": [
+          "1 child included",
           "30 live online classes",
           "Interactive worksheets",
           "Parent support group access",
@@ -175,6 +193,7 @@
         "price": "$249.99",
         "installment": "Or 3 payments of $85",
         "features": [
+          "1 child included",
           "Everything in Standard Plan",
           "Bonus family coaching session",
           "Class replays (on-demand access)",
@@ -228,16 +247,16 @@
     "faqTitle": "Billing FAQ",
     "faqItems": [
       {
-        "question": "How do I cancel my subscription?",
-        "answer": "You can cancel your subscription at any time by clicking the 'Cancel subscription' button in your plan details above. Your access will continue until the end of your current billing period."
-      },
-      {
         "question": "Can I switch plans later?",
         "answer": "Yes! You can upgrade or downgrade your plan at any time. Upgrades take effect immediately, while downgrades start at the next billing cycle."
       },
       {
         "question": "Where can I find my invoices?",
         "answer": "All your past invoices are listed in the 'Billing History' section on this page. You can download them as PDF files."
+      },
+      {
+        "question": "How do I cancel my subscription?",
+        "answer": "You can cancel your subscription at any time by clicking the 'Cancel subscription' button in your plan details above. Your access will continue until the end of your current billing period."
       }
     ],
     "usageTitle": "Usage this month",
@@ -280,6 +299,10 @@
       "upcomingTitle": "Upcoming Sessions",
       "recordingsTitle": "Recordings",
       "viewArchive": "View all archives",
+      "noUpcomingSessions": "No upcoming sessions scheduled yet. Check back soon!",
+      "noPastSessions": "No recorded sessions available yet.",
+      "errorLoadingSessions": "Unable to load sessions",
+      "errorTryAgain": "Something went wrong while loading the sessions. Please try again later.",
       "backToLive": "Back to Live Sessions",
       "archiveTitle": "Session Archive",
       "archiveDescription": "Missed a live session? Don't worry! All our past interactive sessions are recorded and available here for you to watch anytime.",
@@ -294,7 +317,8 @@
         "reserveSpot": "RESERVE SPOT",
         "spotReserved": "SPOT RESERVED",
         "sessionFull": "SESSION FULL",
-        "joinSession": "JOIN SESSION"
+        "joinSession": "JOIN SESSION",
+        "addCalendar": "Add to calendar"
       }
     },
     "settings": {
@@ -306,13 +330,42 @@
         "accounts": "Accounts",
         "security": "Security"
       },
+      "summary": {
+        "title": "My Profile",
+        "sectionIdentity": "Personal information",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Email address",
+        "country": "Country",
+        "notSet": "Not set",
+        "sectionSubscription": "Subscription",
+        "noSubscription": "No active subscription",
+        "plan": "Plan",
+        "statusActive": "Active",
+        "statusExpired": "Expired",
+        "typeMonthly": "Monthly (installment)",
+        "typeQuarterly": "Quarterly",
+        "nextPayment": "Next payment",
+        "activeUntil": "Active until",
+        "sectionChildren": "Associated children",
+        "childrenCount": "{count} / {max} child included in plan",
+        "childrenCountPlural": "{count} / {max} children included in plan",
+        "noChildren": "No children added yet",
+        "childAge": "{age} years old"
+      },
       "form": {
+        "sectionTitle": "Edit my information",
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "Email Address",
+        "emailNote": "Email cannot be changed here.",
         "country": "Country",
         "selectCountry": "Select a country",
-        "noCountries": "No countries found"
+        "noCountries": "No countries found",
+        "save": "Save changes",
+        "successMessage": "Profile updated successfully!",
+        "edit": "Edit",
+        "cancel": "Cancel"
       },
       "security": {
         "title": "Security",
@@ -326,16 +379,62 @@
         "successTitle": "Check your email",
         "successBody": "We've sent a 6-digit code to your email to verify your identity and update your password.",
         "successCta": "I'm ready to enter the code",
-        "infoNote": "To change your password, we will send a verification code to your email."
+        "infoNote": "To change your password, we will send a verification code to your email.",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "passwordLabel": "Password",
+        "errorCurrentRequired": "Please enter your current password",
+        "toastEmailSent": "Email sent! Follow the instructions to change your password."
       }
+    }
+  },
+  "EmailVerificationBanner": {
+    "title": "Please verify your email address.",
+    "body": "We sent a confirmation link to {email}. Check your inbox to activate your account.",
+    "resend": "Resend email",
+    "sent": "Verification email sent! Check your inbox.",
+    "dismiss": "Dismiss"
+  },
+  "DashboardChildren": {
+    "title": "Children",
+    "subtitle": "Monitor your children's learning progress",
+    "addChild": "Add a child",
+    "addFirstChild": "Add My First Child",
+    "errorTitle": "Failed to load children",
+    "errorBody": "Please try again later.",
+    "emptyTitle": "No profiles yet",
+    "emptySubtitle": "Add your first child profile to start monitoring their progress.",
+    "toastAdded": "{name}'s profile created! 🎉",
+    "toastUpdated": "Profile updated! ✨",
+    "upsell": {
+      "title": "Unlock more children!",
+      "body": "Your current plan only includes 1 child. Upgrade to the Family Pack and give all your children access to financial education.",
+      "planHint": "Family Pack — up to 3 children included",
+      "feature1": "Access for up to 3 children",
+      "feature2": "Shared parent dashboard",
+      "feature3": "Priority support & onboarding",
+      "cta": "Upgrade my plan",
+      "dismiss": "Not now"
     }
   },
   "DashboardHome": {
     "welcomeTitle": "Welcome back, {name}! 👋",
+    "greeting_morning": "Good morning, {name}! ☀️",
+    "greeting_afternoon": "Good afternoon, {name}! 👋",
+    "greeting_evening": "Good evening, {name}! 🌙",
     "welcomeSubtitle": "Here's what's happening with your children's learning",
     "whatsappTitle": "Join our Parents Community!",
     "whatsappSubtitle": "Connect, share tips, and get exclusive updates.",
-    "whatsappButton": "Join WhatsApp Group"
+    "whatsappButton": "Join WhatsApp Group",
+    "profile": {
+      "title": "My Profile",
+      "editLink": "Edit profile",
+      "name": "Full name",
+      "email": "Email address",
+      "country": "Country",
+      "noName": "Name not set",
+      "noCountry": "Not specified"
+    }
   },
   "ChildrenList": {
     "myChildren": "My Children",
@@ -345,7 +444,10 @@
     "videosWatched": "Videos Watched",
     "age": "Age {age}",
     "editProfile": "Edit Profile",
-    "deleteProfile": "Delete Profile"
+    "deleteProfile": "Delete Profile",
+    "toastDeleted": "Profile removed.",
+    "errorLoadingChildren": "Failed to load profiles",
+    "errorTryAgain": "Could not delete the profile. Please try again."
   },
   "CallToAction": {
     "title": "Give Your Children the Gift of Financial Confidence",
@@ -430,11 +532,53 @@
     "verifyButton": "Verify & Login",
     "resendCode": "Resend Code",
     "resending": "Resending...",
+    "forgotPassword": "Forgot password?",
     "errors": {
       "email": "Please enter a valid email address",
       "password": "Password is required",
       "otpLength": "Code must be 6 digits",
       "invalidCredentials": "The email or password you entered is incorrect"
+    }
+  },
+  "ForgotPassword": {
+    "backToLogin": "Back to login",
+    "back": "Back",
+    "illustrationAlt": "Reset your password",
+    "emailStep": {
+      "title": "Forgot your password?",
+      "subtitle": "No worries! Enter your email and we'll send you a reset code.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "jhonros93@gmail.com",
+      "submit": "Send Reset Code"
+    },
+    "otpStep": {
+      "title": "Check your email",
+      "subtitle": "We sent a 6-digit code to",
+      "otpLabel": "Verification Code",
+      "submit": "Verify Code",
+      "noCode": "Didn't receive it?",
+      "resend": "Resend Code"
+    },
+    "newPasswordStep": {
+      "title": "Create new password",
+      "subtitle": "Your new password must be at least 8 characters.",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "submit": "Reset Password"
+    },
+    "successStep": {
+      "title": "Password reset!",
+      "subtitle": "Your password has been successfully reset. You can now log in with your new password.",
+      "loginButton": "Back to Login"
+    },
+    "errors": {
+      "emailRequired": "Please enter your email address",
+      "requestFailed": "Failed to send reset code. Please try again.",
+      "otpLength": "Code must be 6 digits",
+      "otpInvalid": "Invalid or expired code. Please try again.",
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "resetFailed": "Failed to reset password. Please try again."
     }
   },
   "Signup": {
@@ -663,32 +807,96 @@
       "tiktok": "Follow us on TikTok"
     },
     "poweredBy": "Zaza Academy",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "termsAndConditions": "Terms & Conditions",
+    "refundPolicy": "Refund Policy"
   },
   "PrivacyPolicy": {
     "title": "Privacy Policy",
     "lastUpdated": "Last Updated: February 2026",
-    "intro": "Welcome to Zaza Academy. We are committed to protecting your privacy and ensuring a safe online environment for all users, especially children. This policy outlines how we collect, use, and handle personal information in accordance with COPPA (Children's Online Privacy Protection Act) and GDPR (General Data Protection Regulation).",
+    "intro": "ZAZA Academy respects your family's privacy and is committed to protecting personal information.",
     "sections": [
       {
         "title": "1. Information We Collect",
-        "content": "We collect information necessary to provide our educational services. For parents: detailed contact and billing information. For children: minimal information such as a username (we encourage not using real names) and progress data. We do not collect persistent identifiers for behavioral advertising from children."
+        "content": "We may collect:\n• Parent or guardian name and email address\n• Child's first name and age group\n• Payment information (processed securely by third-party providers)"
       },
       {
-        "title": "2. Children's Privacy (COPPA Compliance)",
-        "content": "Zaza Academy is designed for children. In compliance with COPPA, we require verifiable parental consent before collecting any personal information from a child under 13. Parents have full control over their child's account and can review, edit, or delete their child's information at any time."
+        "title": "2. Children's Privacy",
+        "content": "We do not knowingly collect unnecessary personal data from children.\nWe comply with applicable children's privacy laws, including COPPA."
       },
       {
-        "title": "3. GDPR Rights",
-        "content": "If you are a resident of the EEU, you have the right to access, correct, delete, or restrict processing of your personal data. You specifically have the 'Right to be Forgotten'. To exercise these rights, please contact our Data Protection Officer."
+        "title": "3. How We Use Information",
+        "content": "Information is used only for:\n• Program enrollment and delivery\n• Communication with parents\n• Providing class updates and materials"
       },
       {
-        "title": "4. Data Security",
-        "content": "We implement industry-standard security measures to protect your data. This includes encryption in transit and at rest, and strict access controls."
+        "title": "4. Data Protection",
+        "content": "We do not sell, rent, or share personal information with third parties."
       },
       {
-        "title": "5. Contact Us",
-        "content": "If you have any questions about this Privacy Policy, please contact us at: \nEmail: privacy@zazaacademy.com"
+        "title": "5. Data Removal",
+        "content": "Parents may request access to or deletion of personal data by contacting us at: zazaacademy@gmail.com"
+      }
+    ]
+  },
+  "TermsAndConditions": {
+    "title": "Terms & Conditions",
+    "lastUpdated": "Last Updated: February 2026",
+    "intro": "Welcome to ZAZA Academy. By enrolling a child in any ZAZA Academy program, you agree to the following terms and conditions.",
+    "sections": [
+      {
+        "title": "1. Program Description",
+        "content": "ZAZA Academy provides online financial education programs designed for children ages 5 to 16. Our programs include live online classes, recorded replays, worksheets, and educational materials."
+      },
+      {
+        "title": "2. Enrollment & Access",
+        "content": "Enrollment grants access only for the duration of the selected program.\nAccess to class recordings and materials is limited to enrolled families.\nMaterials may not be shared, copied, resold, or distributed without written permission from ZAZA Academy."
+      },
+      {
+        "title": "3. Parental Responsibility",
+        "content": "Parents or legal guardians are responsible for supervising their child's participation and ensuring a safe learning environment during online sessions."
+      },
+      {
+        "title": "4. Intellectual Property",
+        "content": "All content, materials, lessons, worksheets, and branding are the property of ZAZA Academy and are protected by copyright laws."
+      },
+      {
+        "title": "5. Limitation of Liability",
+        "content": "ZAZA Academy provides educational content only and is not responsible for individual financial outcomes or decisions made by families."
+      },
+      {
+        "title": "6. Changes to Services",
+        "content": "ZAZA Academy reserves the right to update program content, schedules, instructors, or materials as needed."
+      },
+      {
+        "title": "7. Parent Consent & Child Participation Agreement",
+        "content": "By enrolling my child in ZAZA Academy, I confirm that:\n• I am the legal parent or guardian of the enrolled child.\n• I give permission for my child to participate in online learning sessions.\n• I understand sessions may be recorded for educational and replay purposes.\n• I agree that my child will participate respectfully and appropriately.\n• I acknowledge that ZAZA Academy provides educational content, not financial advice."
+      },
+      {
+        "title": "8. Code of Conduct",
+        "content": "ZAZA Academy is committed to providing a safe, respectful, and inclusive learning environment.\n\nExpectations for students and parents:\n• Be respectful to instructors and fellow students\n• Use appropriate language and behavior\n• Follow instructor guidance\n• Do not disrupt learning sessions\n• Do not share inappropriate or offensive content\n\nZAZA Academy reserves the right to remove any participant who violates this code of conduct, without refund."
+      },
+      {
+        "title": "9. Educational Disclaimer",
+        "content": "ZAZA Academy provides financial education for learning purposes only. We do not offer financial, legal, or investment advice. Parents and guardians remain fully responsible for financial decisions made within their households."
+      }
+    ]
+  },
+  "RefundPolicy": {
+    "title": "Refund & Cancellation Policy",
+    "lastUpdated": "Last Updated: February 2026",
+    "intro": "At ZAZA Academy, we value fairness and transparency.",
+    "sections": [
+      {
+        "title": "1. Refund Eligibility",
+        "content": "Full refunds are available up to 7 days before the program start date.\nNo refunds will be issued once the program has started."
+      },
+      {
+        "title": "2. Missed Classes",
+        "content": "Missed classes are not refundable. Replays will be made available whenever possible."
+      },
+      {
+        "title": "3. Program Cancellation",
+        "content": "If ZAZA Academy cancels a cohort for any reason, a credit will be issued for the following cohort."
       }
     ]
   },

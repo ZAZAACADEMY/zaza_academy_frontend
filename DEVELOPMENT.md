@@ -285,7 +285,7 @@ All API calls go through the Next.js proxy at `/api/*`. The proxy forwards to th
 | `POST` | `/auth/register/`      | Register new user        |
 | `POST` | `/auth/logout/`        | Invalidate session       |
 | `POST` | `/auth/token/refresh/` | Refresh access token     |
-| `GET`  | `/auth/users/me/`      | Get current user profile |
+| `GET`  | `/auth/users`          | Get current user profile |
 
 ### Users
 

@@ -52,7 +52,7 @@ const SignupContent = () => {
       6: "6",
       7: "7",
       8: "8",
-      9: "9"
+      9: "9",
     };
     return t(`stepTitles.${mapping[step] || step}`);
   };
@@ -67,7 +67,7 @@ const SignupContent = () => {
       6: "6",
       7: "7",
       8: "8",
-      9: "9"
+      9: "9",
     };
     return t(`stepSubtitles.${mapping[step] || step}`);
   };

@@ -14,10 +14,22 @@ import {
   Loader2,
   AlertTriangle,
 } from "lucide-react";
-import { VideoCard } from "@/components/dashboard/videos/VideoCard";
 import { useFavorites } from "@/components/dashboard/videos/FavoritesContext";
 import { useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
 import { useGetVideosQuery } from "@/lib/store/services/contentApi";
+import { useListChildrenQuery } from "@/lib/store/services/childrenApi";
+
+const VideoCard = dynamic(
+  () =>
+    import("@/components/dashboard/videos/VideoCard").then((m) => m.VideoCard),
+  {
+    loading: () => (
+      <div className="animate-pulse bg-gray-100 rounded-3xl h-64" />
+    ),
+    ssr: false,
+  },
+);
 
 const AGE_FILTERS_UI = [
   { value: "All Ages", labelKey: "allAges", apiValue: "" },
@@ -33,7 +45,12 @@ const TOPIC_FILTERS = [
   { name: "Saving", key: "saving", icon: PiggyBank, apiValue: "Saving" },
   { name: "Spending", key: "spending", icon: CreditCard, apiValue: "Spending" },
   { name: "Banking", key: "banking", icon: Building2, apiValue: "Banking" },
-  { name: "Investing", key: "investing", icon: TrendingUp, apiValue: "Investing" },
+  {
+    name: "Investing",
+    key: "investing",
+    icon: TrendingUp,
+    apiValue: "Investing",
+  },
   { name: "Business", key: "business", icon: Briefcase, apiValue: "Business" },
 ];
 
@@ -44,23 +61,50 @@ export default function VideoLibraryPage() {
   const [selectedAge, setSelectedAge] = useState("All Ages");
   const [selectedTopic, setSelectedTopic] = useState("All Topics");
 
+  // Derive which age filters to show from children's age groups
+  const { data: children } = useListChildrenQuery();
+  const childAgeGroups = useMemo(() => {
+    const groups = new Set((children ?? []).map((c) => c.age_group));
+    return groups;
+  }, [children]);
+
+  // Only show age filter row when children have more than 1 distinct age group
+  const showAgeFilter = childAgeGroups.size > 1;
+
+  // Build the visible age filter options based on children's actual groups
+  const visibleAgeFilters = useMemo(() => {
+    const childFilters = AGE_FILTERS_UI.filter(
+      (f) => !f.apiValue || childAgeGroups.has(f.apiValue as any),
+    );
+    return childFilters;
+  }, [childAgeGroups]);
+
   // Map UI age filter to API age_group value
-  const apiAgeGroup = AGE_FILTERS_UI.find(f => f.value === selectedAge)?.apiValue || "";
+  const apiAgeGroup =
+    AGE_FILTERS_UI.find((f) => f.value === selectedAge)?.apiValue || "";
   // Map UI topic filter to API category value (if not "My Favorites")
-  const apiCategory = selectedTopic !== "My Favorites" ? (TOPIC_FILTERS.find(f => f.name === selectedTopic)?.apiValue || "") : "";
+  const apiCategory =
+    selectedTopic !== "My Favorites"
+      ? TOPIC_FILTERS.find((f) => f.name === selectedTopic)?.apiValue || ""
+      : "";
 
   // Fetch videos from API with dynamic filters
-  const { 
-    data: videosData, 
-    isLoading, 
-    isError, 
-    error: fetchError 
+  const {
+    data: videosData,
+    isLoading,
+    isError,
+    error: fetchError,
   } = useGetVideosQuery(
     {
       search: searchQuery || undefined,
       age_group: apiAgeGroup || undefined,
       category: apiCategory || undefined,
-    } as any // Cast to any because generated types are strict and might not include all optional query params
+    } as any, // Cast to any because generated types are strict and might not include all optional query params
+    {
+      pollingInterval: 3 * 60 * 1000, // refresh every 3 minutes
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
   );
 
   // Client-side filtering for "My Favorites"
@@ -70,21 +114,25 @@ export default function VideoLibraryPage() {
     // Apply client-side search if API doesn't fully support it (or for refinement)
     // Currently, API does support search on title, description, tags, so this might be redundant
     // if API handles it comprehensively. But leaving it for robustness.
-    if (!apiCategory && searchQuery) { // Only filter client-side if API didn't handle the search for specific categories
-       videos = videos.filter(video => 
-         video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         (video.tags && (video.tags as any[]).some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
-       );
+    if (!apiCategory && searchQuery) {
+      // Only filter client-side if API didn't handle the search for specific categories
+      videos = videos.filter(
+        (video) =>
+          video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (video.tags &&
+            (video.tags as any[]).some((tag: string) =>
+              tag.toLowerCase().includes(searchQuery.toLowerCase()),
+            )),
+      );
     }
-    
+
     if (selectedTopic === "My Favorites") {
       videos = videos.filter((video) => isFavorite(video.id));
     }
 
     return videos;
   }, [videosData, selectedTopic, isFavorite, searchQuery, apiCategory]);
-
 
   if (isLoading) {
     return (
@@ -109,7 +157,7 @@ export default function VideoLibraryPage() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-display font-bold text-brand-dark mb-2">
+        <h1 className="text-2xl md:text-3xl font-display font-bold text-brand-dark mb-2">
           {t("title")}
         </h1>
         <p className="text-gray-500 max-w-2xl">{t("description")}</p>
@@ -131,27 +179,29 @@ export default function VideoLibraryPage() {
 
         {/* Filters */}
         <div className="flex flex-col gap-6">
-          {/* Age Filter */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
-            <span className="text-gray-400 font-medium whitespace-nowrap flex items-center gap-2 text-sm">
-              <Search className="w-4 h-4" /> {t("filterBy")}
-            </span>
-            <div className="flex gap-2 overflow-x-auto pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
-              {AGE_FILTERS_UI.map((age) => (
-                <button
-                  key={age.value}
-                  onClick={() => setSelectedAge(age.value)}
-                  className={`px-6 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap border flex-shrink-0 ${
-                    selectedAge === age.value
-                      ? "bg-brand-dark text-white border-brand-dark"
-                      : "bg-white text-brand-accent border-brand-accent hover:bg-brand-accent/5"
-                  }`}
-                >
-                  {t(`filters.${age.labelKey}`)}
-                </button>
-              ))}
+          {/* Age Filter — only shown when children span multiple age groups */}
+          {showAgeFilter && (
+            <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+              <span className="text-gray-400 font-medium whitespace-nowrap flex items-center gap-2 text-sm">
+                <Search className="w-4 h-4" /> {t("filterBy")}
+              </span>
+              <div className="flex gap-2 overflow-x-auto pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+                {visibleAgeFilters.map((age) => (
+                  <button
+                    key={age.value}
+                    onClick={() => setSelectedAge(age.value)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap border flex-shrink-0 ${
+                      selectedAge === age.value
+                        ? "bg-brand-dark text-white border-brand-dark"
+                        : "bg-white text-brand-accent border-brand-accent hover:bg-brand-accent/5"
+                    }`}
+                  >
+                    {t(`filters.${age.labelKey}`)}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Topic Filter */}
           <div className="flex gap-2 overflow-x-auto pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
@@ -164,7 +214,7 @@ export default function VideoLibraryPage() {
                 <button
                   key={topic.name}
                   onClick={() => setSelectedTopic(topic.name)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap border flex items-center gap-2 flex-shrink-0 ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap border flex items-center gap-1.5 flex-shrink-0 ${
                     isSelected
                       ? isFavoritesFilter
                         ? "bg-red-500 text-white border-red-500 shadow-md transform scale-105"
@@ -175,7 +225,7 @@ export default function VideoLibraryPage() {
                   }`}
                 >
                   <Icon
-                    className={`w-4 h-4 ${isSelected ? "text-white" : isFavoritesFilter ? "text-red-500" : "text-gray-400"}`}
+                    className={`w-3.5 h-3.5 ${isSelected ? "text-white" : isFavoritesFilter ? "text-red-500" : "text-gray-400"}`}
                   />
                   {t(`filters.${topic.key}`)}
                 </button>

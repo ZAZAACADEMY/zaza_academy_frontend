@@ -43,6 +43,13 @@ export const CookieBanner = () => {
   const [analyticsOpen, setAnalyticsOpen] = useState(false);
   const [marketingOpen, setMarketingOpen] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -102,18 +109,18 @@ export const CookieBanner = () => {
 
   return (
     <>
-      {/* â”€â”€ Floating cookie icon â€” hidden while panel is open â”€â”€ */}
+      {/* ── Floating cookie icon — hidden while panel is open ── */}
       <button
         onClick={openSettings}
         aria-label={t("openSettings")}
-        className={`fixed bottom-6 left-6 z-40 w-12 h-12 bg-white border border-gray-200 shadow-lg rounded-full flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all group ${
+        className={`fixed bottom-[70px] left-1 lg:bottom-1 lg:left-1 z-40 w-8 h-8 bg-white/80 border border-gray-200 shadow-md rounded-full flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all duration-300 group ${
           visible
             ? "opacity-0 pointer-events-none"
             : "opacity-100 animate-fade-in"
-        }`}
+        } ${scrolled ? "max-lg:opacity-0 max-lg:pointer-events-none" : ""}`}
       >
         <Cookie
-          size={22}
+          size={15}
           className="text-[#A655F7] group-hover:rotate-12 transition-transform duration-300"
         />
       </button>

@@ -1,18 +1,61 @@
 "use client";
 
 import React from "react";
-import { SessionCard } from "@/components/dashboard/live/SessionCard";
-import { RecordingCard } from "@/components/dashboard/live/RecordingCard";
+import dynamic from "next/dynamic";
 import { Link } from "@/navigation";
 import { useTranslations } from "next-intl";
-import { useGetUpcomingLivesQuery, useGetPastLivesQuery } from "@/lib/store/services/contentApi";
+import {
+  useGetUpcomingLivesQuery,
+  useGetPastLivesQuery,
+} from "@/lib/store/services/contentApi";
 import { Loader2, AlertTriangle } from "lucide-react";
+
+const SessionCard = dynamic(
+  () =>
+    import("@/components/dashboard/live/SessionCard").then(
+      (m) => m.SessionCard,
+    ),
+  {
+    loading: () => (
+      <div className="animate-pulse bg-white rounded-3xl h-56 shadow-sm" />
+    ),
+    ssr: false,
+  },
+);
+const RecordingCard = dynamic(
+  () =>
+    import("@/components/dashboard/live/RecordingCard").then(
+      (m) => m.RecordingCard,
+    ),
+  {
+    loading: () => (
+      <div className="animate-pulse bg-white rounded-3xl h-40 shadow-sm" />
+    ),
+    ssr: false,
+  },
+);
 
 export default function LiveSessionsPage() {
   const t = useTranslations("dashboard.live");
 
-  const { data: upcomingLivesData, isLoading: isLoadingUpcoming, isError: isErrorUpcoming } = useGetUpcomingLivesQuery();
-  const { data: pastLivesData, isLoading: isLoadingPast, isError: isErrorPast } = useGetPastLivesQuery();
+  const {
+    data: upcomingLivesData,
+    isLoading: isLoadingUpcoming,
+    isError: isErrorUpcoming,
+  } = useGetUpcomingLivesQuery(undefined, {
+    pollingInterval: 90 * 1000, // refresh every 90 seconds
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+  const {
+    data: pastLivesData,
+    isLoading: isLoadingPast,
+    isError: isErrorPast,
+  } = useGetPastLivesQuery(undefined, {
+    pollingInterval: 5 * 60 * 1000, // refresh every 5 minutes
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
 
   const isLoading = isLoadingUpcoming || isLoadingPast;
   const isError = isErrorUpcoming || isErrorPast;
@@ -39,14 +82,14 @@ export default function LiveSessionsPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-12 mb-20">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 md:space-y-12 mb-20">
       {/* Header */}
       <div className="relative">
         <div className="max-w-2xl">
-          <h1 className="text-4xl font-display font-bold text-brand-dark mb-4">
+          <h1 className="text-2xl md:text-4xl font-display font-bold text-brand-dark mb-2 md:mb-4">
             {t("title")}
           </h1>
-          <p className="text-gray-500 text-lg leading-relaxed">
+          <p className="text-gray-500 text-sm md:text-lg leading-relaxed">
             {t("description")}
           </p>
         </div>
@@ -86,9 +129,9 @@ export default function LiveSessionsPage() {
 
       {/* Upcoming Sessions */}
       <section>
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-2 h-8 bg-brand-primary rounded-full"></div>
-          <h2 className="text-2xl font-bold text-brand-dark">
+        <div className="flex items-center gap-3 mb-5 md:mb-8">
+          <div className="w-2 h-6 md:h-8 bg-brand-primary rounded-full"></div>
+          <h2 className="text-xl md:text-2xl font-bold text-brand-dark">
             {t("upcomingTitle")}
           </h2>
         </div>
@@ -96,7 +139,7 @@ export default function LiveSessionsPage() {
         {upcomingSessions.length === 0 ? (
           <p className="text-gray-500">{t("noUpcomingSessions")}</p>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             {upcomingSessions.map((session) => (
               <SessionCard key={session.id} session={session as any} />
             ))}
@@ -106,10 +149,10 @@ export default function LiveSessionsPage() {
 
       {/* Past Sessions */}
       <section className="bg-gray-50 -mx-4 md:-mx-8 p-4 md:p-8 rounded-3xl">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-2 h-8 bg-brand-purple rounded-full"></div>
-            <h2 className="text-2xl font-bold text-brand-dark">
+        <div className="flex items-center justify-between mb-5 md:mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-6 md:h-8 bg-brand-purple rounded-full"></div>
+            <h2 className="text-xl md:text-2xl font-bold text-brand-dark">
               {t("recordingsTitle")}
             </h2>
           </div>

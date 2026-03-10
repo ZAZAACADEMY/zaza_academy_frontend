@@ -140,6 +140,22 @@ export const Footer = () => {
                   {t("privacyPolicy")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="hover:text-white transition-colors hover:translate-x-1 inline-block"
+                >
+                  {t("termsAndConditions")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/refund"
+                  className="hover:text-white transition-colors hover:translate-x-1 inline-block"
+                >
+                  {t("refundPolicy")}
+                </Link>
+              </li>
             </ul>
           </StaggerItem>
 
@@ -186,6 +202,20 @@ export const Footer = () => {
               className="block md:inline mt-2 md:mt-0 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white"
             >
               {t("privacyPolicy")}
+            </Link>
+            <span className="mx-2 hidden md:inline">·</span>
+            <Link
+              href="/terms"
+              className="block md:inline mt-2 md:mt-0 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white"
+            >
+              {t("termsAndConditions")}
+            </Link>
+            <span className="mx-2 hidden md:inline">·</span>
+            <Link
+              href="/refund"
+              className="block md:inline mt-2 md:mt-0 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white"
+            >
+              {t("refundPolicy")}
             </Link>
           </p>
 

@@ -5,7 +5,13 @@ import Image from "next/image";
 import { X, User, Calendar, Check, Loader2, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { components } from "@/lib/api/v1";
-import { useAddChildMutation, useUpdateChildMutation, Child } from "@/lib/store/services/childrenApi";
+import {
+  useAddChildMutation,
+  useUpdateChildMutation,
+  Child,
+} from "@/lib/store/services/childrenApi";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 // Avatars list with both path and URL
 const AVATARS = [
@@ -32,6 +38,7 @@ export const AddChildModal = ({
   onClose,
   initialData,
 }: AddChildModalProps) => {
+  const t = useTranslations("DashboardChildren");
   const [formData, setFormData] = useState<Partial<Child>>({
     name: "",
     age: 0,
@@ -58,7 +65,12 @@ export const AddChildModal = ({
       });
       setSelectedAvatar(initialData.avatar || AVATARS[0].src);
     } else {
-      setFormData({ name: "", age: 0, avatar: AVATARS[0].src, age_group: "5-8" });
+      setFormData({
+        name: "",
+        age: 0,
+        avatar: AVATARS[0].src,
+        age_group: "5-8",
+      });
       setSelectedAvatar(AVATARS[0].src);
     }
   }, [initialData, isOpen]);
@@ -77,24 +89,34 @@ export const AddChildModal = ({
     }
 
     try {
-      const absoluteAvatarUrl = `${window.location.origin}${selectedAvatar}`;
-      
       const dataToSave = {
         pseudo: formData.name,
         age: formData.age,
-        avatar: absoluteAvatarUrl,
-        age_group: formData.age <= 8 ? "5-8" : (formData.age <= 12 ? "9-12" : "13-16")
+        avatar: selectedAvatar, // store relative path, e.g. /avatars/A2.jpeg
+        age_group:
+          formData.age <= 8 ? "5-8" : formData.age <= 12 ? "9-12" : "13-16",
       } as any;
 
       if (isEditMode && initialData?.id) {
         await updateChild({ id: initialData.id, body: dataToSave }).unwrap();
+        toast.success(t("toastUpdated"), { duration: 3000, icon: "✨" });
       } else {
         await addChild(dataToSave).unwrap();
+        toast.success(t("toastAdded", { name: formData.name! }), {
+          duration: 3000,
+          icon: "🎉",
+        });
       }
       onClose();
     } catch (err: any) {
       console.error(err);
-      setError(err.data?.message || err.data?.detail || "Failed to save profile.");
+      setError(
+        err.data?.message || err.data?.detail || "Failed to save profile.",
+      );
+      toast.error(
+        err.data?.message || err.data?.detail || "Failed to save profile.",
+        { duration: 4000 },
+      );
     }
   };
 

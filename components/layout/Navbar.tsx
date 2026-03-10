@@ -5,6 +5,7 @@ import { Link, usePathname, useRouter } from "@/navigation";
 import { JellyButton } from "../ui/motion/JellyButton";
 import { usePageTransition } from "../ui/PageTransition";
 import { useTranslations, useLocale } from "next-intl";
+import { useGetCurrentUserQuery } from "@/lib/store/services/authApi";
 import Image from "next/image";
 import Logo from "../../public/vectors/logo.svg";
 
@@ -71,6 +72,8 @@ export const Navbar = () => {
   const router = useRouter();
   const { navigateTo } = usePageTransition();
   const pathname = usePathname();
+  const { data: currentUser } = useGetCurrentUserQuery();
+  const isAuthenticated = !!currentUser;
   const [isVisible, setIsVisible] = React.useState(true);
   const [isLangMenuOpen, setIsLangMenuOpen] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState<string>("");
@@ -98,6 +101,8 @@ export const Navbar = () => {
   const handleLanguageChange = async (newLocale: string) => {
     if (!pathname) return;
     if (newLocale === locale) return;
+    // Persister le choix manuel dans un cookie (prioritaire sur la détection auto)
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
     try {
       await router.replace(pathname, { locale: newLocale });
     } catch (error) {
@@ -195,18 +200,22 @@ export const Navbar = () => {
             />
 
             <div className="flex items-center gap-[16px] bg-white rounded-[32px] pl-[8px] xl:pl-[16px]">
-              <button
-                onClick={() => navigateTo("/login")}
-                className="text-brand-black font-medium text-[16px] xl:text-[18px] hover:text-brand-accent active:scale-95 transition-all"
-              >
-                {t("login")}
-              </button>
+              {!isAuthenticated && (
+                <button
+                  onClick={() => navigateTo("/login")}
+                  className="text-brand-black font-medium text-[16px] xl:text-[18px] hover:text-brand-accent active:scale-95 transition-all"
+                >
+                  {t("login")}
+                </button>
+              )}
 
               <JellyButton
-                onClick={() => navigateTo("/signup")}
+                onClick={() =>
+                  navigateTo(isAuthenticated ? "/dashboard" : "/signup")
+                }
                 className="bg-brand-dark text-[#FDFDFD] px-6 py-3 xl:w-[156px] xl:h-[54px] rounded-[50px] font-medium text-[16px] xl:text-[18px] shadow-sm whitespace-nowrap"
               >
-                {t("getStarted")}
+                {isAuthenticated ? "Dashboard" : t("getStarted")}
               </JellyButton>
             </div>
           </div>
@@ -297,23 +306,25 @@ export const Navbar = () => {
                 );
               })}
               <div className="flex flex-col gap-3 mt-2">
-                <button
-                  onClick={() => {
-                    navigateTo("/login");
-                    setIsOpen(false);
-                  }}
-                  className="w-full py-3 text-center text-gray-700 font-bold border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-transform"
-                >
-                  {t("login")}
-                </button>
+                {!isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      navigateTo("/login");
+                      setIsOpen(false);
+                    }}
+                    className="w-full py-3 text-center text-gray-700 font-bold border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-transform"
+                  >
+                    {t("login")}
+                  </button>
+                )}
                 <JellyButton
                   onClick={() => {
-                    navigateTo("/signup");
+                    navigateTo(isAuthenticated ? "/dashboard" : "/signup");
                     setIsOpen(false);
                   }}
                   className="w-full py-3 text-center bg-brand-dark text-white font-bold rounded-full shadow-lg"
                 >
-                  {t("getStarted")}
+                  {isAuthenticated ? "Dashboard" : t("getStarted")}
                 </JellyButton>
               </div>
             </div>

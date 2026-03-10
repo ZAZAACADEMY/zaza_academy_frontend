@@ -1,19 +1,40 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react";
+import { Toaster } from "sonner";
 import { FavoritesProvider } from "@/components/dashboard/videos/FavoritesContext";
-import { Menu, Loader2 } from "lucide-react";
 import { tokenStore } from "@/lib/api/tokenStore";
 import { useGetMyActiveSubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
+
+const Sidebar = dynamic(
+  () => import("@/components/dashboard/Sidebar").then((m) => m.Sidebar),
+  { ssr: false },
+);
+const BottomNav = dynamic(
+  () => import("@/components/dashboard/BottomNav").then((m) => m.BottomNav),
+  { ssr: false },
+);
+const MobileHeader = dynamic(
+  () =>
+    import("@/components/dashboard/MobileHeader").then((m) => m.MobileHeader),
+  { ssr: false },
+);
+const EmailVerificationBanner = dynamic(
+  () =>
+    import("@/components/dashboard/EmailVerificationBanner").then(
+      (m) => m.EmailVerificationBanner,
+    ),
+  { ssr: false },
+);
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
   const locale = useLocale();
   const token = tokenStore.getToken();
@@ -50,30 +71,27 @@ export default function DashboardLayout({
 
   return (
     <FavoritesProvider>
-...
+      ...
       <div className="min-h-screen bg-[#F8F9FC]">
-        {/* Mobile Header */}
-        <div className="lg:hidden p-4 bg-white shadow-sm flex items-center justify-between sticky top-0 z-30">
-          <span className="font-display font-bold text-brand-purple text-xl">
-            Zaza Academy
-          </span>
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="p-2 text-brand-purple hover:bg-brand-purple/5 rounded-full transition-colors"
-          >
-            <Menu size={24} />
-          </button>
-        </div>
+        <MobileHeader />
+        {/* Spacer for fixed mobile header */}
+        <div className="lg:hidden h-14" />
 
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-        />
+        <Sidebar />
 
-        <main className="lg:ml-64 min-h-screen transition-all duration-300">
+        <main className="lg:ml-64 min-h-screen transition-all duration-300 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
+          <EmailVerificationBanner />
           {children}
         </main>
       </div>
+      <BottomNav />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: { fontFamily: "inherit", borderRadius: "16px" },
+        }}
+        richColors
+      />
     </FavoritesProvider>
   );
 }
