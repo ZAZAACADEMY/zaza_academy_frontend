@@ -33,7 +33,7 @@ const ReadRow = ({
       {icon}
       {label}
     </span>
-    <span className="font-semibold text-[15px] text-[#1F1235]">
+    <span className="font-semibold text-[15px] text-[#1F1235] break-all">
       {value || "—"}
     </span>
   </div>

@@ -83,7 +83,7 @@ export const ProfileSummaryCard = () => {
   // Active subscription (first one)
   const sub = activeSubs?.[0] as any;
   const payments: any[] = sub?.payments ?? [];
-  const planName: string = payments[0]?.plan_name ?? "";
+  const planName: string = sub?.plan_name ?? payments[0]?.plan_name ?? "";
   const isQuarterly = payments.some((p: any) => p.duration === "3_MONTHS");
   const maxChildren = getMaxChildren(planName);
   const nextPaymentDate = isQuarterly ? null : getNextPaymentDate(payments);
@@ -277,13 +277,13 @@ export const ProfileSummaryCard = () => {
                       />
                     ) : (
                       <span className="text-brand-purple font-bold text-sm">
-                        {child.name?.[0]?.toUpperCase() ?? "?"}
+                        {((child as any).pseudo || child.name)?.[0]?.toUpperCase() ?? "?"}
                       </span>
                     )}
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm text-[#1F1235]">
-                      {child.name}
+                      {(child as any).pseudo || child.name}
                     </span>
                     <span className="text-xs text-gray-400">
                       {t("childAge", { age: child.age })}
@@ -316,7 +316,7 @@ const InfoRow = ({
       {icon}
       {label}
     </span>
-    <span className="font-semibold text-[15px] text-[#1F1235]">
+    <span className="font-semibold text-[15px] text-[#1F1235] break-all">
       {value || fallback || "—"}
     </span>
   </div>
