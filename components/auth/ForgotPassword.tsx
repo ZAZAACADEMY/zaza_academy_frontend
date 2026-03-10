@@ -138,7 +138,12 @@ export const ForgotPassword = ({
     }
     try {
       const response = await verifyOtp({ email, otp }).unwrap();
-      setResetToken(response.token);
+      const token = response.token || response.reset_token || "";
+      if (!token) {
+        setError(t("errors.otpInvalid"));
+        return;
+      }
+      setResetToken(token);
       setStep("newPassword");
     } catch (err: any) {
       setError(err.data?.detail || err.data?.message || t("errors.otpInvalid"));
@@ -164,9 +169,14 @@ export const ForgotPassword = ({
       }).unwrap();
       setStep("success");
     } catch (err: any) {
-      setError(
-        err.data?.detail || err.data?.message || t("errors.resetFailed"),
-      );
+      const apiMsg =
+        err.data?.detail ||
+        err.data?.message ||
+        (typeof err.data === "object"
+          ? Object.values(err.data ?? {}).flat().join(" ")
+          : null) ||
+        t("errors.resetFailed");
+      setError(apiMsg);
     }
   };
 

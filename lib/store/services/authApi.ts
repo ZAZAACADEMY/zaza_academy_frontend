@@ -58,7 +58,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
     passwordResetVerifyOtp: builder.mutation<
-      { token: string; detail: string },
+      { token?: string; reset_token?: string; detail: string },
       components["schemas"]["PasswordResetVerifyOTP"]
     >({
       query: (data) => ({
