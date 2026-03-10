@@ -23,46 +23,17 @@ export const SecurityForm = () => {
     usePasswordResetRequestMutation();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [passwords, setPasswords] = useState({
-    current: "",
-    new: "",
-    confirm: "",
-  });
-  const [localError, setLocalError] = useState("");
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setPasswords((prev) => ({ ...prev, [name]: value }));
-    setLocalError("");
-  };
 
   const handleCancel = () => {
-    setPasswords({ current: "", new: "", confirm: "" });
-    setLocalError("");
     setIsEditing(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError("");
-
-    if (!passwords.current) {
-      setLocalError(t("errorCurrentRequired"));
-      return;
-    }
-    if (passwords.new !== passwords.confirm) {
-      setLocalError(t("errorMatch"));
-      return;
-    }
-    if (passwords.new.length < 8) {
-      setLocalError(t("errorLength"));
-      return;
-    }
 
     if (user?.email) {
       try {
         await requestReset({ email: user.email }).unwrap();
-        setPasswords({ current: "", new: "", confirm: "" });
         toast.success(t("toastEmailSent"), { duration: 4000, icon: "✉️" });
       } catch (err) {
         console.error("Password reset request failed:", err);
@@ -145,55 +116,16 @@ export const SecurityForm = () => {
         </button>
       </div>
 
-      {(isError || localError) && (
+      {(isError) && (
         <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100 flex items-center gap-2">
           <AlertTriangle size={18} />
-          {localError || (error as any)?.data?.detail || t("errorGeneric")}
+          {(error as any)?.data?.detail || t("errorGeneric")}
         </div>
       )}
 
       <p className="text-sm text-gray-500 italic mb-6">{t("infoNote")}</p>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-brand-dark">
-            {t("currentPassword")}
-          </label>
-          <input
-            type="password"
-            name="current"
-            value={passwords.current}
-            onChange={handleInputChange}
-            required
-            className="w-full px-6 py-3 rounded-full border border-purple-200 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple bg-white"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-brand-dark">
-            {t("newPassword")}
-          </label>
-          <input
-            type="password"
-            name="new"
-            value={passwords.new}
-            onChange={handleInputChange}
-            required
-            className="w-full px-6 py-3 rounded-full border border-purple-200 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple bg-white"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-brand-dark">
-            {t("confirmNewPassword")}
-          </label>
-          <input
-            type="password"
-            name="confirm"
-            value={passwords.confirm}
-            onChange={handleInputChange}
-            required
-            className="w-full px-6 py-3 rounded-full border border-purple-200 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple bg-white"
-          />
-        </div>
         <div className="pt-2">
           <button
             type="submit"
@@ -201,7 +133,7 @@ export const SecurityForm = () => {
             className="bg-[#2D1B4E] text-white font-bold py-3 px-10 rounded-full hover:bg-opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
           >
             {isLoading && <Loader2 className="animate-spin" size={18} />}
-            {t("updateButton")}
+            {t("sendButton")}
           </button>
         </div>
       </form>

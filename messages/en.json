@@ -369,21 +369,15 @@
       },
       "security": {
         "title": "Security",
-        "currentPassword": "Current Password",
-        "newPassword": "New Password",
-        "confirmNewPassword": "Confirm New Password",
-        "updateButton": "Update Password",
-        "errorMatch": "Passwords do not match",
-        "errorLength": "New password must be at least 8 characters",
+        "passwordLabel": "Password",
+        "infoNote": "To change your password, we will send a verification code to your email. Follow the instructions to set a new password.",
+        "sendButton": "Send reset email",
+        "edit": "Edit",
+        "cancel": "Cancel",
         "errorGeneric": "An error occurred. Please try again.",
         "successTitle": "Check your email",
         "successBody": "We've sent a 6-digit code to your email to verify your identity and update your password.",
         "successCta": "I'm ready to enter the code",
-        "infoNote": "To change your password, we will send a verification code to your email.",
-        "edit": "Edit",
-        "cancel": "Cancel",
-        "passwordLabel": "Password",
-        "errorCurrentRequired": "Please enter your current password",
         "toastEmailSent": "Email sent! Follow the instructions to change your password."
       }
     }
