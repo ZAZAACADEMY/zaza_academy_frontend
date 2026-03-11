@@ -422,8 +422,9 @@ export const Hero = () => {
                     <Image
                       src={`/images/${fileName}`}
                       alt="Avatar"
-                      fill
-                      className="object-cover"
+                      width={44}
+                      height={44}
+                      className="object-cover w-full h-full"
                       priority={i === 0}
                     />
                   </div>

@@ -45,7 +45,7 @@ const TestimonialCard = ({
 
       <div className="flex items-center gap-[16px] mt-auto">
         <div className="relative w-[48px] h-[48px] rounded-full overflow-hidden shrink-0 bg-gray-100">
-          <Image src={imageSrc} alt={name} fill className="object-cover" />
+          <Image src={imageSrc} alt={name} width={48} height={48} className="object-cover w-full h-full" />
         </div>
         <div className="flex flex-col">
           <h4 className="font-display font-bold text-[18px] text-brand-black leading-tight">
