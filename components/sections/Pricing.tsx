@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Sparkles,
-  Crown,
-  Users,
-  Check,
-  Loader2,
-  AlertTriangle,
-} from "lucide-react";
+import { Sparkles, Crown, Users, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn } from "../ui/motion/FadeIn";
 import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
@@ -16,7 +9,6 @@ import { ArrowDoodle } from "../ui/Doodles";
 import { FloatingElements } from "../ui/FloatingElements";
 import { TiltEffect } from "../ui/motion/TiltEffect";
 import { useTranslations, useMessages, useLocale } from "next-intl";
-import { useRouter } from "@/navigation";
 import { usePageTransition } from "../ui/PageTransition";
 import { useGetActivePlansQuery } from "@/lib/store/services/plansApi";
 import { components } from "@/lib/api/v1";
@@ -27,10 +19,20 @@ interface StaticPlan {
   planId: string;
   title: string;
   description: string;
+  /** Quarterly price string from translations, e.g. "199 $" – shown while API loads */
+  price?: string;
+  /** Installment label from translations – shown while API loads */
+  installment?: string;
   features: string[];
   icon: string;
   mostPopular?: boolean;
 }
+
+const PLAN_ORDER: Record<string, number> = {
+  STANDARD: 0,
+  PREMIUM: 1,
+  FAMILLE: 2,
+};
 
 const iconMap: Record<
   string,
@@ -41,45 +43,75 @@ const iconMap: Record<
   users: Users,
 };
 
+// ─── Shimmer placeholder ─────────────────────────────────────────────────────
+const PriceSkeleton = ({ isPremium }: { isPremium: boolean }) => (
+  <span
+    className={`inline-block h-11 w-28 rounded-xl animate-pulse ${
+      isPremium ? "bg-white/20" : "bg-gray-200"
+    }`}
+  />
+);
+
+// ─── Pricing card ─────────────────────────────────────────────────────────────
 const PricingCard = ({
-  plan,
   staticPlan,
+  apiPlan,
+  isLoadingPrice,
   isPremium = false,
   tLabel,
   period,
   subLabel,
   installmentNote,
-  installmentText,
+  installmentLabel,
   perMonth,
   ctaLabel,
   onSelect,
 }: {
-  plan: Plan;
   staticPlan: StaticPlan;
+  apiPlan?: Plan;
+  isLoadingPrice?: boolean;
   isPremium?: boolean;
   tLabel: string;
   period: string;
   subLabel: string;
   installmentNote: string;
-  installmentText: string;
+  installmentLabel: (amount: string) => string;
   perMonth: string;
   ctaLabel: string;
   onSelect: () => void;
 }) => {
   const Icon = iconMap[staticPlan.icon] ?? Sparkles;
 
+  // Use live API prices when available, fall back to static translation prices
+  const quarterlyPrice = apiPlan
+    ? "$" +
+      parseFloat(apiPlan.price_three_months).toFixed(2).replace(/\.00$/, "")
+    : (staticPlan.price ?? null);
+
+  const monthlyAmountStr = apiPlan
+    ? "$" + parseFloat(apiPlan.price_one_month).toFixed(2).replace(/\.00$/, "")
+    : null;
+
+  const monthlyLineText = monthlyAmountStr
+    ? installmentLabel(monthlyAmountStr)
+    : (staticPlan.installment ?? null);
+
+  const monthlyRightText = monthlyAmountStr
+    ? `${monthlyAmountStr}${perMonth}`
+    : null;
+
   return (
     <TiltEffect className="h-full">
       <motion.div
         whileTap={{ scale: 0.98 }}
         className={`
-      relative flex flex-col p-6 md:p-8 rounded-[32px] transition-all duration-300 h-full w-full text-left
-      ${
-        isPremium
-          ? "text-white shadow-[0px_20px_40px_-10px_rgba(168,85,247,0.4)] scale-100 lg:scale-105 z-10"
-          : "bg-white border border-[#F3F4F6] text-brand-black shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] lg:hover:shadow-[0px_10px_30px_0px_rgba(0,0,0,0.06)]"
-      }
-    `}
+          relative flex flex-col p-6 md:p-8 rounded-4xl transition-all duration-300 h-full w-full text-left
+          ${
+            isPremium
+              ? "text-white shadow-[0px_20px_40px_-10px_rgba(168,85,247,0.4)] scale-100 lg:scale-105 z-10"
+              : "bg-white border border-[#F3F4F6] text-brand-black shadow-[0px_4px_20px_0px_rgba(0,0,0,0.02)] lg:hover:shadow-[0px_10px_30px_0px_rgba(0,0,0,0.06)]"
+          }
+        `}
         style={
           isPremium
             ? {
@@ -103,10 +135,8 @@ const PricingCard = ({
         )}
 
         <div
-          className={`
-        w-[60px] h-[60px] rounded-[20px] flex items-center justify-center mb-6 shadow-sm
-        ${isPremium ? "bg-white text-[#8B5CF6]" : "bg-gradient-to-br from-[#A655F7] to-[#F46AA3] text-white"}
-      `}
+          className={`w-15 h-15 rounded-[20px] flex items-center justify-center mb-6 shadow-sm
+            ${isPremium ? "bg-white text-[#8B5CF6]" : "bg-linear-to-br from-[#A655F7] to-[#F46AA3] text-white"}`}
         >
           <Icon className="w-8 h-8" strokeWidth={1.5} />
         </div>
@@ -120,13 +150,18 @@ const PricingCard = ({
           {staticPlan.description}
         </p>
 
+        {/* Quarterly price */}
         <div className="flex items-baseline gap-1 mb-1 relative">
           {isPremium && (
-            <ArrowDoodle className="text-white/40 w-10 absolute -right-4 top-[-10px] rotate-[130deg]" />
+            <ArrowDoodle className="text-white/40 w-10 absolute -right-4 -top-2.5 rotate-130" />
           )}
-          <span className="font-display font-bold text-[40px] tracking-tight">
-            {`$${parseFloat(plan.price_three_months).toFixed(2).replace(/\.00$/, "")}`}
-          </span>
+          {isLoadingPrice && !quarterlyPrice ? (
+            <PriceSkeleton isPremium={isPremium} />
+          ) : (
+            <span className="font-display font-bold text-[40px] tracking-tight">
+              {quarterlyPrice}
+            </span>
+          )}
           <span
             className={`text-[14px] font-medium ${isPremium ? "text-white/80" : "text-[#9CA3AF]"}`}
           >
@@ -139,19 +174,26 @@ const PricingCard = ({
           {subLabel}
         </div>
 
+        {/* Installment box */}
         <div
-          className={`
-        p-4 rounded-[16px] mb-8 w-full
-        ${isPremium ? "bg-white/20 backdrop-blur-sm border border-white/20" : "bg-[#F3F0FF] border border-[#E9E5FF]"}
-      `}
+          className={`p-4 rounded-2xl mb-8 w-full
+            ${isPremium ? "bg-white/20 backdrop-blur-sm border border-white/20" : "bg-[#F3F0FF] border border-[#E9E5FF]"}`}
         >
           <div className="flex items-baseline justify-between gap-2 mb-1">
-            <p className="font-bold text-[15px]">{installmentText}</p>
-            <span
-              className={`font-bold text-[16px] whitespace-nowrap ${isPremium ? "text-white" : "text-brand-purple"}`}
-            >
-              {`$${parseFloat(plan.price_one_month).toFixed(2).replace(/\.00$/, "")}${perMonth}`}
-            </span>
+            {isLoadingPrice && !monthlyLineText ? (
+              <span
+                className={`inline-block h-4 w-36 rounded animate-pulse ${isPremium ? "bg-white/20" : "bg-gray-200"}`}
+              />
+            ) : (
+              <p className="font-bold text-[15px]">{monthlyLineText}</p>
+            )}
+            {monthlyRightText && (
+              <span
+                className={`font-bold text-[16px] whitespace-nowrap ${isPremium ? "text-white" : "text-brand-purple"}`}
+              >
+                {monthlyRightText}
+              </span>
+            )}
           </div>
           <p
             className={`text-[12px] ${isPremium ? "text-white/80" : "text-[#6B7280]"}`}
@@ -160,15 +202,11 @@ const PricingCard = ({
           </p>
         </div>
 
-        <ul className="flex flex-col gap-4 mb-8 flex-grow w-full">
+        {/* Features */}
+        <ul className="flex flex-col gap-4 mb-8 grow w-full">
           {staticPlan.features.map((feature, i) => (
             <li key={i} className="flex items-start gap-3">
-              <div
-                className={`
-              w-[24px] h-[24px] rounded-full flex items-center justify-center shrink-0 mt-0.5
-              ${isPremium ? "bg-white text-[#8B5CF6]" : "bg-white text-[#8B5CF6]"}
-            `}
-              >
+              <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-white text-[#8B5CF6]">
                 <Check size={14} strokeWidth={3} />
               </div>
               <span
@@ -184,13 +222,13 @@ const PricingCard = ({
           whileTap={{ scale: 0.95 }}
           onClick={onSelect}
           className={`
-        w-full py-4 rounded-[50px] font-bold text-[16px] transition-all duration-300 lg:hover:scale-[1.02] active:scale-[0.98]
-        ${
-          isPremium
-            ? "bg-[#F46AA3] text-white shadow-lg lg:hover:bg-[#311F54] border border-white/20"
-            : "bg-white border-2 border-[#1F2937] text-[#1F2937] lg:hover:bg-[#311F54] lg:hover:text-white lg:hover:border-[#311F54]"
-        }
-      `}
+            w-full py-4 rounded-[50px] font-bold text-[16px] transition-all duration-300 lg:hover:scale-[1.02] active:scale-[0.98]
+            ${
+              isPremium
+                ? "bg-[#F46AA3] text-white shadow-lg lg:hover:bg-[#311F54] border border-white/20"
+                : "bg-white border-2 border-[#1F2937] text-[#1F2937] lg:hover:bg-[#311F54] lg:hover:text-white lg:hover:border-[#311F54]"
+            }
+          `}
         >
           {ctaLabel}
         </motion.button>
@@ -199,87 +237,28 @@ const PricingCard = ({
   );
 };
 
+// ─── Main section ─────────────────────────────────────────────────────────────
 export const Pricing = () => {
   const t = useTranslations("Pricing");
   const messages = useMessages();
   const locale = useLocale();
   const { navigateTo } = usePageTransition();
 
-  const { data: plansData, isLoading, isError } = useGetActivePlansQuery();
+  // Fetch with generous staleTime — plan prices rarely change
+  const { data: plansData, isLoading } = useGetActivePlansQuery();
 
-  // Static plan data from translations (description, features, installment)
+  // Static plan data is bundled in JS — available instantly, no network needed
   const staticPlans = ((messages as any).Pricing?.plans ?? []) as StaticPlan[];
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-96">
-          <Loader2 className="animate-spin text-brand-purple" size={48} />
-        </div>
-      );
-    }
+  // Sort the static plans so we always render in the right order immediately
+  const sortedStaticPlans = [...staticPlans].sort(
+    (a, b) => (PLAN_ORDER[a.planId] ?? 99) - (PLAN_ORDER[b.planId] ?? 99),
+  );
 
-    if (isError || !plansData) {
-      return (
-        <div className="flex flex-col items-center justify-center h-96 bg-red-50 text-red-700 rounded-2xl">
-          <AlertTriangle className="w-12 h-12 mb-4" />
-          <h3 className="text-xl font-bold mb-2">{t("errorTitle")}</h3>
-          <p>{t("errorMessage")}</p>
-        </div>
-      );
-    }
-
-    const ORDER: Record<string, number> = {
-      STANDARD: 0,
-      PREMIUM: 1,
-      FAMILLE: 2,
-    };
-    const sorted = [...(plansData as Plan[])].sort(
-      (a, b) => (ORDER[a.name] ?? 99) - (ORDER[b.name] ?? 99),
-    );
-
-    return (
-      <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] lg:gap-[32px] items-start w-full">
-        {sorted.map((plan, index) => {
-          const staticPlan = staticPlans.find(
-            (s) => s.planId === plan.name,
-          ) ?? {
-            planId: plan.name,
-            title: plan.name_display,
-            description: "",
-            installment: "",
-            features: [],
-            icon: "sparkles",
-          };
-          const isPremium = plan.name === "PREMIUM";
-
-          return (
-            <StaggerItem key={index}>
-              <PricingCard
-                plan={plan}
-                staticPlan={staticPlan}
-                isPremium={isPremium}
-                tLabel={t("mostPopular")}
-                period={t("perQuarter")}
-                subLabel={t("quarterly")}
-                installmentNote={t("installmentNote")}
-                installmentText={t("installmentLabel", {
-                  amount: `$${parseFloat(plan.price_one_month).toFixed(2).replace(/\.00$/, "")}`,
-                })}
-                perMonth={t("perMonth")}
-                ctaLabel={t("cta")}
-                onSelect={() =>
-                  navigateTo(`/signup?plan=${encodeURIComponent(plan.id)}`, {
-                    locale,
-                  })
-                }
-              />
-            </StaggerItem>
-          );
-        })}
-      </StaggerContainer>
-    );
-  };
+  // Build a lookup from the API response (available after fetch)
+  const apiPlanByName = Object.fromEntries(
+    (plansData ?? []).map((p) => [p.name, p]),
+  );
 
   return (
     <section
@@ -287,10 +266,10 @@ export const Pricing = () => {
       id="pricing"
     >
       <FloatingElements />
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16 relative z-10">
-        <div className="text-center mb-[60px]">
+      <div className="w-full max-w-360 mx-auto px-5 md:px-16 relative z-10">
+        <div className="text-center mb-15">
           <FadeIn direction="up">
-            <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-[16px] tracking-tight">
+            <h2 className="font-display font-bold text-[36px] md:text-[48px] text-brand-black mb-4 tracking-tight">
               {t.rich("title", {
                 accent: (chunks) => (
                   <span
@@ -310,12 +289,45 @@ export const Pricing = () => {
             </h2>
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
-            <p className="font-sans font-medium text-[#6B7280] text-[16px] md:text-[18px] max-w-[600px] mx-auto leading-[160%]">
+            <p className="font-sans font-medium text-[#6B7280] text-[16px] md:text-[18px] max-w-150 mx-auto leading-[160%]">
               {t("subtitle")}
             </p>
           </FadeIn>
         </div>
-        {renderContent()}
+
+        {/* Always render cards — static first, then enriched with API data */}
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start w-full">
+          {sortedStaticPlans.map((staticPlan, index) => {
+            const apiPlan = apiPlanByName[staticPlan.planId];
+            const isPremium = staticPlan.planId === "PREMIUM";
+
+            return (
+              <StaggerItem key={staticPlan.planId}>
+                <PricingCard
+                  staticPlan={staticPlan}
+                  apiPlan={apiPlan}
+                  isLoadingPrice={isLoading}
+                  isPremium={isPremium}
+                  tLabel={t("mostPopular")}
+                  period={t("perQuarter")}
+                  subLabel={t("quarterly")}
+                  installmentNote={t("installmentNote")}
+                  installmentLabel={(amount) =>
+                    t("installmentLabel", { amount })
+                  }
+                  perMonth={t("perMonth")}
+                  ctaLabel={t("cta")}
+                  onSelect={() => {
+                    const planParam = apiPlan?.id
+                      ? `?plan=${encodeURIComponent(apiPlan.id)}`
+                      : "";
+                    navigateTo(`/signup${planParam}`, { locale });
+                  }}
+                />
+              </StaggerItem>
+            );
+          })}
+        </StaggerContainer>
       </div>
     </section>
   );

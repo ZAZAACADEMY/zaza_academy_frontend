@@ -10,7 +10,10 @@ type PaginatedPlanList = components["schemas"]["PaginatedPlanListList"];
 export const plansApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Endpoint to get all subscription plans
-    getPlans: builder.query<PaginatedPlanList, { status?: boolean; name?: string; page?: number } | void>({
+    getPlans: builder.query<
+      PaginatedPlanList,
+      { status?: boolean; name?: string; page?: number } | void
+    >({
       query: (params) => ({
         url: "/api/v1/plans",
         params: params || {},
@@ -18,7 +21,10 @@ export const plansApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.results.map(({ id }) => ({ type: "Plans" as const, id })),
+              ...result.results.map(({ id }) => ({
+                type: "Plans" as const,
+                id,
+              })),
               { type: "Plans", id: "LIST" },
             ]
           : [{ type: "Plans", id: "LIST" }],
@@ -27,7 +33,9 @@ export const plansApi = baseApi.injectEndpoints({
     // Endpoint to get only active subscription plans
     getActivePlans: builder.query<PlanList, void>({
       query: () => "/api/v1/plans/active_plans",
-       providesTags: [{ type: "Plans", id: "ACTIVE_LIST" }],
+      providesTags: [{ type: "Plans", id: "ACTIVE_LIST" }],
+      // Plans rarely change — cache for 1 hour to avoid redundant requests on slow connections
+      keepUnusedDataFor: 3600,
     }),
 
     // Endpoint to get a single plan by ID
@@ -43,7 +51,10 @@ export const plansApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "Plans", id: "LIST" }, { type: "Plans", id: "ACTIVE_LIST" }],
+      invalidatesTags: [
+        { type: "Plans", id: "LIST" },
+        { type: "Plans", id: "ACTIVE_LIST" },
+      ],
     }),
     updatePlan: builder.mutation<Plan, { id: string; body: PlanCreateUpdate }>({
       query: ({ id, body }) => ({
@@ -51,32 +62,44 @@ export const plansApi = baseApi.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Plans", id }, { type: "Plans", id: "LIST" }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Plans", id },
+        { type: "Plans", id: "LIST" },
+      ],
     }),
-    partialUpdatePlan: builder.mutation<Plan, { id: string; body: PatchedPlanCreateUpdate }>({
+    partialUpdatePlan: builder.mutation<
+      Plan,
+      { id: string; body: PatchedPlanCreateUpdate }
+    >({
       query: ({ id, body }) => ({
         url: `/api/v1/plans/${id}`,
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Plans", id }, { type: "Plans", id: "LIST" }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Plans", id },
+        { type: "Plans", id: "LIST" },
+      ],
     }),
     deletePlan: builder.mutation<void, string>({
       query: (id) => ({
         url: `/api/v1/plans/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Plans", id }, { type: "Plans", id: "LIST" }],
+      invalidatesTags: (result, error, id) => [
+        { type: "Plans", id },
+        { type: "Plans", id: "LIST" },
+      ],
     }),
   }),
 });
 
-export const { 
-    useGetPlansQuery,
-    useGetActivePlansQuery,
-    useGetPlanByIdQuery,
-    useCreatePlanMutation,
-    useUpdatePlanMutation,
-    usePartialUpdatePlanMutation,
-    useDeletePlanMutation,
+export const {
+  useGetPlansQuery,
+  useGetActivePlansQuery,
+  useGetPlanByIdQuery,
+  useCreatePlanMutation,
+  useUpdatePlanMutation,
+  usePartialUpdatePlanMutation,
+  useDeletePlanMutation,
 } = plansApi;

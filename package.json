@@ -9,7 +9,9 @@
     "lint": "next lint",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "optimize:images:dry": "node scripts/optimize-images.mjs --dry-run"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
@@ -36,6 +38,7 @@
     "@types/node": "^22.14.0",
     "@types/react": "19.2.10",
     "openapi-typescript": "^7.13.0",
+    "sharp": "^0.34.5",
     "typescript": "~5.8.2"
   }
 }
