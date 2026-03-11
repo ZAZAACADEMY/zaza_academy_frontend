@@ -53,8 +53,6 @@ export const Step5Payment = () => {
   const isDataLoading = isLoadingPlan || isLoadingSubs;
   const isButtonDisabled = isActionLoading || !plan;
 
-  console.log("Loading States -> Plan:", isLoadingPlan, "Subs:", isLoadingSubs, "Action:", isActionLoading);
-
   const displayNames = useMemo(() => {
     try {
       return new Intl.DisplayNames([locale], { type: "region" });

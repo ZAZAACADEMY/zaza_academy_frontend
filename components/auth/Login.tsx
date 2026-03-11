@@ -98,7 +98,6 @@ export const Login = () => {
           router.push(targetPath as any);
         }
       } catch (err: any) {
-        console.log("Login error:", err);
         if (err.status === 401 || err.data?.detail) {
           setGeneralError(t("errors.invalidCredentials"));
         } else {
