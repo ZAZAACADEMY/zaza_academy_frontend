@@ -246,16 +246,28 @@
     "faqTitle": "FAQ Facturation",
     "faqItems": [
       {
-        "question": "Puis-je changer de forfait plus tard ?",
-        "answer": "Oui ! Vous pouvez changer de forfait à tout moment. Les surclassements sont immédiats, les déclassements s'appliquent au prochain cycle."
+        "question": "Puis-je changer de forfait ?",
+        "answer": "Oui ! Vous pouvez évoluer vers un plan supérieur à tout moment — la mise à niveau est immédiate. Un changement vers un plan inférieur s'applique au début du prochain cycle de facturation."
+      },
+      {
+        "question": "Puis-je obtenir un remboursement ?",
+        "answer": "Un remboursement complet est possible si la demande est faite au moins 7 jours avant la date de début du programme. Aucun remboursement ne peut être accordé une fois le programme commencé. Les sessions manquées ne sont pas remboursables, mais des rediffusions sont mises à disposition dans la mesure du possible."
+      },
+      {
+        "question": "Que se passe-t-il si ZAZA Academy annule un programme ?",
+        "answer": "Si ZAZA Academy est amené à annuler une cohorte pour quelque raison que ce soit, un crédit sera émis et applicable à la prochaine cohorte disponible. Vous serez informé par e-mail."
+      },
+      {
+        "question": "Mes informations de paiement sont-elles sécurisées ?",
+        "answer": "Oui. Toutes les transactions sont traitées de manière sécurisée par des prestataires de paiement certifiés. ZAZA Academy ne stocke pas directement vos données de carte bancaire et ne vend, ne loue ni ne partage jamais vos informations personnelles avec des tiers."
       },
       {
         "question": "Où trouver mes factures ?",
-        "answer": "Toutes vos factures sont listées dans la section 'Historique de facturation'. Vous pouvez les télécharger en PDF."
+        "answer": "Toutes vos factures sont répertoriées dans la section 'Historique de facturation' sur cette page. Vous pouvez les télécharger en PDF à tout moment."
       },
       {
         "question": "Comment résilier mon abonnement ?",
-        "answer": "Vous pouvez résilier votre abonnement à tout moment en cliquant sur le bouton 'Annuler l'abonnement'. Votre accès continuera jusqu'à la fin de la période en cours."
+        "answer": "Pour résilier votre abonnement, contactez notre équipe de support à zazaacademy@gmail.com. Votre accès aux contenus restera actif jusqu'à la fin de la période de facturation en cours."
       }
     ],
     "usageTitle": "Utilisation ce mois-ci",
