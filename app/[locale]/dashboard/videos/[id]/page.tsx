@@ -22,6 +22,7 @@ import {
 } from "@/lib/api/children";
 import confetti from "canvas-confetti";
 import { useFavorites } from "@/components/dashboard/videos/FavoritesContext";
+import { useGetVideoByIdQuery } from "@/lib/store/services/contentApi";
 
 export default function VideoDetailPage() {
   const router = useRouter();
@@ -31,11 +32,40 @@ export default function VideoDetailPage() {
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const { isFavorite: checkIsFavorite, toggleFavorite } = useFavorites();
 
-  const video = MOCK_VIDEOS.find((v) => v.id === id) as any;
+  const { data: apiVideo, isLoading, error } = useGetVideoByIdQuery(id);
 
-  if (!video) {
+  // For UI fields not yet in API, find matching mock video by ID or title
+  const mockVideo = MOCK_VIDEOS.find(
+    (v) => v.id === id || (apiVideo && v.title === apiVideo.title)
+  );
+
+  if (isLoading) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-[400px]">
+        <div className="w-12 h-12 rounded-full border-4 border-brand-accent border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || (!apiVideo && !mockVideo)) {
     notFound();
   }
+
+  // Merge API data with mock fallbacks for UI
+  const video = {
+    id: apiVideo?.id || mockVideo?.id || id,
+    title: apiVideo?.title || mockVideo?.title || "",
+    description: apiVideo?.description || mockVideo?.description || "",
+    category: apiVideo?.category || mockVideo?.category || "General",
+    ageGroup: apiVideo?.age_group || mockVideo?.ageGroup || "All Ages",
+    duration: apiVideo?.duration || mockVideo?.duration || "0:00",
+    longDescription: apiVideo?.description || mockVideo?.longDescription || "",
+    learningPoints: mockVideo?.learningPoints || [],
+    upNext: mockVideo?.upNext || [],
+    progress: mockVideo?.progress || 0,
+    completedLessons: mockVideo?.completedLessons || 0,
+    totalLessons: mockVideo?.totalLessons || 5,
+  };
 
   const isFavorite = checkIsFavorite(video.id);
 

@@ -7,7 +7,7 @@ export interface Child {
 }
 
 export type PaymentFrequency = "Monthly" | "Quarterly";
-export type PaymentGateway = "Card" | "Mobile Money";
+export type PaymentGateway = "Card" | "Mobile Money" | "PayPal";
 
 export interface SignupState {
   step: number;
