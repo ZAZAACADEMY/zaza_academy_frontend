@@ -1,12 +1,22 @@
 "use client";
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { CreditCard, Smartphone, ChevronRight, ArrowLeft, Loader2, AlertTriangle } from "lucide-react";
+import {
+  CreditCard,
+  Smartphone,
+  ChevronRight,
+  ArrowLeft,
+  Loader2,
+  AlertTriangle,
+} from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useSignup } from "./SignupContext";
 import { PaymentGateway } from "./types";
 import { MOBILE_MONEY_CONFIG } from "./constants";
 import { useGetPlanByIdQuery } from "@/lib/store/services/plansApi";
-import { useCreateSubscriptionMutation, useGetMySubscriptionsQuery } from "@/lib/store/services/subscriptionsApi";
+import {
+  useCreateSubscriptionMutation,
+  useGetMySubscriptionsQuery,
+} from "@/lib/store/services/subscriptionsApi";
 import { useInitiatePaymentMutation } from "@/lib/store/services/paymentsApi";
 
 export const Step5Payment = () => {
@@ -39,13 +49,20 @@ export const Step5Payment = () => {
   const countryWrapperRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: plan, isLoading: isLoadingPlan, isError: isErrorPlan } = useGetPlanByIdQuery(selectedPlan, {
+  const {
+    data: plan,
+    isLoading: isLoadingPlan,
+    isError: isErrorPlan,
+  } = useGetPlanByIdQuery(selectedPlan, {
     skip: !selectedPlan,
   });
 
-  const { data: subscriptionsData, isLoading: isLoadingSubs } = useGetMySubscriptionsQuery();
-  const [createSubscription, { isLoading: isCreatingSubscription }] = useCreateSubscriptionMutation();
-  const [initiatePayment, { isLoading: isInitiatingPayment }] = useInitiatePaymentMutation();
+  const { data: subscriptionsData, isLoading: isLoadingSubs } =
+    useGetMySubscriptionsQuery();
+  const [createSubscription, { isLoading: isCreatingSubscription }] =
+    useCreateSubscriptionMutation();
+  const [initiatePayment, { isLoading: isInitiatingPayment }] =
+    useInitiatePaymentMutation();
 
   // Button spinner only when performing an action
   const isActionLoading = isCreatingSubscription || isInitiatingPayment;
@@ -88,7 +105,8 @@ export const Step5Payment = () => {
     const target = current ?? mobileCountryOptions[0]; // Default to first available
     if (!target) return; // No mobile money countries available
 
-    if (!current) { // If current country isn't in mobile options, set to default
+    if (!current) {
+      // If current country isn't in mobile options, set to default
       setCountry(target.code);
     }
     setCountrySearch(target.name);
@@ -100,7 +118,16 @@ export const Step5Payment = () => {
     if (firstProvider && !target.providers.includes(mobileProvider)) {
       setMobileProvider(firstProvider);
     }
-  }, [paymentGateway, mobileCountryOptions, country, mobileProvider, phoneNumber, setCountry, setMobileProvider, setPhoneNumber]);
+  }, [
+    paymentGateway,
+    mobileCountryOptions,
+    country,
+    mobileProvider,
+    phoneNumber,
+    setCountry,
+    setMobileProvider,
+    setPhoneNumber,
+  ]);
 
   // Keep provider aligned to selected country when switching countries within mobile money
   useEffect(() => {
@@ -148,21 +175,27 @@ export const Step5Payment = () => {
       // 1. Check if user already has a subscription for this plan (to handle retries)
       let subscriptionId = "";
       const existingSub = subscriptionsData?.results?.find(
-        (sub) => sub.plan === plan.id && sub.status === "ACTIVE"
+        (sub) => sub.plan === plan.id && sub.status === "ACTIVE",
       );
 
       if (existingSub) {
         subscriptionId = existingSub.id;
       } else {
         // 2. Create the subscription if it doesn't exist
-        const newSubscription = await createSubscription({ plan: plan.id }).unwrap();
+        const newSubscription = await createSubscription({
+          plan: plan.id,
+        }).unwrap();
         subscriptionId = newSubscription.id;
       }
 
       // 3. Initiate the payment
-      const durationApi = paymentFrequency === "Monthly" ? "1_MONTH" : "3_MONTHS";
-      const amount = durationApi === "1_MONTH" ? plan.price_one_month : plan.price_three_months;
-      
+      const durationApi =
+        paymentFrequency === "Monthly" ? "1_MONTH" : "3_MONTHS";
+      const amount =
+        durationApi === "1_MONTH"
+          ? plan.price_one_month
+          : plan.price_three_months;
+
       let methodApi: "STRIPE" | "PAYPAL" | "TARAMONEY";
       if (paymentGateway === "Card") {
         methodApi = "STRIPE";
@@ -174,7 +207,7 @@ export const Step5Payment = () => {
       }
 
       const returnBaseUrl = `${window.location.origin}/${locale}/payment/return`;
-      
+
       const paymentPayload = {
         subscription: subscriptionId,
         duration: durationApi,
@@ -184,7 +217,9 @@ export const Step5Payment = () => {
         cancel_url: `${returnBaseUrl}?status=cancel&payment_id={PAYMENT_ID}`,
       };
 
-      const paymentResult = await initiatePayment(paymentPayload as any).unwrap();
+      const paymentResult = await initiatePayment(
+        paymentPayload as any,
+      ).unwrap();
 
       // 4. Redirect to payment provider
       const checkoutUrl = paymentResult.payment_data?.checkout_url;
@@ -199,11 +234,14 @@ export const Step5Payment = () => {
       } else {
         setError(t("errorPaymentUrl"));
       }
-
     } catch (err: any) {
       console.error("Payment process failed:", err);
       // Attempt to extract meaningful error message
-      const apiErrorMessage = err.data?.non_field_errors?.[0] || err.data?.detail || err.data?.message || err.error;
+      const apiErrorMessage =
+        err.data?.non_field_errors?.[0] ||
+        err.data?.detail ||
+        err.data?.message ||
+        err.error;
       setError(apiErrorMessage || t("errorGenericPayment"));
     }
   };
@@ -223,11 +261,13 @@ export const Step5Payment = () => {
     return (
       <div className="flex flex-col items-center justify-center h-96 bg-red-50 text-red-700 rounded-2xl p-4">
         <AlertTriangle className="w-10 h-10 mb-4" />
-        <h3 className="text-lg font-bold mb-2 text-center">{t("errorLoadingPlan")}</h3>
+        <h3 className="text-lg font-bold mb-2 text-center">
+          {t("errorLoadingPlan")}
+        </h3>
         <p className="text-center text-sm">{t("errorTryAgain")}</p>
-        <button 
+        <button
           type="button"
-          onClick={() => setStep(2)} 
+          onClick={() => setStep(2)}
           className="mt-4 text-brand-purple font-bold hover:underline"
         >
           Go back to plans
@@ -419,12 +459,18 @@ export const Step5Payment = () => {
                 {t("cardGateway")}
               </h3>
               <p className="text-gray-500 max-w-[320px] leading-relaxed">
-                You will be securely redirected to our payment partner, <strong>Stripe</strong>, to complete your transaction with your credit or debit card.
+                You will be securely redirected to our payment partner,{" "}
+                <strong>Stripe</strong>, to complete your transaction with your
+                credit or debit card.
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4 py-2 opacity-60 grayscale">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-6" />
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg"
+                alt="Stripe"
+                className="h-6"
+              />
               <div className="h-4 w-[1px] bg-gray-300" />
               <div className="flex gap-2">
                 <div className="w-8 h-5 bg-gray-200 rounded-sm" />
@@ -452,8 +498,10 @@ export const Step5Payment = () => {
         >
           {isActionLoading ? (
             <Loader2 className="animate-spin" />
+          ) : paymentGateway === "Card" ? (
+            "Continue to Stripe"
           ) : (
-            paymentGateway === "Card" ? "Continue to Stripe" : t("payNow")
+            t("payNow")
           )}
           {!isActionLoading && <ArrowLeft className="rotate-180" size={20} />}
         </button>

@@ -13,7 +13,6 @@ import { StaggerContainer, StaggerItem } from "../ui/motion/Stagger";
 import { FadeIn } from "../ui/motion/FadeIn";
 import { useTranslations } from "next-intl";
 import { Link } from "@/navigation";
-import { ContactModal } from "../ui/ContactModal";
 
 // Custom TikTok icon since it might not be in the installed version of lucide-react
 const TikTok = ({
@@ -41,17 +40,12 @@ const TikTok = ({
 export const Footer = () => {
   const t = useTranslations("Footer");
   const tAria = useTranslations("Footer.aria");
-  const [isContactOpen, setIsContactOpen] = React.useState(false);
 
   type LinkItem = { name: string; href: string };
   const productLinks = t.raw("productLinks") as LinkItem[];
 
   return (
     <footer className="w-full bg-[#311F54] text-white pt-20 pb-10 overflow-hidden">
-      <ContactModal
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
-      />
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-16">
         {/* Main Footer Content */}
         <StaggerContainer
@@ -83,7 +77,7 @@ export const Footer = () => {
                 <Facebook size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@ParlonsDeBusiness"
                 aria-label={tAria("youtube")}
                 className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white hover:text-[#F46AA3] transition-all duration-300 transform hover:scale-110"
               >
@@ -125,12 +119,12 @@ export const Footer = () => {
             </h4>
             <ul className="flex flex-col gap-4 text-white/70 font-sans text-[15px]">
               <li>
-                <button
-                  onClick={() => setIsContactOpen(true)}
-                  className="hover:text-white transition-colors hover:translate-x-1 inline-block text-left"
+                <Link
+                  href="/support"
+                  className="hover:text-white transition-colors hover:translate-x-1 inline-block"
                 >
                   {t("contactUs")}
-                </button>
+                </Link>
               </li>
               <li>
                 <Link

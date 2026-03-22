@@ -45,7 +45,13 @@ const TestimonialCard = ({
 
       <div className="flex items-center gap-[16px] mt-auto">
         <div className="relative w-[48px] h-[48px] rounded-full overflow-hidden shrink-0 bg-gray-100">
-          <Image src={imageSrc} alt={name} width={48} height={48} className="object-cover w-full h-full" />
+          <Image
+            src={imageSrc}
+            alt={name}
+            width={48}
+            height={48}
+            className="object-cover w-full h-full"
+          />
         </div>
         <div className="flex flex-col">
           <h4 className="font-display font-bold text-[18px] text-brand-black leading-tight">
@@ -62,7 +68,12 @@ const TestimonialCard = ({
 const TestimonialCarousel = ({
   testimonials,
 }: {
-  testimonials: { quote: string; name: string; role: string; imageSrc: string | StaticImageData }[];
+  testimonials: {
+    quote: string;
+    name: string;
+    role: string;
+    imageSrc: string | StaticImageData;
+  }[];
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const x = useMotionValue(0);
@@ -81,7 +92,10 @@ const TestimonialCarousel = ({
     });
   };
 
-  const handleDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+  const handleDragEnd = (
+    _: unknown,
+    info: { offset: { x: number }; velocity: { x: number } },
+  ) => {
     const containerWidth = containerRef.current?.offsetWidth ?? 1;
     const threshold = containerWidth * 0.2;
     const { offset, velocity } = info;

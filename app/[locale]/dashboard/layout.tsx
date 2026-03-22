@@ -79,7 +79,7 @@ export default function DashboardLayout({
 
         <Sidebar />
 
-        <main className="lg:ml-64 min-h-screen transition-all duration-300 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
+        <main className="lg:ml-64 min-h-screen transition-all duration-300 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
           <EmailVerificationBanner />
           {children}
         </main>

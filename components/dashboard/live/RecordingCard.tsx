@@ -70,11 +70,11 @@ export const RecordingCard = ({ recording }: { recording: Live }) => {
         </div>
 
         {/* Content */}
-        <div className="p-5 flex flex-col flex-1">
-          <h3 className="text-lg font-display font-bold text-brand-dark mb-2 group-hover:text-brand-purple transition-colors line-clamp-1">
+        <div className="p-3 md:p-5 flex flex-col flex-1">
+          <h3 className="text-sm md:text-lg font-display font-bold text-brand-dark mb-1 md:mb-2 group-hover:text-brand-purple transition-colors line-clamp-2">
             {recording.title}
           </h3>
-          <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-4 flex-1">
+          <p className="text-gray-500 text-xs md:text-sm leading-relaxed line-clamp-2 mb-2 md:mb-4 flex-1">
             {recording.description}
           </p>
 

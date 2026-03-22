@@ -45,7 +45,6 @@ export const VideoCard = ({ video }: { video: Video }) => {
   };
   const durationDisplay = parseDuration(video.duration);
 
-
   return (
     <Link
       href={`/dashboard/videos/${video.id}`}
@@ -53,7 +52,7 @@ export const VideoCard = ({ video }: { video: Video }) => {
     >
       <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full border border-gray-100 transform group-hover:-translate-y-1">
         {/* Thumbnail Container */}
-        <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+        <div className="relative h-32 md:h-48 w-full bg-gray-100 overflow-hidden">
           {video.thumbnail_url && (
             <Image
               src={video.thumbnail_url}
@@ -99,29 +98,29 @@ export const VideoCard = ({ video }: { video: Video }) => {
         </div>
 
         {/* Content */}
-        <div className="p-5 flex flex-col flex-1 relative">
+        <div className="p-3 md:p-5 flex flex-col flex-1 relative">
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-1 md:gap-2 mb-2 md:mb-3">
             {video.category && (
               <span
-                className={`px-3 py-1 text-xs font-bold rounded-full border ${getCategoryColor(video.category)}`}
+                className={`px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-bold rounded-full border ${getCategoryColor(video.category)}`}
               >
                 {video.category}
               </span>
             )}
             {video.age_group && (
-              <span className="px-3 py-1 bg-gray-50 text-gray-500 text-xs font-bold rounded-full border border-gray-100">
+              <span className="px-2 md:px-3 py-0.5 md:py-1 bg-gray-50 text-gray-500 text-[10px] md:text-xs font-bold rounded-full border border-gray-100">
                 {video.age_group}
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="font-display font-bold text-lg text-brand-dark mb-2 leading-tight group-hover:text-brand-primary transition-colors">
+          <h3 className="font-display font-bold text-sm md:text-lg text-brand-dark mb-1 md:mb-2 leading-tight group-hover:text-brand-primary transition-colors line-clamp-2">
             {video.title}
           </h3>
 
-          <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">
+          <p className="text-gray-500 text-xs md:text-sm mb-2 md:mb-4 line-clamp-2 flex-1">
             {video.description}
           </p>
 

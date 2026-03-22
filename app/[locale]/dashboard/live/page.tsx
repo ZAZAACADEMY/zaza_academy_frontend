@@ -167,7 +167,7 @@ export default function LiveSessionsPage() {
         {pastSessions.length === 0 ? (
           <p className="text-gray-500">{t("noPastSessions")}</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {pastSessions.slice(0, 3).map((session) => (
               <RecordingCard key={session.id} recording={session as any} />
             ))}

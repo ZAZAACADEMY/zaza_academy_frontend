@@ -21,9 +21,15 @@ export const SessionCard = ({ session }: { session: Live }) => {
 
   // Parse datetime for display
   const startDate = new Date(session.start_datetime);
-  const month = startDate.toLocaleString("en-US", { month: "short" }).toUpperCase();
+  const month = startDate
+    .toLocaleString("en-US", { month: "short" })
+    .toUpperCase();
   const day = startDate.getDate().toString();
-  const time = startDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+  const time = startDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 
   // Parse duration (e.g., "01:30:00" -> "1h 30m")
   const parseDuration = (durationStr: string | null | undefined) => {
@@ -55,7 +61,9 @@ export const SessionCard = ({ session }: { session: Live }) => {
 
   const handleAddToCalendar = () => {
     try {
-      const durationMinutes = (parseInt(session.estimated_duration?.split(':')[0] || '0') * 60) + parseInt(session.estimated_duration?.split(':')[1] || '0');
+      const durationMinutes =
+        parseInt(session.estimated_duration?.split(":")[0] || "0") * 60 +
+        parseInt(session.estimated_duration?.split(":")[1] || "0");
       const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
 
       const startISO = startDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
@@ -79,8 +87,8 @@ export const SessionCard = ({ session }: { session: Live }) => {
   };
 
   return (
-    <div className="bg-white rounded-[2.5rem] p-2 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full group border border-gray-100/80 flex flex-col">
-      <div className="bg-gradient-to-b from-brand-cream/30 via-white to-white rounded-[2rem] p-6 flex flex-col h-full relative overflow-hidden z-10">
+    <div className="bg-white rounded-4xl md:rounded-4xl p-1.5 md:p-2 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full group border border-gray-100/80 flex flex-col">
+      <div className="bg-linear-to-b from-brand-cream/30 via-white to-white rounded-3xl md:rounded-4xl p-4 md:p-6 flex flex-col h-full relative overflow-hidden z-10">
         {/* Top Section: Date & Tags */}
         <div className="flex justify-between items-start mb-6 relative z-20">
           <div className="flex items-start gap-3">
@@ -132,8 +140,8 @@ export const SessionCard = ({ session }: { session: Live }) => {
         </div>
 
         {/* Main Content */}
-        <div className="mb-6 z-10">
-          <h3 className="text-2xl font-display font-bold text-brand-dark mb-3 leading-tight group-hover:text-brand-primary transition-colors">
+        <div className="mb-4 md:mb-6 z-10">
+          <h3 className="text-xl md:text-2xl font-display font-bold text-brand-dark mb-2 md:mb-3 leading-tight group-hover:text-brand-primary transition-colors">
             {session.title}
           </h3>
           <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">
@@ -149,7 +157,7 @@ export const SessionCard = ({ session }: { session: Live }) => {
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-dashed border-gray-200 pt-5">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border border-white shadow-sm bg-blue-100 text-blue-600">
-                 <User size={18} /> {/* Generic User icon */}
+                <User size={18} /> {/* Generic User icon */}
               </div>
               <div>
                 <div className="text-[10px] uppercase font-bold text-gray-400">

@@ -9,6 +9,7 @@
     "pricing": "Pricing",
     "testimonials": "Testimonials",
     "faq": "FAQ",
+    "contact": "Contact",
     "login": "Login",
     "getStarted": "Get Started",
     "myDashboard": "My Dashboard",
@@ -916,6 +917,79 @@
     "sendButton": "Send Message",
     "successTitle": "Message Sent!",
     "successMessage": "We'll get back to you as soon as possible."
+  },
+  "SupportPage": {
+    "meta": {
+      "title": "Contact & Support | Zaza Academy",
+      "description": "Need help? Contact the Zaza Academy team. We answer your questions about children’s financial education programs, billing, and technical support.",
+      "keywords": [
+        "contact Zaza Academy",
+        "financial education support for kids",
+        "Zaza help",
+        "contact form",
+        "financial programs questions",
+        "parent assistance"
+      ]
+    },
+    "hero": {
+      "title": "How can we help you?",
+      "subtitle": "Our team is here for you. Ask a question, report an issue, or just say hello — we'll get back to you within 24 hours."
+    },
+    "infoCards": [
+      {
+        "icon": "mail",
+        "title": "By Email",
+        "value": "zazaacademy@gmail.com",
+        "desc": "Response within 24 business hours"
+      },
+      {
+        "icon": "clock",
+        "title": "Availability",
+        "value": "Mon – Fri, 9am – 6pm",
+        "desc": "Eastern Time (ET)"
+      },
+      {
+        "icon": "message",
+        "title": "Live Chat",
+        "value": "Coming soon",
+        "desc": "Real-time assistance"
+      }
+    ],
+    "formSection": {
+      "title": "Send us a message",
+      "subtitle": "Fill out the form below and we'll get back to you as quickly as possible.",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "Select a subject",
+      "subjectOptions": [
+        "Question about programs",
+        "Technical issue",
+        "Billing",
+        "Partnership",
+        "Other"
+      ]
+    },
+    "faqSection": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Answers to the most common questions",
+      "items": [
+        {
+          "question": "How do I enroll my child?",
+          "answer": "Create a parent account, choose a plan, and add your child from the dashboard in just a few clicks."
+        },
+        {
+          "question": "What is the refund policy?",
+          "answer": "A full refund is available if requested at least 7 days before the program start date."
+        },
+        {
+          "question": "Are the classes live?",
+          "answer": "Yes! Classes are taught live by certified educators, and class replays are available on demand."
+        },
+        {
+          "question": "What age groups does Zaza cater to?",
+          "answer": "Zaza Academy offers tailored programs for children aged 5 to 16, with content specific to each age group."
+        }
+      ]
+    }
   },
   "Cookies": {
     "bannerTitle": "Hey, it's us — the Cookies! 🍪",

@@ -144,7 +144,14 @@ export const Navbar = () => {
     { name: t("pricing"), href: "#pricing" },
     { name: t("testimonials"), href: "#testimonials" },
     { name: t("faq"), href: "#faq" },
+    { name: t("contact"), href: "/support" },
   ];
+
+  // On a sub-page (not on the landing "/"), anchor links should go back to the
+  // landing page first (e.g. /#about instead of #about).
+  const isOnLanding = pathname === "/";
+  const resolvedHref = (href: string) =>
+    !href.startsWith("/") && !isOnLanding ? `/${href}` : href;
 
   return (
     <div
@@ -173,18 +180,23 @@ export const Navbar = () => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-[20px] xl:gap-[28px]">
             {navLinks.map((item) => {
-              const sectionId = item.href.replace("#", "");
-              const isActive = activeSection === sectionId;
-              return (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={`font-normal text-[15px] xl:text-[17px] transition-all leading-[140%] whitespace-nowrap relative ${
-                    isActive
-                      ? "text-brand-dark font-bold after:absolute after:-bottom-1 after:left-0 after:right-0 after:h-0.5 after:bg-[#A655F7] after:rounded-full"
-                      : "text-[#404040] hover:text-brand-dark"
-                  }`}
-                >
+              const isRoute = item.href.startsWith("/");
+              const sectionId = isRoute ? "" : item.href.replace("#", "");
+              const isActive = isRoute
+                ? pathname === item.href
+                : activeSection === sectionId;
+              const linkClass = `font-normal text-[15px] xl:text-[17px] transition-all leading-[140%] whitespace-nowrap relative ${
+                isActive
+                  ? "text-brand-dark font-bold after:absolute after:-bottom-1 after:left-0 after:right-0 after:h-0.5 after:bg-[#A655F7] after:rounded-full"
+                  : "text-[#404040] hover:text-brand-dark"
+              }`;
+              const href = resolvedHref(item.href);
+              return isRoute ? (
+                <Link key={item.name} href={href} className={linkClass}>
+                  {item.name}
+                </Link>
+              ) : (
+                <a key={item.name} href={href} className={linkClass}>
                   {item.name}
                 </a>
               );
@@ -290,15 +302,28 @@ export const Navbar = () => {
               className="absolute top-[70px] md:top-[80px] left-0 right-0 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-4 lg:hidden animate-fade-in z-50 border border-gray-100 mx-4"
             >
               {navLinks.map((item) => {
-                const sectionId = item.href.replace("#", "");
-                const isActive = activeSection === sectionId;
-                return (
+                const isRoute = item.href.startsWith("/");
+                const sectionId = isRoute ? "" : item.href.replace("#", "");
+                const isActive = isRoute
+                  ? pathname === item.href
+                  : activeSection === sectionId;
+                const linkClass = `py-3 border-b border-gray-50 last:border-0 text-center text-lg active:bg-gray-50 font-medium transition-colors ${
+                  isActive ? "text-[#A655F7] font-bold" : "text-gray-700"
+                }`;
+                return isRoute ? (
+                  <Link
+                    key={item.name}
+                    href={resolvedHref(item.href)}
+                    className={linkClass}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
                   <a
                     key={item.name}
-                    href={item.href}
-                    className={`py-3 border-b border-gray-50 last:border-0 text-center text-lg active:bg-gray-50 font-medium transition-colors ${
-                      isActive ? "text-[#A655F7] font-bold" : "text-gray-700"
-                    }`}
+                    href={resolvedHref(item.href)}
+                    className={linkClass}
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}

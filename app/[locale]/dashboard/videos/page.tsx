@@ -156,15 +156,17 @@ export default function VideoLibraryPage() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-display font-bold text-brand-dark mb-2">
+      <div className="mb-4 md:mb-8">
+        <h1 className="text-xl md:text-3xl font-display font-bold text-brand-dark mb-1 md:mb-2">
           {t("title")}
         </h1>
-        <p className="text-gray-500 max-w-2xl">{t("description")}</p>
+        <p className="text-gray-500 max-w-2xl text-sm md:text-base">
+          {t("description")}
+        </p>
       </div>
 
       {/* Controls Container */}
-      <div className="bg-white p-4 md:p-6 rounded-3xl shadow-sm mb-8 space-y-6">
+      <div className="bg-white p-3 md:p-6 rounded-2xl md:rounded-3xl shadow-sm mb-6 md:mb-8 space-y-4 md:space-y-6">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -237,7 +239,7 @@ export default function VideoLibraryPage() {
 
       {/* Grid */}
       {filteredVideos.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {filteredVideos.map((video) => (
             <div key={video.id} className="h-full">
               <VideoCard video={video} />

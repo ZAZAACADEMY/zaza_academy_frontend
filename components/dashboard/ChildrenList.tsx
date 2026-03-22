@@ -132,7 +132,7 @@ export const ChildrenList = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {children.map((child) => (
               <motion.div
                 layout
@@ -141,18 +141,18 @@ export const ChildrenList = () => {
                 whileHover={{ y: -8, transition: { duration: 0.2 } }}
                 key={child.id}
                 onClick={() => handleEditClick(child)}
-                className="group relative flex flex-col p-6 bg-white border border-gray-100 rounded-[32px] hover:border-brand-purple/20 hover:shadow-2xl hover:shadow-brand-purple/10 transition-all cursor-pointer overflow-hidden"
+                className="group relative flex flex-col p-4 md:p-6 bg-white border border-gray-100 rounded-3xl md:rounded-4xl hover:border-brand-purple/20 hover:shadow-2xl hover:shadow-brand-purple/10 transition-all cursor-pointer overflow-hidden"
               >
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-brand-purple/5 to-pink-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500 ease-out" />
-                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-purple border border-brand-purple/10 shadow-sm flex items-center gap-1">
-                  <Sparkles size={12} className="text-yellow-400" />
+                <div className="absolute top-3 md:top-4 right-3 md:right-4 bg-white/80 backdrop-blur-sm px-2 md:px-3 py-1 rounded-full text-[10px] md:text-xs font-bold text-brand-purple border border-brand-purple/10 shadow-sm flex items-center gap-1">
+                  <Sparkles size={11} className="text-yellow-400" />
                   {child.age_group}
                 </div>
 
                 {/* Avatar & Header */}
-                <div className="relative z-10 flex items-start gap-4 mb-6">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-xl shadow-brand-purple/15 border-4 border-white group-hover:rotate-3 transition-transform duration-300 bg-gray-50">
+                <div className="relative z-10 flex items-start gap-3 mb-4 md:mb-6">
+                  <div className="relative w-14 h-14 md:w-20 md:h-20 rounded-2xl overflow-hidden shadow-xl shadow-brand-purple/15 border-4 border-white group-hover:rotate-3 transition-transform duration-300 bg-gray-50 shrink-0">
                     <Image
                       src={getAvatarPath(child.avatar)}
                       alt={
@@ -162,11 +162,11 @@ export const ChildrenList = () => {
                       className="object-cover"
                     />
                   </div>
-                  <div className="pt-2">
-                    <h4 className="font-display font-bold text-2xl text-brand-dark mb-1 group-hover:text-brand-purple transition-colors">
+                  <div className="pt-1 md:pt-2">
+                    <h4 className="font-display font-bold text-lg md:text-2xl text-brand-dark mb-1 group-hover:text-brand-purple transition-colors leading-tight">
                       {(child as any).pseudo || child.name}
                     </h4>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                    <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500 font-medium">
                       <span className="w-2 h-2 rounded-full bg-green-400"></span>
                       {t("age", { age: child.age })}
                     </div>
@@ -174,8 +174,8 @@ export const ChildrenList = () => {
                 </div>
 
                 {/* Stats Grid (Videos) */}
-                <div className="grid grid-cols-1 gap-3 mb-6">
-                  <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 group-hover:bg-brand-light/30 transition-colors flex items-center justify-between">
+                <div className="grid grid-cols-1 gap-3 mb-4 md:mb-6">
+                  <div className="bg-gray-50 rounded-2xl p-3 md:p-4 border border-gray-100 group-hover:bg-brand-light/30 transition-colors flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">
                         <Video size={14} className="text-brand-purple" />
@@ -245,7 +245,7 @@ export const ChildrenList = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleAddClick}
-              className="flex flex-col items-center justify-center p-6 min-h-[280px] border-2 border-dashed border-gray-200 rounded-[32px] hover:border-brand-purple/50 hover:bg-brand-purple/5 transition-all group"
+              className="flex flex-col items-center justify-center p-4 md:p-6 min-h-50 md:min-h-70 border-2 border-dashed border-gray-200 rounded-3xl md:rounded-4xl hover:border-brand-purple/50 hover:bg-brand-purple/5 transition-all group"
             >
               <div className="w-16 h-16 rounded-3xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-400 mb-4 group-hover:border-brand-purple group-hover:text-brand-purple transition-all shadow-sm group-hover:shadow-brand-purple/20">
                 <Plus

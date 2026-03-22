@@ -9,6 +9,7 @@
     "pricing": "Tarifs",
     "testimonials": "Témoignages",
     "faq": "FAQ",
+    "contact": "Contact",
     "login": "Connexion",
     "getStarted": "Commencer",
     "myDashboard": "Mon tableau de bord",
@@ -916,6 +917,79 @@
     "sendButton": "Envoyer le message",
     "successTitle": "Message envoyé !",
     "successMessage": "Nous vous répondrons dès que possible."
+  },
+  "SupportPage": {
+    "meta": {
+      "title": "Contact & Support | Zaza Academy",
+      "description": "Besoin d'aide ? Contactez l'équipe Zaza Academy. Nous répondons à vos questions sur les programmes d'éducation financière pour enfants, la facturation et la technique.",
+      "keywords": [
+        "contact Zaza Academy",
+        "support éducation financière enfants",
+        "aide Zaza",
+        "formulaire de contact",
+        "questions programmes financiers",
+        "assistance parents"
+      ]
+    },
+    "hero": {
+      "title": "Comment peut-on vous aider ?",
+      "subtitle": "Notre équipe est là pour vous. Posez vos questions, signalez un problème ou dites simplement bonjour — nous vous répondrons sous 24h."
+    },
+    "infoCards": [
+      {
+        "icon": "mail",
+        "title": "Par e-mail",
+        "value": "zazaacademy@gmail.com",
+        "desc": "Réponse sous 24h ouvrées"
+      },
+      {
+        "icon": "clock",
+        "title": "Disponibilité",
+        "value": "Lun – Ven, 9h – 18h",
+        "desc": "Heure de Paris (CET)"
+      },
+      {
+        "icon": "message",
+        "title": "Chat en ligne",
+        "value": "Bientôt disponible",
+        "desc": "Assistance en temps réel"
+      }
+    ],
+    "formSection": {
+      "title": "Envoyez-nous un message",
+      "subtitle": "Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.",
+      "subjectLabel": "Sujet",
+      "subjectPlaceholder": "Sélectionnez un sujet",
+      "subjectOptions": [
+        "Question sur les programmes",
+        "Problème technique",
+        "Facturation",
+        "Partenariat",
+        "Autre"
+      ]
+    },
+    "faqSection": {
+      "title": "Questions fréquentes",
+      "subtitle": "Les réponses aux questions les plus courantes",
+      "items": [
+        {
+          "question": "Comment inscrire mon enfant ?",
+          "answer": "Créez un compte parent, choisissez un plan et ajoutez votre enfant depuis le tableau de bord en quelques clics."
+        },
+        {
+          "question": "Quelle est la politique de remboursement ?",
+          "answer": "Un remboursement complet est possible si la demande est faite au moins 7 jours avant le début du programme."
+        },
+        {
+          "question": "Les cours sont-ils en direct ?",
+          "answer": "Oui ! Les cours sont dispensés en direct par des éducateurs certifiés, et les rediffusions sont disponibles sur demande."
+        },
+        {
+          "question": "Pour quels âges est conçu Zaza ?",
+          "answer": "Zaza Academy propose des parcours adaptés pour les enfants de 5 à 16 ans, avec des contenus spécifiques à chaque tranche d'âge."
+        }
+      ]
+    }
   },
   "Cookies": {
     "bannerTitle": "Salut, c'est nous… les cookies ! 🍪",

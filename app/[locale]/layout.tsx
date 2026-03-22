@@ -11,6 +11,7 @@ import StoreProvider from "@/app/StoreProvider";
 import { CookieBanner } from "@/components/ui/CookieBanner";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { PageTransitionProvider } from "@/components/ui/PageTransition";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -113,6 +114,7 @@ export default async function RootLayout({
                 {children}
                 <CookieBanner />
                 <ScrollToTop />
+                <OfflineBanner />
               </SmoothScroll>
             </PageTransitionProvider>
           </StoreProvider>
