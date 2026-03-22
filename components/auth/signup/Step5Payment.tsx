@@ -468,12 +468,18 @@ export const Step5Payment = () => {
                 PayPal
               </h3>
               <p className="text-gray-500 max-w-[320px] leading-relaxed">
-                You will be securely redirected to <strong>PayPal</strong> to complete your payment using your PayPal balance or linked bank account/card.
+                You will be securely redirected to <strong>PayPal</strong> to
+                complete your payment using your PayPal balance or linked bank
+                account/card.
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4 py-2 opacity-80">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-6" />
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                alt="PayPal"
+                className="h-6"
+              />
             </div>
           </div>
         ) : (
