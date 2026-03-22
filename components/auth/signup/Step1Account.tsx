@@ -68,6 +68,20 @@ export const Step1Account = () => {
     [displayNames],
   );
 
+  // Auto-select country if typed text matches exactly, or revert to previous selection
+  const resolveCountrySearch = () => {
+    const match = countryOptions.find(
+      (c) => c.name.toLowerCase() === countrySearch.trim().toLowerCase(),
+    );
+    if (match) {
+      setCountry(match.code);
+      setCountrySearch(match.name);
+    } else {
+      const prev = countryOptions.find((c) => c.code === country);
+      setCountrySearch(prev?.name ?? "");
+    }
+  };
+
   // Close country dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -76,6 +90,7 @@ export const Step1Account = () => {
         !countryWrapperRef.current.contains(event.target as Node)
       ) {
         setIsCountryOpen(false);
+        resolveCountrySearch();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -282,6 +297,7 @@ export const Step1Account = () => {
                 setIsCountryOpen(true);
               }}
               onFocus={() => setIsCountryOpen(true)}
+              onBlur={() => resolveCountrySearch()}
               aria-invalid={!!errors.country}
               aria-describedby={errors.country ? "country-error" : undefined}
               aria-expanded={isCountryOpen}

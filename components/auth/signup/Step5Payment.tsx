@@ -147,6 +147,23 @@ export const Step5Payment = () => {
     setMobileProvider,
   ]);
 
+  // Auto-select country if typed text matches exactly, or revert to previous selection
+  const resolveCountrySearch = () => {
+    const match = mobileCountryOptions.find(
+      (c) => c.name.toLowerCase() === countrySearch.trim().toLowerCase(),
+    );
+    if (match) {
+      setCountry(match.code);
+      setCountrySearch(match.name);
+      if (phoneNumber.trim()) {
+        setPhoneNumber((prev) => applyDialCode(match.dialCode, prev));
+      }
+    } else {
+      const prev = mobileCountryOptions.find((c) => c.code === country);
+      setCountrySearch(prev?.name ?? "");
+    }
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -155,6 +172,7 @@ export const Step5Payment = () => {
         !countryWrapperRef.current.contains(event.target as Node)
       ) {
         setIsCountryOpen(false);
+        resolveCountrySearch();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -345,6 +363,7 @@ export const Step5Payment = () => {
                     setIsCountryOpen(true);
                   }}
                   onFocus={() => setIsCountryOpen(true)}
+                  onBlur={() => resolveCountrySearch()}
                   placeholder={t("countryPlaceholder")}
                   className="w-full px-6 py-4 rounded-[50px] border border-gray-200 focus:border-[#A655F7] focus:ring-2 focus:ring-[#A655F7]/20 outline-none transition-all bg-white"
                 />
