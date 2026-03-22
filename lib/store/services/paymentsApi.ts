@@ -58,6 +58,24 @@ export const paymentsApi = baseApi.injectEndpoints({
       query: (id) => `/api/v1/payments/${id}`,
       providesTags: (result, error, id) => [{ type: "Payments", id }],
     }),
+
+    // Endpoint to get exchange rate
+    getExchangeRate: builder.query<
+      {
+        from_currency: string;
+        to_currency: string;
+        exchange_rate: number;
+        amount?: number;
+        converted_amount?: number;
+        rounded_up_amount?: number;
+      },
+      { from_currency: string; to_currency: string; amount?: number; round_up?: boolean }
+    >({
+      query: (params) => ({
+        url: "/api/v1/payments/exchange-rate",
+        params,
+      }),
+    }),
   }),
 });
 
@@ -66,4 +84,5 @@ export const {
     useInitiatePaymentMutation,
     useGetMyPaymentsQuery,
     useGetPaymentByIdQuery,
+    useGetExchangeRateQuery,
 } = paymentsApi;

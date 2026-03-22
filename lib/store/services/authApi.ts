@@ -3,10 +3,26 @@ import { tokenStore } from "@/lib/api/tokenStore";
 import { components } from "@/lib/api/v1";
 
 export type UserProfile = components["schemas"]["UserSerializer"];
-export type AuthResponse = any; // components["schemas"]["AuthResponse"];
+export type AuthResponse = {
+  access?: string;
+  refresh?: string;
+  user?: UserProfile;
+  requires_2fa?: boolean;
+  token?: string;
+  message?: string;
+};
 export type LoginCredentials = components["schemas"]["Login"];
 export type RegisterData = components["schemas"]["Register"];
 export type Country = any; //  components["schemas"]["Country"];
+export type ChangePassword = {
+  old_password?: string;
+  new_password?: string;
+  new_password_confirm?: string;
+};
+export type SendVerificationOtp = {
+  email: string;
+};
+
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -18,13 +34,26 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User", "Me"],
     }),
-    register: builder.mutation<any, RegisterData>({
+    register: builder.mutation<AuthResponse, RegisterData>({
       query: (data) => ({
         url: "/api/v1/auth/register/",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["User"],
+    }),
+    changePassword: builder.mutation<{ message: string }, ChangePassword>({
+      query: (data) => ({
+        url: "/api/v1/auth/change-password/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    sendVerificationOtp: builder.mutation<void, void>({
+      query: () => ({
+        url: "/api/v1/auth/send-verification-otp/",
+        method: "POST",
+      }),
     }),
     verifyEmail: builder.mutation<
       { message: string; user: UserProfile },
@@ -128,6 +157,8 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useChangePasswordMutation,
+  useSendVerificationOtpMutation,
   useVerifyEmailMutation,
   useResendOtpMutation,
   usePasswordResetRequestMutation,

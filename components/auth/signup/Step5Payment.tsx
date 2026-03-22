@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Loader2,
   AlertTriangle,
+  Wallet,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useSignup } from "./SignupContext";
@@ -201,12 +202,15 @@ export const Step5Payment = () => {
         methodApi = "STRIPE";
       } else if (paymentGateway === "Mobile Money") {
         methodApi = "TARAMONEY";
+      } else if (paymentGateway === "PayPal") {
+        methodApi = "PAYPAL";
       } else {
         setError(t("errorInvalidGateway"));
         return;
       }
 
       const returnBaseUrl = `${window.location.origin}/${locale}/payment/return`;
+      const cleanPhoneNumber = phoneNumber.replace(/[\s+]/g, "");
 
       const paymentPayload = {
         subscription: subscriptionId,
@@ -215,6 +219,10 @@ export const Step5Payment = () => {
         method: methodApi,
         success_url: `${returnBaseUrl}?status=success&payment_id={PAYMENT_ID}`,
         cancel_url: `${returnBaseUrl}?status=cancel&payment_id={PAYMENT_ID}`,
+        ...(methodApi === "TARAMONEY" && {
+          phone_number: cleanPhoneNumber,
+          country_iso: country,
+        }),
       };
 
       const paymentResult = await initiatePayment(
@@ -225,7 +233,7 @@ export const Step5Payment = () => {
       const checkoutUrl = paymentResult.payment_data?.checkout_url;
 
       if (checkoutUrl) {
-        // Stripe usually handles its own redirect, but we provide our return URL
+        // Stripe and PayPal usually handle their own redirect via checkout_url
         window.location.href = checkoutUrl;
       } else if (methodApi === "TARAMONEY") {
         // Handle Mobile Money (which might have its own logic or automatic processing)
@@ -279,6 +287,7 @@ export const Step5Payment = () => {
   const gateways: { id: PaymentGateway; label: string; icon: any }[] = [
     { id: "Card", label: t("cardGateway"), icon: CreditCard },
     { id: "Mobile Money", label: t("mobileGateway"), icon: Smartphone },
+    { id: "PayPal", label: "PayPal", icon: Wallet },
   ];
 
   return (
@@ -449,6 +458,24 @@ export const Step5Payment = () => {
               />
             </div>
           </div>
+        ) : paymentGateway === "PayPal" ? (
+          <div className="flex flex-col items-center justify-center py-8 px-4 text-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-[#003087]/10 flex items-center justify-center text-[#003087] animate-pulse">
+              <Wallet size={40} />
+            </div>
+            <div className="flex flex-col gap-3">
+              <h3 className="font-display font-bold text-xl text-brand-black">
+                PayPal
+              </h3>
+              <p className="text-gray-500 max-w-[320px] leading-relaxed">
+                You will be securely redirected to <strong>PayPal</strong> to complete your payment using your PayPal balance or linked bank account/card.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-4 py-2 opacity-80">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-6" />
+            </div>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-center gap-6">
             <div className="w-20 h-20 rounded-full bg-[#F3F0FF] flex items-center justify-center text-[#A655F7] animate-pulse">
@@ -500,6 +527,8 @@ export const Step5Payment = () => {
             <Loader2 className="animate-spin" />
           ) : paymentGateway === "Card" ? (
             "Continue to Stripe"
+          ) : paymentGateway === "PayPal" ? (
+            "Continue to PayPal"
           ) : (
             t("payNow")
           )}

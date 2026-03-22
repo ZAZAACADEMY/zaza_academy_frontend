@@ -64,7 +64,8 @@ export const baseApi = createApi({
     "Subscriptions", 
     "Payments", 
     "Videos", 
-    "Lives"
+    "Lives",
+    "Stats"
   ],
   endpoints: () => ({}), // Endpoints are injected from other files
 });
