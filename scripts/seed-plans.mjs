@@ -1,4 +1,4 @@
-const BASE_URL = "http://3.137.41.163";
+const BASE_URL = "https://api.zaza-academy.com";
 const LOGIN_URL = `${BASE_URL}/api/v1/auth/login/`;
 const PLANS_URL = `${BASE_URL}/api/plans/`;
 
